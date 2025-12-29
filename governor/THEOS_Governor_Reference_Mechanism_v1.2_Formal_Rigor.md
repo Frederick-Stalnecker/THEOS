@@ -41,7 +41,7 @@ This mechanism implements **functional time** — enabling the system to be shap
 
 The following diagram shows the complete THEOS Governor request/response cycle:
 
-![THEOS Governor Flow](../../diagrams/governor/governor_flow_complete.png)
+![THEOS Governor Flow](../diagrams/governor/governor_flow_complete.png)
 
 **Key Points:**
 - All scalars (R, S, W) are bounded to [0, 1] as specified in Section 2.1
@@ -72,7 +72,7 @@ All primary governance scalars are bounded:
 
 The following diagram shows posture transitions and their associated constraints:
 
-![Posture State Machine](../../diagrams/governor/posture_state_machine.png)
+![Posture State Machine](../diagrams/governor/posture_state_machine.png)
 
 **Posture Characteristics:**
 - **NOM:** Full capability, D=8-12, V=2-3, tools=ALLOWED

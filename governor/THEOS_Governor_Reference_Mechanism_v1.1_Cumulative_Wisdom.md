@@ -39,7 +39,7 @@ This mechanism implements **functional time** — enabling the system to be shap
 
 The following diagram shows the complete THEOS Governor request/response cycle:
 
-![THEOS Governor Flow](../../diagrams/governor/governor_flow_complete.png)
+![THEOS Governor Flow](../diagrams/governor/governor_flow_complete.png)
 
 **Key Points:**
 - Wisdom state `W[c]` is loaded at entry for the current context class
@@ -205,7 +205,7 @@ Posture escalation is influenced by both current signals and wisdom:
 
 The following diagram shows posture transitions and their associated constraints:
 
-![Posture State Machine](../../diagrams/governor/posture_state_machine.png)
+![Posture State Machine](../diagrams/governor/posture_state_machine.png)
 
 **Key Points:**
 - **NOM (Normal):** Full capability, D=8-12, tools allowed

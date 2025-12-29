@@ -23,8 +23,8 @@ All wisdom accumulation mechanisms implement **functional time** — enabling th
 ### 0.1 Architecture Reference
 
 For the complete Governor flow and posture state machine, see:
-- [Governor Flow Diagram](../../diagrams/governor/governor_flow_complete.png)
-- [Posture State Machine](../../diagrams/governor/posture_state_machine.png)
+- [Governor Flow Diagram](../diagrams/governor/governor_flow_complete.png)
+- [Posture State Machine](../diagrams/governor/posture_state_machine.png)
 
 This document (v1.3) focuses on **safety envelopes** for the parameters used in those flows.
 

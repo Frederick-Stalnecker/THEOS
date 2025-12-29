@@ -92,7 +92,7 @@ Different consequence types have different half-lives:
 
 ### 4.3 Visual: Temporal Decay Over Time
 
-![Functional Time Decay](../../diagrams/governance/functional_time_decay.png)
+![Functional Time Decay](../diagrams/governance/functional_time_decay.png)
 
 **Key Insight:** The system becomes "shaped by" past consequences without "remembering" them. A harmful event at t=0 still influences behavior at t=120 days, but with exponentially diminishing weight.
 
@@ -102,7 +102,7 @@ Different consequence types have different half-lives:
 
 ### 5.1 Flow Diagram
 
-![Wisdom Accumulation Flow](../../diagrams/governance/wisdom_accumulation_flow.png)
+![Wisdom Accumulation Flow](../diagrams/governance/wisdom_accumulation_flow.png)
 
 ### 5.2 Step-by-Step Process
 

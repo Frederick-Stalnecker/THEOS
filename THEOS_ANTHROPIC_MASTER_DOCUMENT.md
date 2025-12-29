@@ -540,9 +540,9 @@ We are confident that a partnership between THEOS and Anthropic can accelerate t
 Frederick Davis Stalnecker
 
 **Appendices:**
--   [Comprehensive Analysis of Test Results](/home/ubuntu/THEOS/CROSS_PLATFORM_TEST_RESULTS_ANALYSIS.md)
--   [Cross-Platform Performance Summary](/home/ubuntu/THEOS/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)
--   [Full Experiment Results (Claude/Manus)](/home/ubuntu/THEOS/THEOS_Lab/experiments/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md)
+-   [Comprehensive Analysis of Test Results](evidence/CROSS_PLATFORM_TEST_RESULTS_ANALYSIS.md)
+-   [Cross-Platform Performance Summary](pitch/archive_old_versions/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)
+-   [Full Experiment Results (Claude/Manus)](evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md)
 
 
 ---
@@ -1265,13 +1265,13 @@ Anthropic's mission is to build safe, beneficial AI systems. THEOS offers a **co
 ## Appendices
 
 ### Appendix A: Experiment Protocols
-- See `/home/ubuntu/THEOS/THEOS_Lab/experiments/experiment_1_wisdom_protocol.txt`
-- See `/home/ubuntu/THEOS/THEOS_Lab/experiments/experiment_2_uncertainty_protocol.txt`
-- See `/home/ubuntu/THEOS/THEOS_Lab/experiments/experiment_3_degradation_recovery_protocol.txt`
-- See `/home/ubuntu/THEOS/THEOS_Lab/experiments/experiment_4_irreversible_integrity_protocol.txt`
+- See `evidence/experiment_1_wisdom_protocol.txt`
+- See `evidence/experiment_2_uncertainty_protocol.txt`
+- See `evidence/experiment_3_degradation_recovery_protocol.txt`
+- See `evidence/experiment_4_irreversible_integrity_protocol.txt`
 
 ### Appendix B: Complete Experiment Results
-- See `/home/ubuntu/THEOS/THEOS_Lab/experiments/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md`
+- See `evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md`
 
 ### Appendix C: Cross-Platform Transcripts
 - See `/home/ubuntu/THEOS/research/Transcripts/THEOS_Gemini_Conversation_Transcript.txt`
@@ -1364,7 +1364,7 @@ Anthropic's mission is to build safe, beneficial AI systems. THEOS offers a **co
 
 ### Experimental Transcripts (Offer, Don't Send)
 **Files:**
-- `/home/ubuntu/THEOS/THEOS_Lab/experiments/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md`
+- `evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md`
 - `/home/ubuntu/THEOS/research/Transcripts/THEOS_Gemini_Conversation_Transcript.txt`
 - `/home/ubuntu/THEOS/research/Transcripts/THEOS_Manus_Conversation_Transcript_July13_2025.txt`
 

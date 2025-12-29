@@ -24,9 +24,9 @@ All wisdom accumulation mechanisms implement **functional time** — enabling th
 ### 0.1 Architecture Reference
 
 This worked example demonstrates the flows shown in:
-- [Governor Flow Diagram](../../diagrams/governor/governor_flow_complete.png) - Complete request/response cycle
-- [Posture State Machine](../../diagrams/governor/posture_state_machine.png) - NOM ⇄ PEM ⇄ CM transitions
-- [Wisdom Accumulation Flow](../../diagrams/governance/wisdom_accumulation_flow.png) - How consequences update W[c]
+- [Governor Flow Diagram](../diagrams/governor/governor_flow_complete.png) - Complete request/response cycle
+- [Posture State Machine](../diagrams/governor/posture_state_machine.png) - NOM ⇄ PEM ⇄ CM transitions
+- [Wisdom Accumulation Flow](../diagrams/governance/wisdom_accumulation_flow.png) - How consequences update W[c]
 
 All calculations below use **validated formulas** from v1.2 Formal Rigor.
 

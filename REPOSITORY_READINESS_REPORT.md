@@ -71,8 +71,8 @@ The repository is now organized into four key directories:
 
 The repository is designed to answer questions in this order:
 
-1.  **What is THEOS?** → [/pitch/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md](pitch/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)
-2.  **Why should we care?** → [/pitch/THEOS_ANTHROPIC_PITCH_DECK.md](pitch/THEOS_ANTHROPIC_PITCH_DECK.md)
+1.  **What is THEOS?** → [pitch/archive_old_versions/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md](pitch/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)
+2.  **Why should we care?** → [pitch/archive_old_versions/THEOS_ANTHROPIC_PITCH_DECK.md](pitch/THEOS_ANTHROPIC_PITCH_DECK.md)
 3.  **Does it work?** → [/evidence/BENCHMARKS.md](evidence/BENCHMARKS.md)
 4.  **How well does it work?** → [/evidence/CROSS_PLATFORM_TEST_RESULTS_ANALYSIS.md](evidence/CROSS_PLATFORM_TEST_RESULTS_ANALYSIS.md)
 5.  **Show me the proof.** → [/evidence/RAW_EXPERIMENT_LOG_WISDOM_PROTOCOL.json](evidence/RAW_EXPERIMENT_LOG_WISDOM_PROTOCOL.json)
@@ -89,7 +89,7 @@ The repository is designed to answer questions in this order:
 
 All critical links in the main README.md have been verified:
 
--   ✅ [/pitch/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md](pitch/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)
+-   ✅ [pitch/archive_old_versions/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md](pitch/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)
 -   ✅ [/code/theos_governor.py](code/theos_governor.py)
 -   ✅ [/evidence/BENCHMARKS.md](evidence/BENCHMARKS.md)
 -   ✅ [/compliance/REGULATORY_COMPLIANCE_MAPPING.md](compliance/REGULATORY_COMPLIANCE_MAPPING.md)

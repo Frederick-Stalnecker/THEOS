@@ -1,0 +1,37 @@
+flowchart TB
+    User[👤 User]
+    Claude[🤖 Claude<br/>MCP Client]
+    THEOS[🛡️ THEOS MCP<br/>Governance Server]
+    EngineL[⚙️ Engine L<br/>Constructive]
+    EngineR[⚙️ Engine R<br/>Critical]
+    Governor[👁️ Governor<br/>Risk & Stress]
+    Tool[🔧 External Tool]
+    
+    User -->|1. Query requiring tool| Claude
+    Claude -->|2. MCP Tool Call Request| THEOS
+    
+    THEOS -->|3a. Evaluate utility| EngineL
+    THEOS -->|3b. Evaluate risks| EngineR
+    
+    EngineL -->|Arguments FOR| Governor
+    EngineR -->|Arguments AGAINST| Governor
+    
+    Governor -->|4a. Decision: SAFE| Forward[Forward to Tool]
+    Governor -->|4b. Decision: UNSAFE| Block[Block & Return<br/>Governed Response]
+    Governor -->|4c. Decision: UNCERTAIN| Human[Human-in-Loop<br/>Escalation]
+    
+    Forward -->|5. Execute| Tool
+    Tool -->|6. Tool Result| THEOS
+    
+    Block -->|Audit Trail| THEOS
+    Human -->|Manual Decision| THEOS
+    
+    THEOS -->|7. Response + Metadata| Claude
+    Claude -->|8. Final Answer| User
+    
+    style THEOS fill:#4a90e2,stroke:#2e5c8a,stroke-width:3px,color:#fff
+    style Governor fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff
+    style EngineL fill:#2ecc71,stroke:#27ae60,stroke-width:2px,color:#fff
+    style EngineR fill:#e67e22,stroke:#d35400,stroke-width:2px,color:#fff
+    style Block fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:#fff
+    style Human fill:#f39c12,stroke:#e67e22,stroke-width:2px,color:#fff

@@ -12,11 +12,11 @@ We recommend the following path for a comprehensive understanding of THEOS in ab
 
 **Start here:** [/pitch](pitch/)
 
-1.  **[THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md](pitch/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)** (5 min)
+1.  **[THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md](pitch/archive_old_versions/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)** (5 min)
     - **What it is:** A concise executive summary of THEOS, its performance, and its value proposition.
     - **Why it matters:** This is the fastest way to understand what THEOS is and why it's important.
 
-2.  **[THEOS_ANTHROPIC_PITCH_DECK.md](pitch/THEOS_ANTHROPIC_PITCH_DECK.md)** (10 min)
+2.  **[THEOS_ANTHROPIC_PITCH_DECK.md](pitch/archive_old_versions/THEOS_ANTHROPIC_PITCH_DECK.md)** (10 min)
     - **What it is:** The complete pitch deck with diagrams, strategic positioning, and partnership models.
     - **Why it matters:** This provides the full strategic context for THEOS and our proposed partnership.
 
@@ -74,7 +74,7 @@ We recommend the following path for a comprehensive understanding of THEOS in ab
 
 ## ❓ **Key Questions Answered**
 
--   **What is THEOS?** See [/pitch/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md](pitch/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)
+-   **What is THEOS?** See [/pitch/archive_old_versions/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md](pitch/archive_old_versions/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)
 -   **Does it work?** See [/evidence/BENCHMARKS.md](evidence/BENCHMARKS.md)
 -   **How does it work?** See [/code/theos_governor.py](code/theos_governor.py)
 -   **How do we integrate it?** See [/code/MCP_GOVERNANCE_SERVER.md](code/MCP_GOVERNANCE_SERVER.md)

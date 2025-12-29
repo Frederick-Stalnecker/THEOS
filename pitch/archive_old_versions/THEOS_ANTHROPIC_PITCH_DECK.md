@@ -208,6 +208,6 @@ We are confident that a partnership between THEOS and Anthropic can accelerate t
 Frederick Davis Stalnecker
 
 **Appendices:**
--   [Comprehensive Analysis of Test Results](../CROSS_PLATFORM_TEST_RESULTS_ANALYSIS.md)
--   [Cross-Platform Performance Summary](../THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)
+-   [Comprehensive Analysis of Test Results](../../evidence/CROSS_PLATFORM_TEST_RESULTS_ANALYSIS.md)
+-   [Cross-Platform Performance Summary](THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)
 -   [Full Experiment Results (Claude/Manus)](../../evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md)
