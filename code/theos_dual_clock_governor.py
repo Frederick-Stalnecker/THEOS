@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Frederick Stalnecker
+# Licensed under the MIT License - see LICENSE file for details
+
 """
 THEOS Dual-Clock Governor
 
