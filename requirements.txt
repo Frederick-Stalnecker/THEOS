@@ -1,0 +1,36 @@
+# THEOS - Dual-Engine AI Governance Framework
+# Core dependencies for THEOS Governor and Memory Engine
+# 
+# Installation: pip install -r requirements.txt
+
+# No external dependencies required for core THEOS implementation
+# THEOS is built with Python standard library only for maximum compatibility
+
+# Optional dependencies for extended functionality:
+# Uncomment below to install optional features
+
+# For LLM integration and AI reasoning:
+# openai>=1.0.0
+# anthropic>=0.7.0
+
+# For data analysis and benchmarking:
+# numpy>=1.24.0
+# pandas>=2.0.0
+# scipy>=1.10.0
+
+# For visualization:
+# matplotlib>=3.7.0
+# plotly>=5.14.0
+
+# For testing:
+# pytest>=7.3.0
+# pytest-cov>=4.1.0
+
+# For documentation:
+# sphinx>=6.2.0
+# sphinx-rtd-theme>=1.2.0
+
+# For development:
+# black>=23.3.0
+# pylint>=2.17.0
+# mypy>=1.2.0
