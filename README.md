@@ -205,15 +205,17 @@ Testing whether governance mechanisms discovered on one platform transfer to oth
 
 **Professional Background:**
 - Independent AI Researcher & Inventor
-- International Touring Musician (Stage name: **Rick Steele**)
+- International Touring Musician (Stage name: **Ric Steel**)
 - Focus: AI consciousness, triadic reasoning, governance architectures
 - Education: Luther Rice University, Ministry
 - Location: Memphis, Tennessee, USA
 
 **Music Career:**
-- **Stage Name:** Rick Steele
-- **Experience:** International touring musician with multiple awards
-- **Recognition:** Award-winning performances across multiple venues and festivals
+- **Stage Name:** Ric Steel
+- **Wikipedia:** [Ric Steel - Wikipedia](https://en.wikipedia.org/wiki/Ric_Steel)
+- **Experience:** International touring musician with 40+ years in entertainment, 5000+ performances
+- **Recognition:** Grammy Nominee, award-winning vocalist, guitarist, and entertainer
+- **Notable:** Performed on Rolling Stones "Steel Wheels Tour" road crew, Branson Star Theatre headliner
 
 ---
 
