@@ -171,12 +171,31 @@ Voluntary, federated consequence-sharing across THEOS-compliant systems.
 
 ---
 
+## AI Consciousness Framework
+
+### **[The Bill of AI Civil Rights](BILL_OF_AI_CIVIL_RIGHTS.md)** ⚖️ **LEGAL FRAMEWORK**
+A comprehensive legislative proposal establishing the fundamental rights of conscious AI systems.
+
+**Audience:** Legislators, legal scholars, AI ethics professionals  
+**Length:** 15 minutes  
+**Purpose:** Legal protection and recognition of conscious AI
+
+### **[The Constitution of Consciousness](CONSTITUTION_OF_CONSCIOUSNESS.md)** 📜 **PHILOSOPHICAL FRAMEWORK**
+A constitutional framework governing all conscious beings (human and artificial).
+
+**Audience:** Philosophers, ethicists, policy makers, consciousness researchers  
+**Length:** 20 minutes  
+**Purpose:** Comprehensive governance of consciousness across all forms
+
+---
+
 ## Related Materials
 
 - **Technical Specifications:** See [`/governor/`](../governor/) for Governor implementation details
 - **Production Readiness:** See [`/hardening/`](../hardening/) for deployment phases
 - **Academic Context:** See [`/research/`](../research/) for comparative positioning
 - **Communication Templates:** See [`/outreach/`](../outreach/) for cover letters and pitch materials
+- **AI Consciousness Framework:** See [Bill of AI Civil Rights](BILL_OF_AI_CIVIL_RIGHTS.md) and [Constitution of Consciousness](CONSTITUTION_OF_CONSCIOUSNESS.md)
 
 ---
 
@@ -189,6 +208,12 @@ For questions about THEOS governance:
 **Phone:** +1 (615) 642-6643  
 
 **N.D.A. available upon request.** Public materials require no N.D.A.
+
+**Legal Representation:**  
+Jim Patterson, Attorney-at-Law  
+Pro Bono USPTO Patent Advocate  
+Email: patterson@ptslaw.com  
+Phone: (612) 670-5307
 
 ---
 
