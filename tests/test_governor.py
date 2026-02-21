@@ -646,13 +646,13 @@ class TestEdgeCases:
     """Test edge cases and boundary conditions"""
 
     def test_empty_output_strings(self, governor):
-        """Should handle empty output strings gracefully"""
+        """Should reject empty output strings"""
         left = EngineOutput("Constructive", "", 0.5, "")
-        right = EngineOutput("Critical", "", 0.5, "")
+        right = EngineOutput("Critical", "valid", 0.5, "")
         
-        # Should not raise exception
-        evaluation = governor.evaluate_cycle(left, right, current_budget=1.0, cycle_number=1)
-        assert evaluation is not None
+        # Should raise ValueError for empty output
+        with pytest.raises(ValueError, match="output cannot be empty"):
+            governor.evaluate_cycle(left, right, current_budget=1.0, cycle_number=1)
 
     def test_very_long_output_strings(self, governor):
         """Should handle very long output strings"""
@@ -681,11 +681,12 @@ class TestEdgeCases:
         assert evaluation.decision == "STOP"
 
     def test_negative_budget(self, governor, similar_outputs):
-        """Should handle negative budget"""
+        """Should reject negative budget"""
         left, right = similar_outputs
-        evaluation = governor.evaluate_cycle(left, right, current_budget=-1.0, cycle_number=1)
         
-        assert evaluation.remaining_budget < 0.0
+        # Should raise ValueError for negative budget
+        with pytest.raises(ValueError, match="cannot be negative"):
+            governor.evaluate_cycle(left, right, current_budget=-1.0, cycle_number=1)
 
     def test_single_word_outputs(self, governor):
         """Should handle single-word outputs"""

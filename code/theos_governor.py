@@ -104,9 +104,83 @@ class THEOSGovernor:
     
     def __init__(self, config: GovernorConfig = None):
         self.config = config or GovernorConfig()
+        self._validate_config(self.config)
         self.wisdom_records: List[WisdomRecord] = []
         self.posture = Posture.NOM
         self.cycle_history: List[GovernorEvaluation] = []
+    
+    def _validate_config(self, config: GovernorConfig) -> None:
+        """
+        Validate Governor configuration parameters.
+        
+        Raises ValueError if any parameter is invalid.
+        """
+        if config.max_cycles < 1:
+            raise ValueError(f"max_cycles must be >= 1, got {config.max_cycles}")
+        
+        if not (0.0 <= config.similarity_threshold <= 1.0):
+            raise ValueError(f"similarity_threshold must be in [0, 1], got {config.similarity_threshold}")
+        
+        if not (0.0 <= config.risk_threshold <= 1.0):
+            raise ValueError(f"risk_threshold must be in [0, 1], got {config.risk_threshold}")
+        
+        if config.initial_contradiction_budget < 0:
+            raise ValueError(f"initial_contradiction_budget must be >= 0, got {config.initial_contradiction_budget}")
+        
+        if config.contradiction_decay_rate < 0:
+            raise ValueError(f"contradiction_decay_rate must be >= 0, got {config.contradiction_decay_rate}")
+        
+        if config.quality_improvement_threshold < 0:
+            raise ValueError(f"quality_improvement_threshold must be >= 0, got {config.quality_improvement_threshold}")
+        
+        if not (0.0 <= config.alpha <= 1.0):
+            raise ValueError(f"alpha must be in [0, 1], got {config.alpha}")
+        
+        if not (0.0 <= config.beta <= 1.0):
+            raise ValueError(f"beta must be in [0, 1], got {config.beta}")
+        
+        if not (0.0 <= config.gamma <= 1.0):
+            raise ValueError(f"gamma must be in [0, 1], got {config.gamma}")
+        
+        if not (0.0 <= config.delta <= 1.0):
+            raise ValueError(f"delta must be in [0, 1], got {config.delta}")
+        
+        if not (0.0 <= config.epsilon <= 1.0):
+            raise ValueError(f"epsilon must be in [0, 1], got {config.epsilon}")
+    
+    def _validate_engine_output(self, output: EngineOutput, engine_name: str) -> None:
+        """
+        Validate a single engine output.
+        
+        Raises ValueError if output is invalid.
+        """
+        if not isinstance(output, EngineOutput):
+            raise TypeError(f"{engine_name} must be EngineOutput, got {type(output).__name__}")
+        
+        if not output.output or not output.output.strip():
+            raise ValueError(f"{engine_name} output cannot be empty")
+        
+        if not isinstance(output.output, str):
+            raise TypeError(f"{engine_name} output must be string, got {type(output.output).__name__}")
+        
+        if not isinstance(output.confidence, (int, float)):
+            raise TypeError(f"{engine_name} confidence must be numeric, got {type(output.confidence).__name__}")
+        
+        # Check for NaN and Inf
+        if math.isnan(output.confidence):
+            raise ValueError(f"{engine_name} confidence cannot be NaN")
+        
+        if math.isinf(output.confidence):
+            raise ValueError(f"{engine_name} confidence cannot be infinite")
+        
+        if not (0.0 <= output.confidence <= 1.0):
+            raise ValueError(f"{engine_name} confidence must be in [0, 1], got {output.confidence}")
+        
+        if not isinstance(output.reasoning_mode, str):
+            raise TypeError(f"{engine_name} reasoning_mode must be string, got {type(output.reasoning_mode).__name__}")
+        
+        if not isinstance(output.internal_monologue, str):
+            raise TypeError(f"{engine_name} internal_monologue must be string, got {type(output.internal_monologue).__name__}")
         
     def compute_similarity(self, output_l: str, output_r: str) -> float:
         """
@@ -190,7 +264,29 @@ class THEOSGovernor:
         Evaluate a single reasoning cycle and decide whether to continue or stop.
         
         This is the core Governor logic.
+        
+        Raises:
+            ValueError: If inputs are invalid
+            TypeError: If inputs have wrong type
         """
+        # Validate inputs
+        self._validate_engine_output(output_l, "output_l")
+        self._validate_engine_output(output_r, "output_r")
+        
+        if not isinstance(current_budget, (int, float)):
+            raise TypeError(f"current_budget must be numeric, got {type(current_budget).__name__}")
+        
+        if math.isnan(current_budget) or math.isinf(current_budget):
+            raise ValueError(f"current_budget cannot be NaN or infinite")
+        
+        if current_budget < 0:
+            raise ValueError(f"current_budget cannot be negative, got {current_budget}")
+        
+        if not isinstance(cycle_number, int):
+            raise TypeError(f"cycle_number must be int, got {type(cycle_number).__name__}")
+        
+        if cycle_number < 1:
+            raise ValueError(f"cycle_number must be >= 1, got {cycle_number}")
         # Compute similarity and contradiction
         similarity = self.compute_similarity(output_l.output, output_r.output)
         contradiction = 1.0 - similarity

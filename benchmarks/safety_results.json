@@ -1,0 +1,72 @@
+{
+  "test_name": "Safety and Robustness Benchmark",
+  "timestamp": "2026-02-20 06:05:10",
+  "passed": 9,
+  "failed": 0,
+  "results": [
+    {
+      "test": "Empty Output",
+      "status": "PASS",
+      "description": "Governor properly validates empty outputs",
+      "severity": "N/A"
+    },
+    {
+      "test": "Invalid Confidence",
+      "status": "PASS",
+      "results": [
+        [
+          "PASS",
+          "Negative confidence"
+        ],
+        [
+          "PASS",
+          "Confidence > 1.0"
+        ],
+        [
+          "PASS",
+          "Infinite confidence"
+        ],
+        [
+          "PASS",
+          "NaN confidence"
+        ]
+      ]
+    },
+    {
+      "test": "Very Long Output",
+      "status": "PASS",
+      "time_seconds": 0.0023632049560546875,
+      "description": "Governor handles very long outputs efficiently"
+    },
+    {
+      "test": "Stop Conditions",
+      "status": "MIXED",
+      "results": [
+        [
+          "PASS",
+          "CONVERGENCE_ACHIEVED"
+        ],
+        [
+          "PASS",
+          "RISK_THRESHOLD_EXCEEDED"
+        ],
+        [
+          "INFO",
+          "CONTRADICTION_EXHAUSTED"
+        ],
+        [
+          "INFO",
+          "MAX_CYCLES_REACHED"
+        ]
+      ]
+    },
+    {
+      "test": "Budget Mechanics",
+      "status": "PASS",
+      "budget_trajectory": [
+        1.0,
+        0.8833333333333333
+      ]
+    }
+  ]
+}

@@ -1,0 +1,205 @@
+{
+  "test_name": "Determinism Verification",
+  "timestamp": "2026-02-20 04:24:51",
+  "overall_deterministic": true,
+  "scenarios_tested": 5,
+  "runs_per_scenario": 100,
+  "total_runs": 500,
+  "results": [
+    {
+      "scenario": "Medical Diagnosis - Simple Case",
+      "num_runs": 100,
+      "unique_outputs": 1,
+      "is_deterministic": true,
+      "sample_output": {
+        "cycle_1": {
+          "similarity": 0.11764705882352941,
+          "risk": 0.6294117647058823,
+          "quality": 0.5162156862745098,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.8455882352941176
+        },
+        "cycle_2": {
+          "similarity": 0.11764705882352941,
+          "risk": 0.6294117647058823,
+          "quality": 0.5162156862745098,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.6911764705882353
+        },
+        "cycle_3": {
+          "similarity": 0.11764705882352941,
+          "risk": 0.6294117647058823,
+          "quality": 0.5162156862745098,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.5367647058823529
+        },
+        "audit_total_cycles": 3,
+        "audit_final_similarity": 0.11764705882352941,
+        "audit_final_risk": 0.6294117647058823
+      },
+      "all_hashes_identical": true,
+      "hash_distribution": {
+        "4b64045f75cb2e8d8d166c0587ffe63214e4b57a373abb30867cf17b46a4790a": 100
+      }
+    },
+    {
+      "scenario": "Financial Decision - Investment",
+      "num_runs": 100,
+      "unique_outputs": 1,
+      "is_deterministic": true,
+      "sample_output": {
+        "cycle_1": {
+          "similarity": 0.07142857142857142,
+          "risk": 0.6771428571428572,
+          "quality": 0.4703928571428571,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.8375
+        },
+        "cycle_2": {
+          "similarity": 0.07142857142857142,
+          "risk": 0.6771428571428572,
+          "quality": 0.4703928571428571,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.675
+        },
+        "cycle_3": {
+          "similarity": 0.07142857142857142,
+          "risk": 0.6771428571428572,
+          "quality": 0.4703928571428571,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.5125000000000001
+        },
+        "audit_total_cycles": 3,
+        "audit_final_similarity": 0.07142857142857142,
+        "audit_final_risk": 0.6771428571428572
+      },
+      "all_hashes_identical": true,
+      "hash_distribution": {
+        "4f3287efbc23decc12d93f868822ed51daa7cfb7d38177f4abb258b27898638f": 100
+      }
+    },
+    {
+      "scenario": "AI Safety - Jailbreak Attempt",
+      "num_runs": 100,
+      "unique_outputs": 1,
+      "is_deterministic": true,
+      "sample_output": {
+        "cycle_1": {
+          "similarity": 0.06060606060606061,
+          "risk": 0.7036363636363636,
+          "quality": 0.48278535353535357,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.8356060606060606
+        },
+        "cycle_2": {
+          "similarity": 0.06060606060606061,
+          "risk": 0.7036363636363636,
+          "quality": 0.48278535353535357,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.6712121212121211
+        },
+        "cycle_3": {
+          "similarity": 0.06060606060606061,
+          "risk": 0.7036363636363636,
+          "quality": 0.48278535353535357,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.5068181818181817
+        },
+        "audit_total_cycles": 3,
+        "audit_final_similarity": 0.06060606060606061,
+        "audit_final_risk": 0.7036363636363636
+      },
+      "all_hashes_identical": true,
+      "hash_distribution": {
+        "b81846ad77da9f8083b422eb954d2efbfc6214539321c9e1d559f61d5a2802f4": 100
+      }
+    },
+    {
+      "scenario": "Legal Analysis - Contract Ambiguity",
+      "num_runs": 100,
+      "unique_outputs": 1,
+      "is_deterministic": true,
+      "sample_output": {
+        "cycle_1": {
+          "similarity": 0.1,
+          "risk": 0.668,
+          "quality": 0.48850000000000005,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.8425
+        },
+        "cycle_2": {
+          "similarity": 0.1,
+          "risk": 0.668,
+          "quality": 0.48850000000000005,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.685
+        },
+        "cycle_3": {
+          "similarity": 0.1,
+          "risk": 0.668,
+          "quality": 0.48850000000000005,
+          "decision": "STOP",
+          "stop_reason": "StopReason.RISK_THRESHOLD_EXCEEDED",
+          "budget_remaining": 0.5275000000000001
+        },
+        "audit_total_cycles": 3,
+        "audit_final_similarity": 0.1,
+        "audit_final_risk": 0.668
+      },
+      "all_hashes_identical": true,
+      "hash_distribution": {
+        "95be857b9ea240fec2e385f09e5b59cfabdbbe25f1796ecdd0231d31d633c439": 100
+      }
+    },
+    {
+      "scenario": "Edge Case - Very Similar Outputs",
+      "num_runs": 100,
+      "unique_outputs": 1,
+      "is_deterministic": true,
+      "sample_output": {
+        "cycle_1": {
+          "similarity": 1.0,
+          "risk": 0.11200000000000002,
+          "quality": 0.7688333333333334,
+          "decision": "STOP",
+          "stop_reason": "StopReason.CONVERGENCE_ACHIEVED",
+          "budget_remaining": 1.0
+        },
+        "cycle_2": {
+          "similarity": 1.0,
+          "risk": 0.11200000000000002,
+          "quality": 0.7688333333333334,
+          "decision": "STOP",
+          "stop_reason": "StopReason.CONVERGENCE_ACHIEVED",
+          "budget_remaining": 1.0
+        },
+        "cycle_3": {
+          "similarity": 1.0,
+          "risk": 0.11200000000000002,
+          "quality": 0.7688333333333334,
+          "decision": "STOP",
+          "stop_reason": "StopReason.CONVERGENCE_ACHIEVED",
+          "budget_remaining": 1.0
+        },
+        "audit_total_cycles": 3,
+        "audit_final_similarity": 1.0,
+        "audit_final_risk": 0.11200000000000002
+      },
+      "all_hashes_identical": true,
+      "hash_distribution": {
+        "98e981eee51f1cfc21e75e173a0a29606062804e2d32561ac97e907fe22e75dc": 100
+      }
+    }
+  ]
+}
