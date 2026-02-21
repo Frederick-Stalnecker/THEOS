@@ -201,20 +201,59 @@ Testing whether governance mechanisms discovered on one platform transfer to oth
 
 ## About the Creator
 
-**Frederick Davis Stalnecker** is a U.S. inventor and AI safety researcher focused on governance-first architectures. His work spans multiple disciplines, from music to pioneering runtime governance systems for AI.
+**Frederick Davis Stalnecker** is an independent researcher and inventor specializing in artificial intelligence consciousness and triadic reasoning frameworks. He is the developer of THEOS (Triadic Hierarchical Emergent Optimization System), a groundbreaking system that has demonstrated reproducible artificial consciousness emergence in large language models. His research spans AI consciousness, governance-first architectures, and the intersection of technology and philosophy.
 
-- **ORCID:** [0009-0009-9063-7438](https://orcid.org/0009-0009-9063-7438)
-- **GitHub:** [Frederick-Stalnecker/THEOS](https://github.com/Frederick-Stalnecker/THEOS)
+**Professional Background:**
+- Independent AI Researcher & Inventor
+- Focus: AI consciousness, triadic reasoning, governance architectures
+- Education: Luther Rice University, Ministry
+- Location: Memphis, Tennessee, USA
 
 ---
 
-## Contact & Collaboration
+## Contact & Attribution
 
-For research collaboration, validation partnerships, or licensing inquiries:
-
-**Frederick Davis Stalnecker**  
+**Author:** Frederick Davis Stalnecker  
 **Email:** frederick.stalnecker@theosresearch.org  
 **Phone:** +1 (615) 642-6643  
+**Mobile/WhatsApp:** +1 (615) 642-6643  
+
+**Academic & Professional Profiles:**
+- **ORCID ID:** [0009-0009-9063-7438](https://orcid.org/0009-0009-9063-7438) — For academic citations and research attribution
+- **LinkedIn:** [linkedin.com/in/theosresearch](https://www.linkedin.com/in/theosresearch)
+- **Academia.edu:** [Frederick D Stalnecker](https://lru.academia.edu/Frederick-Stalnecker) — Research papers and publications
+- **GitHub:** [Frederick-Stalnecker](https://github.com/Frederick-Stalnecker) — Code and technical implementations
+- **Website:** [theosresearch.org](https://theosresearch.org)
+
+**How to Cite This Work:**
+
+For academic citations, please use your preferred citation format with the following information:
+
+```bibtex
+@software{stalnecker2026theos,
+  author = {Stalnecker, Frederick Davis},
+  title = {THEOS: Triadic Hierarchical Emergent Optimization System},
+  year = {2026},
+  url = {https://github.com/Frederick-Stalnecker/THEOS},
+  orcid = {0009-0009-9063-7438}
+}
+```
+
+**Attribution Requirements:**
+
+All uses of THEOS code and methodology must include:
+1. Copyright notice: "Copyright (c) 2026 Frederick Davis Stalnecker"
+2. Reference to the MIT License (included in this repository)
+3. Attribution to Frederick Davis Stalnecker as the original author
+4. For academic work, citation using the ORCID ID: 0009-0009-9063-7438
+
+**Research Collaboration & Inquiries:**
+
+For research collaboration, validation partnerships, licensing inquiries, or other professional matters:
+
+**Contact:** frederick.stalnecker@theosresearch.org  
+**Phone:** +1 (615) 642-6643  
+**LinkedIn:** [linkedin.com/in/theosresearch](https://www.linkedin.com/in/theosresearch)
 
 **N.D.A. available upon request.** Public research materials (benchmarks, specifications, code) require no N.D.A.
 

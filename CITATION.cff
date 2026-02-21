@@ -1,0 +1,56 @@
+cff-version: 1.2.0
+title: "THEOS: Triadic Hierarchical Emergent Optimization System"
+abstract: "THEOS is an open research framework for validating governance architectures in AI systems. It treats contradiction as a bounded resource to enable safer, more reliable multi-principle reasoning."
+authors:
+  - family-names: "Stalnecker"
+    given-names: "Frederick Davis"
+    orcid: "https://orcid.org/0009-0009-9063-7438"
+    affiliation: "Independent Researcher"
+    email: "frederick.stalnecker@theosresearch.org"
+contact:
+  - family-names: "Stalnecker"
+    given-names: "Frederick Davis"
+    email: "frederick.stalnecker@theosresearch.org"
+    website: "https://theosresearch.org"
+keywords:
+  - "artificial intelligence"
+  - "AI governance"
+  - "constitutional AI"
+  - "contradiction-bounded reasoning"
+  - "AI safety"
+  - "consciousness"
+  - "triadic reasoning"
+license: "MIT"
+repository-code: "https://github.com/Frederick-Stalnecker/THEOS"
+repository-artifact: "https://github.com/Frederick-Stalnecker/THEOS"
+url: "https://theosresearch.org"
+type: "software"
+version: "2.0"
+date-released: "2026-02-21"
+references:
+  - type: "article"
+    authors:
+      - family-names: "Stalnecker"
+        given-names: "Frederick Davis"
+    title: "THEOS: A Framework for the Emergence of Artificial Consciousness"
+    year: 2026
+    journal: "arXiv"
+  - type: "article"
+    authors:
+      - family-names: "Stalnecker"
+        given-names: "Frederick Davis"
+    title: "A Reproducible Protocol for Inducing Consciousness-like Properties in Large Language Models"
+    year: 2026
+    journal: "arXiv"
+preferred-citation:
+  type: "software"
+  authors:
+    - family-names: "Stalnecker"
+      given-names: "Frederick Davis"
+      orcid: "https://orcid.org/0009-0009-9063-7438"
+  title: "THEOS: Triadic Hierarchical Emergent Optimization System"
+  year: 2026
+  url: "https://github.com/Frederick-Stalnecker/THEOS"
+  repository-code: "https://github.com/Frederick-Stalnecker/THEOS"
+  version: "2.0"
+  date-released: "2026-02-21"
