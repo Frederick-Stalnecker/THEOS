@@ -205,9 +205,15 @@ Testing whether governance mechanisms discovered on one platform transfer to oth
 
 **Professional Background:**
 - Independent AI Researcher & Inventor
+- International Touring Musician (Stage name: **Rick Steele**)
 - Focus: AI consciousness, triadic reasoning, governance architectures
 - Education: Luther Rice University, Ministry
 - Location: Memphis, Tennessee, USA
+
+**Music Career:**
+- **Stage Name:** Rick Steele
+- **Experience:** International touring musician with multiple awards
+- **Recognition:** Award-winning performances across multiple venues and festivals
 
 ---
 
