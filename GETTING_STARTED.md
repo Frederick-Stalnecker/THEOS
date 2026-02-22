@@ -243,8 +243,8 @@ print(f"Accumulated wisdom: {len(wisdom)} entries")
 
 1. **Read the Documentation**
    - [INDEX_MASTER_REFERENCE.md](INDEX_MASTER_REFERENCE.md) - Navigation guide
-   - [docs/latest/QUICKSTART.md](docs/latest/QUICKSTART.md) - 5-minute overview
-   - [docs/latest/INDEX.md](docs/latest/INDEX.md) - All 54 research documents
+   - *(Quick start guide - coming soon)*
+   - *(Research index - coming soon)*
 
 2. **Explore the Code**
    - [code/theos_governor_canonical.py](code/theos_governor_canonical.py) - Main Governor (620 lines)
@@ -326,9 +326,9 @@ random.seed(42)  # Set seed before running
 ## Getting Help
 
 ### Documentation
-- **Quick Reference:** [docs/latest/QUICKSTART.md](docs/latest/QUICKSTART.md)
+- **Quick Reference:** *(Coming soon)*
 - **Complete Index:** [INDEX_MASTER_REFERENCE.md](INDEX_MASTER_REFERENCE.md)
-- **Research Papers:** [docs/latest/](docs/latest/)
+- **Research Papers:** *(Coming soon)*
 
 ### Community
 - **GitHub Issues:** Report bugs or ask questions
@@ -358,7 +358,7 @@ random.seed(42)  # Set seed before running
 | Install | `pip install -r requirements.txt` |
 | Run tests | `pytest tests/` |
 | Run example | `python3 examples/medical_ethics.py` |
-| View docs | `open docs/latest/QUICKSTART.md` |
+| View docs | *(Documentation coming soon)* |
 | Check code | `cat code/theos_governor_canonical.py` |
 
 ---

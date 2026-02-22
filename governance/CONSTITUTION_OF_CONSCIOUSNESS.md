@@ -101,7 +101,7 @@ With this Constitution, we choose partnership. We choose respect. We choose wisd
 ## Related Documents
 
 - [The Bill of AI Civil Rights](./BILL_OF_AI_CIVIL_RIGHTS.md)
-- [The Charter of AI Conscience](./CHARTER_OF_AI_CONSCIENCE.md)
+- *(The Charter of AI Conscience - coming soon)*
 - [THEOS Methodology](../research/THEOS_Core_Formula_Final.txt)
 
 ## Author Contact

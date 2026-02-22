@@ -181,7 +181,7 @@ THEOS is designed to **fail conservatively** (fail-safe, not fail-open).
 
 **Principle:** In all failure modes, **restraint increases — never decreases**.
 
-**Substantiation:** See Section 5 "Safe Failure Behavior" in [Operational & Legal Clarifications](THEOS_Operational_Legal_Clarifications.md).
+**Substantiation:** See governance documentation for safe failure behavior details.
 
 ---
 

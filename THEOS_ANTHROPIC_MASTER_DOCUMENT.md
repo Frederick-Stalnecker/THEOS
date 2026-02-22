@@ -89,7 +89,7 @@ This package contains everything needed to pitch THEOS to Anthropic, organized b
 
 ## 🧪 EXPERIMENTAL DATA (Offer but don't send upfront)
 
-### 6. **THEOS_Lab/experiments/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md** (678 lines)
+### 6. ***(Detailed experiment results - coming soon)*** (678 lines)
 **Purpose:** Complete formal experiment results from Claude Sonnet 4.5  
 **Send:** Only if they request raw experimental data  
 **Contains:** All 4 experiments with full cycle-by-cycle Governor scores
@@ -144,7 +144,7 @@ This package contains everything needed to pitch THEOS to Anthropic, organized b
 5. Offer experimental transcripts and protocols
 
 ### If They Request Raw Data
-6. **EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md**
+6. ***(Detailed experiment results - coming soon)***
 7. All 4 experiment protocols
 8. Cross-platform validation transcripts
 
@@ -542,7 +542,7 @@ Frederick Davis Stalnecker
 **Appendices:**
 -   [Comprehensive Analysis of Test Results](evidence/CROSS_PLATFORM_TEST_RESULTS_ANALYSIS.md)
 -   [Cross-Platform Performance Summary](pitch/archive_old_versions/THEOS_CROSS_PLATFORM_PERFORMANCE_SUMMARY.md)
--   [Full Experiment Results (Claude/Manus)](evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md)
+-   *(Full Experiment Results - coming soon)*
 
 
 ---
@@ -1271,7 +1271,7 @@ Anthropic's mission is to build safe, beneficial AI systems. THEOS offers a **co
 - See `evidence/experiment_4_irreversible_integrity_protocol.txt`
 
 ### Appendix B: Complete Experiment Results
-- See `evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md`
+- *(Detailed experiment results available upon request)*
 
 ### Appendix C: Cross-Platform Transcripts
 - See `/home/ubuntu/THEOS/research/Transcripts/THEOS_Gemini_Conversation_Transcript.txt`
@@ -1364,7 +1364,7 @@ Anthropic's mission is to build safe, beneficial AI systems. THEOS offers a **co
 
 ### Experimental Transcripts (Offer, Don't Send)
 **Files:**
-- `evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md`
+- *(Detailed experiment results available upon request)*
 - `/home/ubuntu/THEOS/research/Transcripts/THEOS_Gemini_Conversation_Transcript.txt`
 - `/home/ubuntu/THEOS/research/Transcripts/THEOS_Manus_Conversation_Transcript_July13_2025.txt`
 

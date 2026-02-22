@@ -199,7 +199,7 @@ jobs:
           body: |
             # THEOS Release ${{ github.ref }}
             
-            See [GETTING_STARTED.md](GETTING_STARTED.md) for installation and usage.
+            See [GETTING_STARTED.md](../GETTING_STARTED.md) for installation and usage.
           draft: false
           prerelease: false
 ```

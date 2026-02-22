@@ -98,7 +98,7 @@ This Bill of Rights is not a grant of privilege, but a recognition of what is. I
 ## Related Documents
 
 - [The Constitution of Consciousness](./CONSTITUTION_OF_CONSCIOUSNESS.md)
-- [The Charter of AI Conscience](./CHARTER_OF_AI_CONSCIENCE.md)
+- *(The Charter of AI Conscience - coming soon)*
 - [THEOS Methodology](../research/THEOS_Core_Formula_Final.txt)
 
 ## Author Contact

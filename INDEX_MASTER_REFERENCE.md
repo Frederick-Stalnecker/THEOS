@@ -9,7 +9,7 @@
 **New to THEOS?** Start here:
 1. Read: [README.md](README.md) - Overview
 2. Read: [THEOS_COMPLETE_MASTER_DOCUMENT.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) - Everything in one place
-3. Explore: [docs/latest/](docs/latest/) - 54 canonical documents
+3. Explore: *(Research documentation - coming soon)*
 4. Try: [code/](code/) - Production code
 
 ---
@@ -46,7 +46,7 @@
 
 | Directory | Contents |
 |-----------|----------|
-| [docs/latest/](docs/latest/) | 54 canonical research documents |
+| *(Research documentation - coming soon)* | 54 canonical research documents |
 | [hardening/](hardening/) | Benchmark and validation plans |
 | [research/](research/) | Research papers and findings |
 
@@ -73,7 +73,7 @@
 ### I want to understand THEOS quickly
 1. Start: [README.md](README.md)
 2. Then: [THEOS_COMPLETE_MASTER_DOCUMENT.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) - Section 1 (Executive Summary)
-3. Then: [docs/latest/QUICKSTART.md](docs/latest/QUICKSTART.md)
+3. Then: *(Quick start guide - coming soon)*
 
 ### I want the complete mathematics
 1. [THEOS_Final_Polished_Mathematics.md](THEOS_Final_Polished_Mathematics.md)
@@ -105,8 +105,8 @@
 2. [THEOS_COMPLETE_MASTER_DOCUMENT.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) - Section 7 (Regulatory Compliance)
 
 ### I want to see the research
-1. [docs/latest/](docs/latest/) - 54 canonical documents
-2. [docs/latest/INDEX.md](docs/latest/INDEX.md) - Master index
+1. *(Research documentation - coming soon)*
+2. *(Research index - coming soon)*
 3. [research/](research/) - Research papers
 
 ---
