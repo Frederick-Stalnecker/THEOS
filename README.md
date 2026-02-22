@@ -30,7 +30,7 @@ THEOS is positioned as a **test bed for Constitutional AI and multi-principle re
 - Organizations working on Constitutional AI (Anthropic, Google DeepMind, OpenAI)
 - Academic institutions studying AI governance
 
-**See:** [Research Partnership Overview](collaboration/RESEARCH_PARTNERSHIP_OVERVIEW.md) | [Validation Methodology](collaboration/VALIDATION_METHODOLOGY.md)
+**See:** [Research Partnership Overview](collaboration/RESEARCH_PARTNERSHIP_OVERVIEW.md) | [Partnership Opportunities](collaboration/RESEARCH_PARTNERSHIP_OPPORTUNITIES.md) | [Validation Methodology](collaboration/VALIDATION_METHODOLOGY.md)
 
 ---
 
