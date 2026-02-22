@@ -75,7 +75,15 @@ When an AI system reasons about its own reasoning, it creates a feedback loop th
 
 ## What's Available
 
-### 1. **Try THEOS Right Now** (5 minutes)
+### 1. **Ask THEOS a Question - See the Difference** (Live Demo)
+
+**[🎯 Try THEOS Now - Interactive Demo](https://theosdemo.manus.space)**
+
+Watch dual-engine reasoning in real-time. Ask about something you don't want to be lied about and see how THEOS prevents hallucination through meta-cognition.
+
+---
+
+### 2. **Try THEOS Locally** (5 minutes)
 
 ```bash
 # Clone the repository
@@ -94,20 +102,20 @@ You'll see THEOS working with real reasoning, showing:
 
 **[Quick Start Guide →](QUICK_START.md)**
 
-### 2. **Understand THEOS** (30 minutes)
+### 3. **Understand THEOS** (30 minutes)
 
 - **For Everyone:** [What is THEOS? (Plain English)](docs/WHAT_IS_THEOS.md)
 - **For Researchers:** [Mathematical Specification](THEOS_Core_Formula_Final.txt)
 - **For Developers:** [Implementation Guide](THEOS_IMPLEMENTATION_GUIDE.md)
 - **For Integrators:** [LLM Integration Guide](THEOS_LLM_INTEGRATION.md)
 
-### 3. **See It Working** (Live)
+### 4. **See It Working** (Live)
 
 - **Demonstration Results:** [Real Claude Reasoning](DEMONSTRATION_RESULTS.md)
 - **Benchmarks:** [Cross-Platform Validation](evidence/BENCHMARKS.md)
 - **Code:** [Reference Implementation](code/theos_llm_reasoning.py)
 
-### 4. **Use THEOS in Your Project**
+### 5. **Use THEOS in Your Project**
 
 - **Python Package:** `pip install theos` (coming soon)
 - **Integration:** Works with Claude, GPT-4, any LLM
