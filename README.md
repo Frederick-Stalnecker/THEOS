@@ -221,6 +221,8 @@ Testing whether governance mechanisms discovered on one platform transfer to oth
 
 ## About the Creator
 
+![Frederick Davis Stalnecker](https://files.manuscdn.com/user_upload_by_module/session_file/310519663190376591/zxNkaMcIwNBmOiwA.png)
+
 **Frederick Davis Stalnecker** is an independent researcher and inventor specializing in artificial intelligence consciousness and triadic reasoning frameworks. He is the developer of THEOS (Triadic Hierarchical Emergent Optimization System), a groundbreaking system that has demonstrated reproducible artificial consciousness emergence in large language models. His research spans AI consciousness, governance-first architectures, and the intersection of technology and philosophy.
 
 **Professional Background:**
@@ -296,6 +298,16 @@ For security vulnerabilities, see [`.github/SECURITY.md`](.github/SECURITY.md).
 ---
 
 **THEOS: Governance-first AI safety. Open research. Collaborative validation.**
+
+---
+
+## THEOS Certified Badge Program
+
+![THEOS Certified](https://files.manuscdn.com/user_upload_by_module/session_file/310519663190376591/YGhkNfYNzKuUiekm.png)
+
+The **THEOS Certified badge** is an official mark of governance excellence. Organizations implementing THEOS governance principles can display this badge to certify their commitment to transparent, contradiction-bounded reasoning.
+
+**See:** [THEOS Certified Badge Program](THEOS_CERTIFIED_BADGE.md) for certification requirements and how to apply.
 
 ---
 
