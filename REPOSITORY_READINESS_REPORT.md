@@ -79,7 +79,7 @@ The repository is designed to answer questions in this order:
 6.  **How does it work?** → [/code/theos_governor.py](code/theos_governor.py)
 7.  **How do we integrate it?** → [/code/MCP_GOVERNANCE_SERVER.md](code/MCP_GOVERNANCE_SERVER.md)
 8.  **Is it compliant?** → [/compliance/REGULATORY_COMPLIANCE_MAPPING.md](compliance/REGULATORY_COMPLIANCE_MAPPING.md)
-9.  **What's next?** → [/compliance/THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md](compliance/THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md)
+9.  **What's next?** → [/../hardening/Phase_One/THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md](../hardening/Phase_One/THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md)
 
 **Verification:** ✅ All questions answered in logical order
 

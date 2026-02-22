@@ -73,7 +73,7 @@ THEOS is a **runtime governance framework** that complements Constitutional AI w
    - Phase One Hardening roadmap
    - Regulatory engagement plan
 
-8. **[THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md](../compliance/THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md)** (5 min)
+8. **[THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md](../../hardening/Phase_One/THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md)** (5 min)
    - Detailed validation methodology
    - Adversarial stress testing plan
    - Success criteria and timelines
@@ -101,7 +101,7 @@ THEOS is a **runtime governance framework** that complements Constitutional AI w
 
 ### **For Compliance/Legal Teams:**
 - [REGULATORY_COMPLIANCE_MAPPING.md](../compliance/REGULATORY_COMPLIANCE_MAPPING.md) - Regulatory alignment
-- [THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md](../compliance/THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md) - Validation plan
+- [THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md](../../hardening/Phase_One/THEOS_HARDENING_PHASE_ONE_BENCHMARK_PLAN.md) - Validation plan
 - [BENCHMARKS.md](../evidence/BENCHMARKS.md) - Section 5 (Compliance findings)
 
 ### **For Product/Business Teams:**
