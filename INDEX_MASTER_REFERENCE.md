@@ -8,7 +8,7 @@
 
 **New to THEOS?** Start here:
 1. Read: [README.md](README.md) - Overview
-2. Read: [THEOS_COMPLETE_MASTER_DOCUMENT.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) - Everything in one place
+2. Read: [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Everything in one place
 3. Explore: *(Research documentation - coming soon)*
 4. Try: [code/](code/) - Production code
 
@@ -20,7 +20,7 @@
 
 | Document | Purpose | Size |
 |----------|---------|------|
-| [THEOS_COMPLETE_MASTER_DOCUMENT.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) | **Everything in one place**: Math, code, benchmarks, results | 37 KB |
+| [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) | **Everything in one place**: Math, code, benchmarks, results | 37 KB |
 | [THEOS_PUBLICATION_STRATEGY.md](THEOS_PUBLICATION_STRATEGY.md) | Publication roadmap and outreach strategy | 12 KB |
 | [THEOS_COMPREHENSIVE_AUDIT.md](THEOS_COMPREHENSIVE_AUDIT.md) | Complete audit and assessment of THEOS | 10 KB |
 | [Letter_to_Mrinank_Sharma.md](Letter_to_Mrinank_Sharma.md) | Outreach letter to Anthropic researcher | 7 KB |
@@ -56,7 +56,7 @@
 |-----------|----------|
 | [pitch/](pitch/) | Pitch materials for stakeholders |
 | [ANTHROPIC_PITCH_PACKAGE_README.md](ANTHROPIC_PITCH_PACKAGE_README.md) | Anthropic pitch guide |
-| [THEOS_ANTHROPIC_MASTER_DOCUMENT.md](THEOS_ANTHROPIC_MASTER_DOCUMENT.md) | Anthropic-specific materials |
+| [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) | Anthropic-specific materials |
 
 ### Governance & Compliance
 
@@ -72,37 +72,37 @@
 
 ### I want to understand THEOS quickly
 1. Start: [README.md](README.md)
-2. Then: [THEOS_COMPLETE_MASTER_DOCUMENT.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) - Section 1 (Executive Summary)
+2. Then: [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Section 1 (Executive Summary)
 3. Then: *(Quick start guide - coming soon)*
 
 ### I want the complete mathematics
 1. [THEOS_Final_Polished_Mathematics.md](THEOS_Final_Polished_Mathematics.md)
-2. [THEOS_COMPLETE_MASTER_DOCUMENT.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) - Section 2 (Mathematical Framework)
+2. [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Section 2 (Mathematical Framework)
 3. [THEOS_Core_Formula_Final.txt](THEOS_Core_Formula_Final.txt)
 
 ### I want to implement THEOS
 1. [code/README.md](code/README.md)
 2. [code/theos_governor_canonical.py](code/theos_governor_canonical.py)
-3. [THEOS_COMPLETE_MASTER_DOCUMENT.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) - Section 3 (Python Implementation)
+3. [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Section 3 (Python Implementation)
 
 ### I want to validate THEOS
 1. [hardening/](hardening/) - Benchmark plans
-2. [THEOS_COMPLETE_MASTER_DOCUMENT.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) - Section 4 & 5 (Benchmarks & Results)
+2. [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Section 4 & 5 (Benchmarks & Results)
 3. [research/](research/) - Experimental results
 
 ### I want to publish THEOS
 1. [THEOS_PUBLICATION_STRATEGY.md](THEOS_PUBLICATION_STRATEGY.md)
 2. [THEOS_COMPREHENSIVE_AUDIT.md](THEOS_COMPREHENSIVE_AUDIT.md)
-3. [THEOS_COMPLETE_MASTER_DOCUMENT.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) - Section 8 (Publication Strategy)
+3. [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Section 8 (Publication Strategy)
 
 ### I want to pitch THEOS to Anthropic
 1. [ANTHROPIC_PITCH_PACKAGE_README.md](ANTHROPIC_PITCH_PACKAGE_README.md)
-2. [THEOS_ANTHROPIC_MASTER_DOCUMENT.md](THEOS_ANTHROPIC_MASTER_DOCUMENT.md)
+2. [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md)
 3. [Letter_to_Mrinank_Sharma.md](Letter_to_Mrinank_Sharma.md)
 
 ### I want to understand regulatory compliance
 1. [compliance/](compliance/)
-2. [THEOS_COMPLETE_MASTER_DOCUMENT.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) - Section 7 (Regulatory Compliance)
+2. [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Section 7 (Regulatory Compliance)
 
 ### I want to see the research
 1. *(Research documentation - coming soon)*
@@ -128,7 +128,7 @@
 ## 🔄 DOCUMENT RELATIONSHIPS
 
 ```
-THEOS_COMPLETE_MASTER_DOCUMENT.md (Central Hub)
+THEOS_MASTER_DOCUMENT.md (Central Hub)
 ├── Mathematical Framework
 │   ├── THEOS_Final_Polished_Mathematics.md
 │   ├── THEOS_Final_Polished_Mathematics.pdf
@@ -157,7 +157,7 @@ THEOS_COMPLETE_MASTER_DOCUMENT.md (Central Hub)
 
 Use this to verify all materials are present:
 
-- [x] THEOS_COMPLETE_MASTER_DOCUMENT.md (37 KB)
+- [x] THEOS_MASTER_DOCUMENT.md (37 KB)
 - [x] THEOS_PUBLICATION_STRATEGY.md (12 KB)
 - [x] THEOS_COMPREHENSIVE_AUDIT.md (10 KB)
 - [x] Letter_to_Mrinank_Sharma.md (7 KB)
@@ -178,7 +178,7 @@ Use this to verify all materials are present:
 
 ## 🚀 NEXT STEPS
 
-1. **Review**: Read THEOS_COMPLETE_MASTER_DOCUMENT.md
+1. **Review**: Read THEOS_MASTER_DOCUMENT.md
 2. **Validate**: Review THEOS_COMPREHENSIVE_AUDIT.md
 3. **Publish**: Follow THEOS_PUBLICATION_STRATEGY.md
 4. **Outreach**: Send Letter_to_Mrinank_Sharma.md

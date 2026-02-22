@@ -257,7 +257,7 @@ print(f"Accumulated wisdom: {len(wisdom)} entries")
 
 4. **Understand the Math**
    - [THEOS_Final_Polished_Mathematics.md](THEOS_Final_Polished_Mathematics.md) - Complete formalization
-   - [THEOS_Complete_Master_Document.md](THEOS_COMPLETE_MASTER_DOCUMENT.md) - Section 2 (Math)
+   - [THEOS_Complete_Master_Document.md](THEOS_MASTER_DOCUMENT.md) - Section 2 (Math)
 
 5. **Validate Your Setup**
    - Run the test suite: `pytest tests/`

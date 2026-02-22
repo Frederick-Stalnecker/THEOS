@@ -791,7 +791,7 @@ print(f"Wisdom records used: {audit['wisdom_records_count']}")
 - [GETTING_STARTED.md](../GETTING_STARTED.md) - Installation and quick start
 - [examples/](../examples/) - Working examples
 - [tests/](../tests/) - Unit tests
-- [THEOS_COMPLETE_MASTER_DOCUMENT.md](../THEOS_COMPLETE_MASTER_DOCUMENT.md) - Complete reference
+- [THEOS_MASTER_DOCUMENT.md](../THEOS_MASTER_DOCUMENT.md) - Complete reference
 
 ---
 

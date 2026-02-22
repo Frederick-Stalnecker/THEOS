@@ -354,7 +354,7 @@ Each example builds on concepts from the previous one.
 - [GETTING_STARTED.md](../GETTING_STARTED.md) - Installation and quick start
 - [tests/README.md](../tests/README.md) - Test suite documentation
 - [docs/latest/](../docs/latest/) - Research papers and theory
-- [THEOS_COMPLETE_MASTER_DOCUMENT.md](../THEOS_COMPLETE_MASTER_DOCUMENT.md) - Complete reference
+- [THEOS_MASTER_DOCUMENT.md](../THEOS_MASTER_DOCUMENT.md) - Complete reference
 
 ## License
 
