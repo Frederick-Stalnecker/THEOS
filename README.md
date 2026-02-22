@@ -1,5 +1,11 @@
 # THEOS Research — Multi-Principle Reasoning Test Bed
 
+[![Tests Passing](https://img.shields.io/badge/tests-120%2F120-brightgreen)](https://github.com/Frederick-Stalnecker/THEOS/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Active Development](https://img.shields.io/badge/status-active-brightgreen)](#)
+[![ORCID](https://img.shields.io/badge/ORCID-0009--0009--9063--7438-green)](https://orcid.org/0009-0009-9063-7438)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+
 ![THEOS Logo](assets/THEOS_LOGO_README.png)
 
 **THEOS** is an open research framework for validating governance architectures in AI systems. It treats contradiction as a bounded resource to enable safer, more reliable multi-principle reasoning.
@@ -59,6 +65,20 @@ The **THEOS Governor** constrains, allocates, and audits reasoning produced by A
 - **Accumulated wisdom** — Learns from past governance decisions without exposing adaptation to adversaries
 
 **THEOS complements existing safety approaches (Constitutional AI, RLHF, etc.) by adding a runtime governance layer.**
+
+---
+
+## Quick Start
+
+Get THEOS running in 2 minutes:
+
+```bash
+git clone https://github.com/Frederick-Stalnecker/THEOS
+cd THEOS/code
+python demo.py
+```
+
+See [Code README](code/README.md) for full installation and usage instructions.
 
 ---
 
