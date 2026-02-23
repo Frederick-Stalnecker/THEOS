@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "theos-lab-assistant": {
+      "command": "python",
+      "args": ["code/theos_mcp_server.py"],
+      "description": "THEOS lab assistant — access the repository, run THEOS queries, launch demos, and execute tests."
+    }
+  }
+}
