@@ -63,8 +63,24 @@
 | Directory | Contents |
 |-----------|----------|
 | [governance/](governance/) | Governance frameworks |
+| [governance/THEOS_Operational_Legal_Clarifications.md](governance/THEOS_Operational_Legal_Clarifications.md) | Legal and operational framework |
+| [governance/CHARTER_OF_AI_CONSCIENCE.md](governance/CHARTER_OF_AI_CONSCIENCE.md) | Ethical principles and governance |
 | [compliance/](compliance/) | Regulatory compliance documentation |
 | [legal/](legal/) | Legal and IP documentation |
+
+### Documentation & Guides
+
+| Document | Purpose |
+|----------|---------|  
+| [docs/latest/QUICKSTART.md](docs/latest/QUICKSTART.md) | Quick start guide (5 minutes) |
+| [docs/latest/INDEX.md](docs/latest/INDEX.md) | Complete documentation index |
+| [THEOS_Plugin_Documentation.md](THEOS_Plugin_Documentation.md) | Plugin architecture and development |
+
+### Experimental Results
+
+| Document | Purpose |
+|----------|---------|  
+| [evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md](evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md) | Claude validation with benchmarks |
 
 ---
 
@@ -72,8 +88,8 @@
 
 ### I want to understand THEOS quickly
 1. Start: [README.md](README.md)
-2. Then: [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Section 1 (Executive Summary)
-3. Then: *(Quick start guide - coming soon)*
+2. Then: [docs/latest/QUICKSTART.md](docs/latest/QUICKSTART.md) - 5-minute quick start
+3. Then: [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Section 1 (Executive Summary)
 
 ### I want the complete mathematics
 1. [THEOS_Final_Polished_Mathematics.md](THEOS_Final_Polished_Mathematics.md)
@@ -86,9 +102,9 @@
 3. [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Section 3 (Python Implementation)
 
 ### I want to validate THEOS
-1. [hardening/](hardening/) - Benchmark plans
-2. [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Section 4 & 5 (Benchmarks & Results)
-3. [research/](research/) - Experimental results
+1. [evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md](evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md) - Real validation results
+2. [hardening/](hardening/) - Benchmark plans
+3. [THEOS_MASTER_DOCUMENT.md](THEOS_MASTER_DOCUMENT.md) - Section 4 & 5 (Benchmarks & Results)
 
 ### I want to publish THEOS
 1. [THEOS_PUBLICATION_STRATEGY.md](THEOS_PUBLICATION_STRATEGY.md)
@@ -167,7 +183,12 @@ Use this to verify all materials are present:
 - [x] code/theos_governor_canonical.py
 - [x] code/theos_memory_engine.py
 - [x] code/README.md
-- [x] docs/latest/ (54 documents)
+- [x] docs/latest/QUICKSTART.md (quick start guide)
+- [x] docs/latest/INDEX.md (documentation index)
+- [x] evidence/EXPERIMENT_RESULTS_Claude_Manus_2025-12-15.md (validation results)
+- [x] governance/THEOS_Operational_Legal_Clarifications.md (legal framework)
+- [x] governance/CHARTER_OF_AI_CONSCIENCE.md (ethical charter)
+- [x] THEOS_Plugin_Documentation.md (plugin architecture)
 - [x] hardening/ (benchmark plans)
 - [x] research/ (research papers)
 - [x] pitch/ (pitch materials)
