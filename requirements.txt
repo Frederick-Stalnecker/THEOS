@@ -3,7 +3,10 @@
 # 
 # Installation: pip install -r requirements.txt
 
-# No external dependencies required for core THEOS implementation
+# MCP (Model Context Protocol) — lab assistant server
+mcp>=1.26.0
+
+# No other external dependencies required for core THEOS implementation
 # THEOS is built with Python standard library only for maximum compatibility
 
 # Optional dependencies for extended functionality:
