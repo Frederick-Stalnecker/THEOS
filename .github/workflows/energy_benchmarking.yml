@@ -1,0 +1,116 @@
+name: THEOS Energy Benchmarking
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'benchmarks/**'
+      - 'code/**'
+      - '.github/workflows/energy_benchmarking.yml'
+  workflow_dispatch:
+
+jobs:
+  energy_benchmark:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        llm: [claude, gpt4, gemini, llama, falcon, mistral, cohere, palm]
+      max-parallel: 4
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install psutil memory-profiler
+      
+      - name: Run energy benchmark for ${{ matrix.llm }}
+        env:
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
+        run: |
+          python benchmarks/energy_measurement.py \
+            --llm ${{ matrix.llm }} \
+            --output results/energy_${{ matrix.llm }}_${{ github.run_number }}.json \
+            --verbose
+      
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v3
+        with:
+          name: energy-results-${{ matrix.llm }}
+          path: results/energy_${{ matrix.llm }}_*.json
+          retention-days: 90
+      
+      - name: Comment on PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const results = fs.readdirSync('results').filter(f => f.includes('energy'));
+            let comment = `## ⚡ Energy Benchmark Results for ${{ matrix.llm }}\n\n`;
+            results.forEach(file => {
+              const data = JSON.parse(fs.readFileSync(`results/${file}`, 'utf8'));
+              comment += `- **Energy Used:** ${data.energy_joules} J\n`;
+              comment += `- **Time:** ${data.execution_time_seconds}s\n`;
+              comment += `- **Tokens:** ${data.tokens_used}\n`;
+            });
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  aggregate_results:
+    needs: energy_benchmark
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download all results
+        uses: actions/download-artifact@v3
+        with:
+          path: all_results
+      
+      - name: Generate comparison report
+        run: |
+          python benchmarks/generate_energy_report.py \
+            --input all_results \
+            --output results/energy_comparison_${{ github.run_number }}.md
+      
+      - name: Upload comparison report
+        uses: actions/upload-artifact@v3
+        with:
+          name: energy-comparison-report
+          path: results/energy_comparison_*.md
+      
+      - name: Update GitHub Pages data
+        run: |
+          python benchmarks/update_dashboard_data.py \
+            --input all_results \
+            --output docs/dashboard/data.json
+      
+      - name: Commit and push results
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add results/ docs/dashboard/data.json
+          git commit -m "🔄 Update energy benchmarking results [skip ci]" || echo "No changes to commit"
+          git push

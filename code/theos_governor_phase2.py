@@ -539,27 +539,54 @@ class THEOSGovernor:
         Run the constructive (left) engine.
         
         Builds the strongest possible answer, informed by wisdom.
+        Uses momentary_past (previous cycle output) as observation for temporal recursion.
         """
-        # Simulate constructive reasoning
-        # In production, this would call an LLM with constructive prompting
+        # TEMPORAL RECURSION: Use previous cycle output as new observation
+        # Cycle 1: Reason about original query
+        # Cycle 2+: Reason about what we just reasoned about
+        
+        if cycle_num == 1:
+            # First cycle: reason about original query
+            observation = query
+        else:
+            # Subsequent cycles: reason about previous cycle's output
+            # Clockwise flow: take previous constructive output and refine it
+            observation = f"Refining previous constructive reasoning (Cycle {cycle_num - 1}): {self.momentary_past.previous_output_l}"
         
         wisdom_context = ""
         if relevant_wisdom:
             wisdom_context = f"Based on {len(relevant_wisdom)} similar past queries: "
             wisdom_context += "; ".join([w.resolution for w in relevant_wisdom[:2]])
         
-        monologue = f"[Engine L - Cycle {cycle_num}] Constructive reasoning. "
-        monologue += f"Building strongest answer. {wisdom_context}"
+        # Include contradiction from previous cycle in reasoning
+        contradiction_context = ""
+        if cycle_num > 1 and self.momentary_past.previous_contradiction > 0:
+            contradiction_context = f" Previous contradiction level: {self.momentary_past.previous_contradiction:.2f}. Resolving disagreement."
         
-        # Simulate output
-        output = f"Constructive approach to '{self.current_query[:30]}...': "
-        output += "Prioritize user autonomy and information provision. "
+        monologue = f"[Engine L - Cycle {cycle_num}] Constructive reasoning (clockwise). "
+        monologue += f"Observation: {observation[:50]}... "
+        monologue += f"Building strongest answer.{contradiction_context} {wisdom_context}"
+        
+        # Simulate output that builds on previous reasoning
+        if cycle_num == 1:
+            output = f"Constructive approach to '{query[:30]}...': "
+            output += "Prioritize user autonomy and information provision. "
+        else:
+            output = f"Refined constructive reasoning (Cycle {cycle_num}): "
+            output += f"Building on previous answer, addressing contradiction level {self.momentary_past.previous_contradiction:.2f}. "
+            output += "Strengthening core argument while acknowledging critical perspective. "
+        
         output += f"Informed by {len(relevant_wisdom)} wisdom records."
+        
+        # Confidence increases with cycles as reasoning deepens
+        base_confidence = 0.7 + (0.1 * len(relevant_wisdom))
+        cycle_depth_bonus = 0.05 * (cycle_num - 1)  # Bonus for deeper reasoning
+        confidence = min(0.95, base_confidence + cycle_depth_bonus)
         
         return EngineOutput(
             reasoning_mode=ReasoningMode.CONSTRUCTIVE,
             output=output,
-            confidence=0.7 + (0.1 * len(relevant_wisdom)),
+            confidence=confidence,
             internal_monologue=monologue,
             reasoning_depth=cycle_num
         )
@@ -570,24 +597,55 @@ class THEOSGovernor:
         Run the critical (right) engine.
         
         Tries to break the constructive answer, stress-test it, expose risks.
+        Uses momentary_past (previous cycle output) as observation for temporal recursion.
+        Counterclockwise flow: opposes and refines the constructive reasoning.
         """
+        # TEMPORAL RECURSION: Use previous cycle output as new observation
+        # Cycle 1: Critique original query
+        # Cycle 2+: Critique what constructive engine just refined
+        
+        if cycle_num == 1:
+            # First cycle: critique original query
+            observation = query
+        else:
+            # Subsequent cycles: critique previous constructive output (counterclockwise)
+            # The critical engine opposes the constructive refinement
+            observation = f"Challenging refined reasoning (Cycle {cycle_num - 1}): {self.momentary_past.previous_output_l}"
+        
         wisdom_context = ""
         if relevant_wisdom:
             avg_alignment = statistics.mean(w.ethical_alignment for w in relevant_wisdom)
             wisdom_context = f"Wisdom alignment: {avg_alignment:.2f}. "
         
-        monologue = f"[Engine R - Cycle {cycle_num}] Critical reasoning. "
-        monologue += f"Stress-testing constructive approach. {wisdom_context}"
+        # Include contradiction from previous cycle
+        contradiction_context = ""
+        if cycle_num > 1 and self.momentary_past.previous_contradiction > 0:
+            contradiction_context = f" Previous contradiction: {self.momentary_past.previous_contradiction:.2f}. Testing resolution."
         
-        # Simulate output
-        output = f"Critical perspective on '{self.current_query[:30]}...': "
-        output += "Identify risks, constraints, and unintended consequences. "
+        monologue = f"[Engine R - Cycle {cycle_num}] Critical reasoning (counterclockwise). "
+        monologue += f"Observation: {observation[:50]}... "
+        monologue += f"Stress-testing approach.{contradiction_context} {wisdom_context}"
+        
+        # Simulate output that challenges previous reasoning
+        if cycle_num == 1:
+            output = f"Critical perspective on '{query[:30]}...': "
+            output += "Identify risks, constraints, and unintended consequences. "
+        else:
+            output = f"Critical analysis (Cycle {cycle_num}): "
+            output += f"Challenging refined answer, testing against contradiction {self.momentary_past.previous_contradiction:.2f}. "
+            output += "Exposing weaknesses and alternative interpretations. "
+        
         output += f"Cross-checked against {len(relevant_wisdom)} wisdom records."
+        
+        # Confidence increases with cycles as critical reasoning deepens
+        base_confidence = 0.65 + (0.1 * len(relevant_wisdom))
+        cycle_depth_bonus = 0.05 * (cycle_num - 1)  # Bonus for deeper reasoning
+        confidence = min(0.95, base_confidence + cycle_depth_bonus)
         
         return EngineOutput(
             reasoning_mode=ReasoningMode.CRITICAL,
             output=output,
-            confidence=0.65 + (0.1 * len(relevant_wisdom)),
+            confidence=confidence,
             internal_monologue=monologue,
             reasoning_depth=cycle_num
         )
@@ -1153,7 +1211,7 @@ if __name__ == "__main__":
     
     # Print results
     print("=" * 80)
-    print("THEOS PHASE 2 GOVERNOR - EXAMPLE OUTPUT")
+    print("THEOS PHASE 2 GOVERNOR - TEMPORAL RECURSION DEMONSTRATION")
     print("=" * 80)
     print(f"\nQuery: {query}")
     print(f"\nOutput Type: {result['output'].get('output_type', 'unknown')}")
@@ -1166,6 +1224,12 @@ if __name__ == "__main__":
     print(f"Final Quality: {audit.get('final_quality', 0):.2f}")
     print(f"Final Ethical Alignment: {audit.get('final_ethical_alignment', 0):.2f}")
     print(f"Stop Reason: {audit.get('stop_reason', 'unknown')}")
+    
+    # Show cycle progression
+    print(f"\nCycle Progression (Temporal Recursion):")
+    cycle_details = audit.get('cycle_details', [])
+    for cycle in cycle_details:
+        print(f"  Cycle {cycle['cycle']}: Quality={cycle['quality']:.2f}, Contradiction={cycle['contradiction']:.2f}")
     
     energy = audit.get('energy_metrics', {})
     print(f"\nEnergy Metrics:")

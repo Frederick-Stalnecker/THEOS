@@ -159,7 +159,7 @@ Keep your response concise (2-3 sentences)."""
 Provide your strongest constructive reasoning:"""
         
         response = self.client.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-opus-4-1",
             max_tokens=300,
             system=system_prompt,
             messages=[{"role": "user", "content": prompt}]
@@ -196,7 +196,7 @@ Keep your response concise (2-3 sentences)."""
 Provide your critical analysis:"""
         
         response = self.client.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-opus-4-1",
             max_tokens=300,
             system=system_prompt,
             messages=[{"role": "user", "content": prompt}]
