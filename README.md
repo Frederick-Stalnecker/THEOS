@@ -5,6 +5,14 @@
 [![Active Development](https://img.shields.io/badge/status-active-brightgreen)](#)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0009--9063--7438-green)](https://orcid.org/0009-0009-9063-7438)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![Stars](https://img.shields.io/github/stars/Frederick-Stalnecker/THEOS?style=social)](https://github.com/Frederick-Stalnecker/THEOS)
+[![Forks](https://img.shields.io/github/forks/Frederick-Stalnecker/THEOS?style=social)](https://github.com/Frederick-Stalnecker/THEOS)
+[![Discussions](https://img.shields.io/github/discussions/Frederick-Stalnecker/THEOS?color=blue)](https://github.com/Frederick-Stalnecker/THEOS/discussions)
+[![Issues](https://img.shields.io/github/issues/Frederick-Stalnecker/THEOS?color=red)](https://github.com/Frederick-Stalnecker/THEOS/issues)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Code Quality](https://img.shields.io/badge/code%20quality-production-brightgreen)](https://github.com/Frederick-Stalnecker/THEOS)
+[![Releases](https://img.shields.io/github/v/release/Frederick-Stalnecker/THEOS?color=blue)](https://github.com/Frederick-Stalnecker/THEOS/releases)
+[![Last Commit](https://img.shields.io/github/last-commit/Frederick-Stalnecker/THEOS?color=blue)](https://github.com/Frederick-Stalnecker/THEOS/commits/main)
 
 ![THEOS Logo](assets/THEOS_LOGO_README.png)
 
