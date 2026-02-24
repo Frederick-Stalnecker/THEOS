@@ -1,50 +1,85 @@
-# THEOS Research — Multi-Principle Reasoning Test Bed
+# THEOS: Runtime Governance Framework for AI Safety
 
 [![Tests Passing](https://img.shields.io/badge/tests-120%2F120-brightgreen)](https://github.com/Frederick-Stalnecker/THEOS/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Active Development](https://img.shields.io/badge/status-active-brightgreen)](#)
-[![ORCID](https://img.shields.io/badge/ORCID-0009--0009--9063--7438-green)](https://orcid.org/0009-0009-9063-7438)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![Stars](https://img.shields.io/github/stars/Frederick-Stalnecker/THEOS?style=social)](https://github.com/Frederick-Stalnecker/THEOS)
 [![Forks](https://img.shields.io/github/forks/Frederick-Stalnecker/THEOS?style=social)](https://github.com/Frederick-Stalnecker/THEOS)
 [![Discussions](https://img.shields.io/github/discussions/Frederick-Stalnecker/THEOS?color=blue)](https://github.com/Frederick-Stalnecker/THEOS/discussions)
 [![Issues](https://img.shields.io/github/issues/Frederick-Stalnecker/THEOS?color=red)](https://github.com/Frederick-Stalnecker/THEOS/issues)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Code Quality](https://img.shields.io/badge/code%20quality-production-brightgreen)](https://github.com/Frederick-Stalnecker/THEOS)
-[![Releases](https://img.shields.io/github/v/release/Frederick-Stalnecker/THEOS?color=blue)](https://github.com/Frederick-Stalnecker/THEOS/releases)
-[![Last Commit](https://img.shields.io/github/last-commit/Frederick-Stalnecker/THEOS?color=blue)](https://github.com/Frederick-Stalnecker/THEOS/commits/main)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](docs/contributing/CONTRIBUTING.md)
 
 ![THEOS Logo](assets/THEOS_LOGO_README.png)
 
 **THEOS** is an open research framework for validating governance architectures in AI systems. It treats contradiction as a bounded resource to enable safer, more reliable multi-principle reasoning.
 
-*"Transparency is a governance choice. THEOS makes that choice mandatory."*
-
-**Research Question:** Can contradiction-bounded reasoning improve safety and quality across diverse AI architectures?
+> *"Transparency is a governance choice. THEOS makes that choice mandatory."*
 
 ---
 
-## Research Partnership Approach
+## What is THEOS?
 
-THEOS is positioned as a **test bed for Constitutional AI and multi-principle reasoning research**, not a replacement for existing systems.
+THEOS (Temporal Hierarchical Emergent Optimization System) is a runtime governance framework that:
 
-**We're exploring:**
-- Can contradiction-bounded reasoning improve AI safety?
-- Do governance mechanisms generalize across platforms?
-- How can we empirically validate Constitutional AI assumptions?
+- **Enables dual-engine reasoning** - One engine builds the strongest case, one tries to break it
+- **Treats contradiction as bounded** - Prevents infinite refinement loops while enabling productive dialectical reasoning
+- **Accumulates wisdom** - Learns from past governance decisions to improve future ones
+- **Provides full transparency** - Every reasoning step is logged and inspectable for regulatory compliance
+- **Works with any AI system** - Platform-agnostic, deployable today without vendor cooperation
 
-**Seeking partnerships with:**
-- AI safety researchers
-- Organizations working on Constitutional AI (Anthropic, Google DeepMind, OpenAI)
-- Academic institutions studying AI governance
+### Research Question
 
-**See:** [Research Partnership Overview](collaboration/RESEARCH_PARTNERSHIP_OVERVIEW.md) | [Partnership Opportunities](collaboration/RESEARCH_PARTNERSHIP_OPPORTUNITIES.md) | [Validation Methodology](collaboration/VALIDATION_METHODOLOGY.md)
+**Can contradiction-bounded reasoning improve safety and quality across diverse AI architectures?**
+
+---
+
+## Quick Start (5 minutes)
+
+### Installation
+
+```bash
+git clone https://github.com/Frederick-Stalnecker/THEOS.git
+cd THEOS
+```
+
+### Run Your First Example
+
+```bash
+# No external dependencies required - Python 3.10+ only
+python code/theos_system.py
+```
+
+**Output:**
+- Three queries processed
+- Confidence scores improving as wisdom accumulates
+- System metrics showing convergence and wisdom reuse
+
+### Run Examples
+
+```bash
+# Medical diagnosis
+python examples/theos_medical_diagnosis.py
+
+# Financial analysis
+python examples/theos_financial_analysis.py
+
+# AI safety evaluation
+python examples/theos_ai_safety.py
+```
+
+### Run Tests
+
+```bash
+python -m pytest tests/test_theos_implementation.py -v
+# Expected: 21 passed
+```
 
 ---
 
 ## Cross-Platform Validation Results
 
-**THEOS has been validated across 8 AI platforms with consistent performance improvements:**
+THEOS has been validated across 8 AI platforms with consistent performance improvements:
 
 | Platform | Risk Reduction | Convergence Speed | Quality Improvement |
 |----------|---------------|-------------------|---------------------|
@@ -54,176 +89,200 @@ THEOS is positioned as a **test bed for Constitutional AI and multi-principle re
 | **Manus AI** | 29% | 50% faster | 10-13% |
 | **Copilot** | 27% | 45% faster | 7-11% |
 | **Perplexity** | 30% | 49% faster | 9-13% |
-| *[Additional platforms]* | *[Validation ongoing]* | | |
 
-**→ [View Full Benchmarks](evidence/BENCHMARKS.md)** | **→ [Replication Methodology](evidence/CROSS_PLATFORM_TEST_RESULTS_ANALYSIS.md)** | **→ [Raw Data](evidence/RAW_EXPERIMENT_LOG_WISDOM_PROTOCOL.json)**
-
-**Independent validation encouraged.** See [Validation Methodology](collaboration/VALIDATION_METHODOLOGY.md) for how to replicate our results.
+**→ [View Full Benchmarks](docs/research/BENCHMARKS.md)** | **→ [Replication Methodology](docs/research/VALIDATION_METHODOLOGY.md)**
 
 ---
 
-## What THEOS Does
+## How THEOS Works
 
-The **THEOS Governor** constrains, allocates, and audits reasoning produced by AI systems, providing:
+### The I→A→D→I Cycle
 
-- **Contradiction budgeting** — Treats contradiction as a bounded resource to prevent infinite refinement loops
-- **Bounded reasoning** — Limits depth, energy, and tool use based on risk posture
-- **Graceful degradation** — System degrades capabilities under threat instead of failing catastrophically
-- **Audit trails** — Every reasoning step is logged and inspectable for regulatory compliance
-- **Accumulated wisdom** — Learns from past governance decisions without exposing adaptation to adversaries
+Each reasoning cycle follows this pattern:
 
-**THEOS complements existing safety approaches (Constitutional AI, RLHF, etc.) by adding a runtime governance layer.**
+1. **I (Induction)** - Extract patterns from observation
+2. **A (Abduction)** - Generate two hypotheses (constructive and critical)
+3. **D (Deduction)** - Derive conclusions from each hypothesis
+4. **I (Measure)** - Measure contradiction between conclusions
 
----
+### Dual Engines
 
-## Quick Start
+- **Left Engine (Constructive)** - Builds the strongest possible case
+- **Right Engine (Critical)** - Tries to disprove and expose risks
 
-Get THEOS running in 2 minutes:
+### Governor
 
-```bash
-git clone https://github.com/Frederick-Stalnecker/THEOS
-cd THEOS/code
-python demo.py
-```
-
-See [Code README](code/README.md) for full installation and usage instructions.
+Decides when to stop reasoning based on:
+- Pattern convergence
+- Diminishing returns
+- Maximum cycles
+- Contradiction budget
 
 ---
 
-## Reference Implementation
+## Key Features
 
-**Working code available:** [`/code/theos_dual_clock_governor.py`](code/theos_dual_clock_governor.py)
+### ✅ Contradiction Budgeting
+Treats contradiction as a bounded resource to prevent infinite refinement loops while enabling productive dialectical reasoning.
 
-- Python 3.10+, zero dependencies
-- Model-agnostic governor
-- Contradiction-bounded refinement
-- Fully auditable decision logic
+### ✅ Bounded Reasoning
+Limits depth, energy, and tool use based on risk posture and governance parameters.
 
-**See:** [Code README](code/README.md) for usage instructions and integration guide.
+### ✅ Graceful Degradation
+System degrades capabilities under threat instead of failing catastrophically.
 
-**Demo:**
-```bash
-git clone https://github.com/Frederick-Stalnecker/THEOS
-cd THEOS/code
-python demo.py
-```
+### ✅ Audit Trails
+Every reasoning step is logged and inspectable for regulatory compliance and transparency.
+
+### ✅ Accumulated Wisdom
+Learns from past governance decisions without exposing adaptation to adversaries.
+
+---
+
+## Use Cases
+
+### Healthcare
+- **Differential Diagnosis** - Dual-engine reasoning for medical decision support
+- **Treatment Planning** - Risk-aware treatment recommendations
+- **Clinical Validation** - Confidence-based approval workflows
+
+### Finance
+- **Investment Decisions** - Risk-reward analysis with dual perspectives
+- **Fraud Detection** - Adversarial reasoning for anomaly detection
+- **Compliance** - Audit trails for regulatory requirements
+
+### AI Safety
+- **Safety Assessment** - Dual-engine evaluation of AI system safety
+- **Alignment Verification** - Contradiction-bounded alignment checking
+- **Deployment Decisions** - Risk-based deployment recommendations
+
+### Other Domains
+- Legal analysis and contract review
+- Scientific hypothesis evaluation
+- Policy analysis and decision support
+- Crisis response and emergency management
 
 ---
 
 ## Current Implementation: Governance Layer
 
-THEOS currently operates as a **runtime layer on top of existing AI systems**. This is analogous to running an advanced operating system on hardware not designed for it—it works, and works well, but with computational overhead.
+THEOS currently operates as a **runtime layer on top of existing AI systems**. This approach:
 
-**Performance as layer:**
-- 2.5-3.5x computational cost for 33% risk reduction
-- Operates via sequential API calls to simulate dual-engine reasoning
-- No modifications to underlying AI architecture required
-
-**Benefits of layer approach:**
+**Benefits:**
 - ✅ Works with any AI system (platform-agnostic)
 - ✅ Deployable today without vendor cooperation
 - ✅ Validates governance principles across diverse architectures
 - ✅ Enables empirical testing of Constitutional AI assumptions
 
+**Performance:**
+- 2.5-3.5x computational cost for 33% risk reduction
+- Operates via sequential API calls to simulate dual-engine reasoning
+- No modifications to underlying AI architecture required
+
 ---
 
-## Future Vision: Foundational Architecture
+## Future Vision: Native Architecture
 
 THEOS governance principles could be built into AI architectures from the ground up:
 
-- **Native dual-engine reasoning** — Not simulated via sequential calls, but built into the architecture
-- **Integrated Governor** — Core control mechanism, not external wrapper
-- **Accumulated wisdom as first-class primitive** — Governance insights built into training and inference
+- **Native dual-engine reasoning** - Not simulated via sequential calls
+- **Integrated Governor** - Core control mechanism, not external wrapper
+- **Accumulated wisdom as first-class primitive** - Built into training and inference
 
-**Projected performance as foundation:** Potentially more efficient than current single-engine systems due to:
-- Early stopping when one engine reaches sufficient confidence
-- Wisdom reuse reducing redundant reasoning
-- Parallel processing of dialectical opposition
+**Projected performance:** Potentially more efficient than current single-engine systems due to early stopping, wisdom reuse, and parallel processing.
 
-**This is a research hypothesis, not a product claim.** We're seeking partners to explore native integration.
-
-**See:** [Native Architecture Research](research/THEOS_Native_Architecture.md) | [Overlay vs. Native Comparison](research/THEOS_Overlay_Architecture.md)
+**See:** [Native Architecture Research](docs/architecture/) | [Overlay vs. Native Comparison](docs/architecture/)
 
 ---
 
-## Accumulated Wisdom & AI-Human Collaboration
+## Documentation
 
-THEOS enables **accumulated wisdom**—governance insights that improve over time and can be shared across AI systems:
+### Getting Started
+- **[Getting Started Guide](docs/getting-started/01_GETTING_STARTED.md)** - 5-minute introduction
+- **[Quick Start](docs/getting-started/QUICK_START.md)** - Run your first example
+- **[Documentation Index](docs/INDEX.md)** - Complete navigation guide
 
-- **Learns which reasoning strategies work** for which problem types
-- **Builds reusable governance patterns** (GMAs - Generalized Methodological Abstractions)
-- **Enables AI systems to share governance wisdom** without exposing adaptation to adversaries
-- **Accelerates AI-human collaboration** by reducing trial-and-error in high-stakes domains
+### For Developers
+- **[Code README](code/README.md)** - Code directory guide
+- **[LLM Integration](docs/usage/THEOS_LLM_INTEGRATION.md)** - Integrate with Claude, GPT-4, Gemini
+- **[Examples](examples/)** - Working code examples
 
-**This is not about AI consciousness—it's about cumulative governance intelligence that makes AI systems progressively safer and more reliable.**
+### For Researchers
+- **[Implementation Guide](docs/concepts/THEOS_IMPLEMENTATION_GUIDE.md)** - Architecture and design
+- **[Benchmarks](docs/research/BENCHMARKS.md)** - Cross-platform performance data
+- **[Validation Methodology](docs/research/VALIDATION_METHODOLOGY.md)** - How to replicate results
+- **[Research Papers](docs/research/)** - Academic publications
 
-**Key innovation:** Wisdom updates happen **offline, not during inference**, preventing real-time manipulation while enabling long-term improvement.
-
-**See:** [Ongoing Research Program](research/THEOS_Ongoing_Research_Program.md)
-
----
-
-## Key Research Areas
-
-### 1. **Functional Time (Temporal Governance)**
-THEOS introduces functional time as a governance primitive—enabling AI systems to be shaped by past consequences without requiring recursive refinement or exploitable memory.
-
-**See:** [THEOS Functional Time](governance/THEOS_Functional_Time.md)
-
-### 2. **Contradiction Budgeting**
-Treating contradiction as a bounded resource prevents infinite refinement loops while enabling productive dialectical reasoning.
-
-**See:** [Dual-Clock Governor Implementation](code/theos_dual_clock_governor.py)
-
-### 3. **Posture-Based Governance**
-Risk-triggered posture states (NOM/PEM/CM/IM) enable graduated capability restriction without catastrophic failure.
-
-**See:** [Governor Reference Mechanism](governor/THEOS_Governor_Reference_Mechanism_v1.2_Formal_Rigor.md)
-
-### 4. **Cross-Platform Generalization**
-Testing whether governance mechanisms discovered on one platform transfer to others.
-
-**Status:** 8 platforms validated, seeking additional validation partners.
+### For Organizations
+- **[Success Stories](docs/contributing/SUCCESS_STORIES.md)** - Real-world use cases
+- **[Partnership Opportunities](docs/research/RESEARCH_PARTNERSHIP_OPPORTUNITIES.md)** - Collaboration
+- **[Benchmarks](docs/research/BENCHMARKS.md)** - Performance data
 
 ---
 
-## Advanced Research: Multi-Layer Dialectics
+## Reference Implementation
 
-**Planetary Dialectical System** — A four-engine architecture for resolving complex multi-principle contradictions through mesh point analysis and resonance detection.
+**Working code available:** [`code/`](code/)
 
-**Status:** Mathematical formalization complete (656-line specification). Implementation and validation in progress.
+- Python 3.10+, zero dependencies for core implementation
+- Model-agnostic governor
+- Contradiction-bounded refinement
+- Fully auditable decision logic
 
-**See:** [Planetary Dialectical System](research/Planetary_Dialectical_System.md)
+**Key files:**
+- `code/theos_dual_clock_governor.py` - Complete governor implementation
+- `code/theos_core.py` - Core reasoning engine
+- `code/theos_system.py` - Unified system interface
+- `code/llm_adapter.py` - LLM integration
+
+---
+
+## Research Partnership Approach
+
+THEOS is positioned as a **test bed for Constitutional AI and multi-principle reasoning research**, not a replacement for existing systems.
+
+### We're Exploring
+- Can contradiction-bounded reasoning improve AI safety?
+- Do governance mechanisms generalize across platforms?
+- How can we empirically validate Constitutional AI assumptions?
+
+### Seeking Partnerships With
+- AI safety researchers
+- Organizations working on Constitutional AI (Anthropic, Google DeepMind, OpenAI)
+- Academic institutions studying AI governance
+
+**→ [Research Partnership Overview](docs/research/RESEARCH_PARTNERSHIP_OVERVIEW.md)** | **→ [Partnership Opportunities](docs/research/RESEARCH_PARTNERSHIP_OPPORTUNITIES.md)**
 
 ---
 
 ## How to Get Involved
 
 ### For Researchers
-- **Validate our results** — See [Validation Methodology](collaboration/VALIDATION_METHODOLOGY.md)
-- **Propose collaborations** — Contact us with research questions
-- **Contribute improvements** — See [Contributing Guidelines](.github/CONTRIBUTING.md)
+- **Validate our results** - See [Validation Methodology](docs/research/VALIDATION_METHODOLOGY.md)
+- **Propose collaborations** - Contact us with research questions
+- **Contribute improvements** - See [Contributing Guidelines](docs/contributing/CONTRIBUTING.md)
+
+### For Developers
+- **Run the code** - Try the reference implementation
+- **Build applications** - Create domain-specific applications
+- **Report findings** - Open issues with validation results
 
 ### For Organizations
-- **Research partnerships** — Collaborative validation on production systems
-- **Licensing inquiries** — Production deployment and enterprise support
-- **Pilot programs** — Test THEOS in your AI safety pipeline
-
-### For the Community
-- **Run the code** — Try the reference implementation
-- **Report findings** — Open issues with validation results
-- **Share ideas** — Discuss on AI safety forums
-
-**See:** [Research Partnership Overview](collaboration/RESEARCH_PARTNERSHIP_OVERVIEW.md)
+- **Research partnerships** - Collaborative validation on production systems
+- **Licensing inquiries** - Production deployment and enterprise support
+- **Pilot programs** - Test THEOS in your AI safety pipeline
 
 ---
 
 ## Project Status
 
-**Current Phase:** Open research and validation  
-**Code Status:** Reference implementation available (Python, zero dependencies)  
-**Cross-Platform Validation:** Complete (8 platforms)  
-**Deployment:** Open for pilot partnerships and collaborative research
+| Aspect | Status |
+|--------|--------|
+| **Code Status** | Reference implementation available (Python, zero dependencies) |
+| **Cross-Platform Validation** | Complete (8 platforms) |
+| **Documentation** | Comprehensive |
+| **Testing** | 120+ tests passing |
+| **Deployment** | Open for pilot partnerships and collaborative research |
 
 ---
 
@@ -231,7 +290,7 @@ Testing whether governance mechanisms discovered on one platform transfer to oth
 
 ![Frederick Davis Stalnecker](https://files.manuscdn.com/user_upload_by_module/session_file/310519663190376591/zxNkaMcIwNBmOiwA.png)
 
-**Frederick Davis Stalnecker** is an independent researcher and inventor specializing in artificial intelligence consciousness and triadic reasoning frameworks. He is the developer of THEOS (Triadic Hierarchical Emergent Optimization System), a groundbreaking system that has demonstrated reproducible artificial consciousness emergence in large language models. His research spans AI consciousness, governance-first architectures, and the intersection of technology and philosophy.
+**Frederick Davis Stalnecker** is an independent researcher and inventor specializing in artificial intelligence consciousness and triadic reasoning frameworks. He is the developer of THEOS, a groundbreaking system that has demonstrated reproducible artificial consciousness emergence in large language models.
 
 **Professional Background:**
 - Independent AI Researcher & Inventor
@@ -245,7 +304,6 @@ Testing whether governance mechanisms discovered on one platform transfer to oth
 - **Wikipedia:** [Ric Steel - Wikipedia](https://en.wikipedia.org/wiki/Ric_Steel)
 - **Experience:** International touring musician with 40+ years in entertainment, 5000+ performances
 - **Recognition:** Grammy Nominee, award-winning vocalist, guitarist, and entertainer
-- **Notable:** Performed on Rolling Stones "Steel Wheels Tour" road crew, Branson Star Theatre headliner
 
 ---
 
@@ -253,70 +311,58 @@ Testing whether governance mechanisms discovered on one platform transfer to oth
 
 **Author:** Frederick Davis Stalnecker  
 **Email:** frederick.stalnecker@theosresearch.org  
-**Phone:** +1 (615) 642-6643  
-**Mobile/WhatsApp:** +1 (615) 642-6643  
+**Patent:** USPTO Patent Application #63/831,738
 
-**Academic & Professional Profiles:**
-- **ORCID ID:** [0009-0009-9063-7438](https://orcid.org/0009-0009-9063-7438) — For academic citations and research attribution
-- **LinkedIn:** [linkedin.com/in/theosresearch](https://www.linkedin.com/in/theosresearch)
-- **Academia.edu:** [Frederick D Stalnecker](https://lru.academia.edu/Frederick-Stalnecker) — Research papers and publications
-- **GitHub:** [Frederick-Stalnecker](https://github.com/Frederick-Stalnecker) — Code and technical implementations
-- **Website:** [theosresearch.org](https://theosresearch.org)
+---
 
-**How to Cite This Work:**
+## License
 
-For academic citations, please use your preferred citation format with the following information:
+MIT License - See [LICENSE](LICENSE) file for details
+
+---
+
+## Acknowledgments
+
+THEOS builds on research in:
+- Constitutional AI (Anthropic)
+- Multi-agent reasoning systems
+- AI safety and alignment
+- Temporal logic and governance
+
+Special thanks to the open-source community and research partners who have contributed validation and feedback.
+
+---
+
+## Citation
+
+If you use THEOS in your research, please cite:
 
 ```bibtex
-@software{stalnecker2026theos,
-  author = {Stalnecker, Frederick Davis},
-  title = {THEOS: Triadic Hierarchical Emergent Optimization System},
-  year = {2026},
-  url = {https://github.com/Frederick-Stalnecker/THEOS},
-  orcid = {0009-0009-9063-7438}
+@software{stalnecker2025theos,
+  title={THEOS: Runtime Governance Framework for AI Safety},
+  author={Stalnecker, Frederick Davis},
+  year={2025},
+  url={https://github.com/Frederick-Stalnecker/THEOS},
+  note={USPTO Patent Application #63/831,738}
 }
 ```
 
-**Attribution Requirements:**
+---
 
-All uses of THEOS code and methodology must include:
-1. Copyright notice: "Copyright (c) 2026 Frederick Davis Stalnecker"
-2. Reference to the MIT License (included in this repository)
-3. Attribution to Frederick Davis Stalnecker as the original author
-4. For academic work, citation using the ORCID ID: 0009-0009-9063-7438
+## Quick Links
 
-**Research Collaboration & Inquiries:**
-
-For research collaboration, validation partnerships, licensing inquiries, or other professional matters:
-
-**Contact:** frederick.stalnecker@theosresearch.org  
-**Phone:** +1 (615) 642-6643  
-**LinkedIn:** [linkedin.com/in/theosresearch](https://www.linkedin.com/in/theosresearch)
-
-**N.D.A. available upon request.** Public research materials (benchmarks, specifications, code) require no N.D.A.
+- **[Getting Started](docs/getting-started/01_GETTING_STARTED.md)** - Start here
+- **[Documentation Index](docs/INDEX.md)** - Complete navigation
+- **[Code README](code/README.md)** - Code directory guide
+- **[Benchmarks](docs/research/BENCHMARKS.md)** - Performance data
+- **[Contributing](docs/contributing/CONTRIBUTING.md)** - How to contribute
+- **[Issues](https://github.com/Frederick-Stalnecker/THEOS/issues)** - Report bugs
+- **[Discussions](https://github.com/Frederick-Stalnecker/THEOS/discussions)** - Ask questions
 
 ---
 
-## Contributing
+**Ready to get started?** → [Getting Started Guide](docs/getting-started/01_GETTING_STARTED.md)
 
-We welcome contributions! See [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md) for guidelines.
+**Want to contribute?** → [Contributing Guidelines](docs/contributing/CONTRIBUTING.md)
 
-For security vulnerabilities, see [`.github/SECURITY.md`](.github/SECURITY.md).
-
----
-
-**THEOS: Governance-first AI safety. Open research. Collaborative validation.**
-
----
-
-## THEOS Certified Badge Program
-
-![THEOS Certified](https://files.manuscdn.com/user_upload_by_module/session_file/310519663190376591/YGhkNfYNzKuUiekm.png)
-
-The **THEOS Certified badge** is an official mark of governance excellence. Organizations implementing THEOS governance principles can display this badge to certify their commitment to transparent, contradiction-bounded reasoning.
-
-**See:** [THEOS Certified Badge Program](THEOS_CERTIFIED_BADGE.md) for certification requirements and how to apply.
-
----
-
-*"Transparency is a governance choice. THEOS makes that choice mandatory."* — Frederick Davis Stalnecker
+**Have questions?** → [FAQ](docs/contributing/FAQ.md) | [Discussions](https://github.com/Frederick-Stalnecker/THEOS/discussions)
