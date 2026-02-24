@@ -41,3 +41,6 @@ htmlcov/
 # Temporary
 *.tmp
 *.temp
+
+# THEOS session logs (auto-generated, do not commit)
+logs/*.json
