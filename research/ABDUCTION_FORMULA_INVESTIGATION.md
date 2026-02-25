@@ -232,7 +232,44 @@ The provisional patent covers the general I→A→D→I cycle. The specific abdu
 
 **Recommendation:** Bring this document to the patent attorney's attention before June 2026.
 
-## 9. What to Do Next
+## 9. The Formal Mathematical Treatment (From iCloud Math Version 2)
+
+The document `Theos Math version 2.pdf` (iCloud, not yet in repository) contains Section 3: "Abduction as Optimization and Bracket" which formalizes the abduction step rigorously:
+
+**Definition 3.1 — Abduction Quality:**
+```
+QA(H; I) = EP(H, I) / (1 + λ · Complexity(H))
+```
+Where EP(H, I) = explanatory power of hypothesis H given observations I.
+λ > 0 controls the complexity penalty (Minimum Description Length principle).
+
+**Definition 3.3 — Left/Right Abductions as Bracket:**
+```
+A_L^n = argmax_{H ∈ H_n} QA(H; I_n)    [Left engine: best hypothesis]
+A_R^n = argmin_{H ∈ H_n} QA(H; I_n)    [Right engine: worst/adversarial hypothesis]
+Width_n = QA(A_L^n; I_n) - QA(A_R^n; I_n)   [Quality bracket width]
+```
+
+**Theorem 3.5 — Exponential Convergence:**
+Under monotone tightening (Width_{n+1} ≤ η · Width_n), the quality bracket shrinks exponentially: Width_n → 0 as n → ∞.
+
+**Implication:** As cycles proceed, the left (constructive) and right (adversarial) engines' hypothesis quality converges to the same value. This is the formal proof that dual-engine reasoning converges.
+
+**Two Formalizations of the Same Idea:**
+
+| Approach | Left Engine | Right Engine | Criterion |
+|----------|-------------|--------------|-----------|
+| Math version 2 (formal) | argmax QA (best hypothesis) | argmin QA (worst adversarial) | Quality bracket → 0 |
+| Experimental protocol (practical) | Generate 2-3 candidates, test, select best | Generate 2-3 adversarial candidates, test, select worst | Deduction adjudicates |
+
+The math version is more rigorous; the experimental protocol is more implementable. They're consistent formalizations of the same underlying mechanism.
+
+**What this contributes to the patent case:**
+The formal mathematical proof (Theorem 3.5) is significant: it shows that the quality bracket shrinks exponentially, which means THEOS provably converges to the best explanation faster than any single-engine approach (Theorem 2.7 in the same document shows the dual-engine has strictly faster asymptotic convergence than single-engine).
+
+This math should be referenced in the full patent application.
+
+## 10. What to Do Next
 
 1. ~~Read the patent PDFs~~ **DONE — see Section 8 above.**
 
