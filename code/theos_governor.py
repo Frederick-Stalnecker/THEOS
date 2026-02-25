@@ -187,14 +187,78 @@ class GovernorDecision:
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def _tokenize(text: str) -> set:
-    """Lowercase word-token set, punctuation stripped."""
-    return set("".join(c.lower() if c.isalnum() else " " for c in text).split())
+_STOP_WORDS = frozenset({
+    "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
+    "of", "with", "by", "from", "is", "are", "was", "were", "be", "been",
+    "being", "have", "has", "had", "do", "does", "did", "will", "would",
+    "could", "should", "may", "might", "that", "this", "these", "those",
+    "it", "its", "i", "you", "he", "she", "we", "they", "not", "no",
+    "as", "if", "then", "than", "so", "can", "all", "also", "more",
+    "such", "any", "when", "which", "what", "how", "who", "there",
+    "their", "our", "your", "my", "his", "her", "into", "about",
+})
 
 
+def _tokenize(text: str) -> list:
+    """Lowercase content-word tokens, stop words and punctuation stripped."""
+    import re
+    tokens = re.sub(r"[^\w\s]", " ", text.lower()).split()
+    return [t for t in tokens if t not in _STOP_WORDS and len(t) > 0]
+
+
+def _tfidf_cosine_similarity(a: str, b: str) -> float:
+    """TF-IDF cosine similarity between two texts.
+
+    Replaces Jaccard word overlap.  Jaccard inflates similarity for texts
+    that share only stop words ("the", "is", "and") while reporting near-zero
+    for semantically similar texts with different vocabulary.  TF-IDF cosine
+    weights content words by frequency and inverse document frequency, making
+    stop words nearly invisible.
+
+    This is still lexical similarity, not semantic (which requires embeddings).
+    For true semantic similarity, use :mod:`code.semantic_retrieval`.
+    """
+    import math
+    from collections import Counter
+
+    tokens_a = _tokenize(a)
+    tokens_b = _tokenize(b)
+
+    if not tokens_a or not tokens_b:
+        return 0.0
+
+    tf_a = Counter(tokens_a)
+    tf_b = Counter(tokens_b)
+    n_a, n_b = len(tokens_a), len(tokens_b)
+    vocab = set(tf_a) | set(tf_b)
+
+    def idf(term: str) -> float:
+        df = int(term in tf_a) + int(term in tf_b)
+        return math.log(3 / (df + 1)) + 1.0  # smoothed, N=2 docs
+
+    vec_a = {t: (tf_a.get(t, 0) / n_a) * idf(t) for t in vocab}
+    vec_b = {t: (tf_b.get(t, 0) / n_b) * idf(t) for t in vocab}
+
+    dot = sum(vec_a[t] * vec_b[t] for t in vocab)
+    mag_a = math.sqrt(sum(v * v for v in vec_a.values()))
+    mag_b = math.sqrt(sum(v * v for v in vec_b.values()))
+
+    if mag_a == 0.0 or mag_b == 0.0:
+        return 0.0
+    return dot / (mag_a * mag_b)
+
+
+# Kept for reference only — no longer used for convergence detection.
 def _jaccard_similarity(a: str, b: str) -> float:
-    """Jaccard similarity between word-token sets of *a* and *b*."""
-    A, B = _tokenize(a), _tokenize(b)
+    """[DEPRECATED] Jaccard similarity between word-token sets.
+
+    Replaced by _tfidf_cosine_similarity which correctly handles stop words
+    and does not produce false positives for semantically divergent texts
+    that share common function words.
+    """
+    tokens = lambda t: set("".join(c.lower() if c.isalnum() else " "
+                                   for c in t).split())
+    A, B = tokens(a), tokens(b)
     if not A or not B:
         return 0.0
     return len(A & B) / len(A | B)
@@ -261,7 +325,7 @@ class THEOSGovernor:
             :class:`GovernorDecision` with the CONTINUE/FREEZE verdict.
         """
         cycle = max(left.cycle_index, right.cycle_index)
-        sim   = _jaccard_similarity(left.answer, right.answer)
+        sim   = _tfidf_cosine_similarity(left.answer, right.answer)
 
         # ── Contradiction budget update ────────────────────────────────────
         if left.contradiction_claim or right.contradiction_claim:
