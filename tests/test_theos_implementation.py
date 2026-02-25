@@ -15,11 +15,7 @@ Tests verify:
 Author: Frederick Davis Stalnecker
 """
 
-import sys
-sys.path.insert(0, '/home/ubuntu/THEOS_repo/code')
-sys.path.insert(0, '/home/ubuntu/THEOS_repo/examples')
-
-import unittest
+import unittest  # sys.path injected by root conftest.py
 from theos_core import TheosCore, TheosConfig, HaltReason
 from theos_system import create_numeric_system, TheosSystem
 from theos_medical_diagnosis import MedicalDiagnosisEngine

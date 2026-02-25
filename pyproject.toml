@@ -1,0 +1,108 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "theos"
+version = "1.0.0"
+description = "THEOS: Temporal Hierarchical Emergent Optimization System — Runtime AI Governance Framework"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Frederick Davis Stalnecker"},
+]
+keywords = [
+    "ai-safety", "ai-governance", "reasoning", "dual-engine",
+    "contradiction", "governor", "wisdom", "dialectical",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+requires-python = ">=3.10"
+dependencies = []   # Zero external deps for core
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.0.0"]
+llm = ["anthropic>=0.7.0", "openai>=1.0.0"]
+vector = ["chromadb>=0.4.0"]
+dev = [
+    "pytest>=7.3.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.3.0",
+    "black>=24.0.0",
+    "mypy>=1.8.0",
+]
+all = ["theos[mcp,llm,vector,dev]"]
+
+[project.urls]
+Homepage     = "https://github.com/fredstalnecker/THEOS2"
+Documentation = "https://github.com/fredstalnecker/THEOS2/tree/main/docs"
+Repository   = "https://github.com/fredstalnecker/THEOS2"
+Issues       = "https://github.com/fredstalnecker/THEOS2/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["theos*"]
+
+[tool.setuptools.package-dir]
+"theos" = "code"
+
+# ── pytest ──────────────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths      = ["tests"]
+python_files   = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts        = "-v --tb=short --strict-markers --disable-warnings"
+markers = [
+    "unit: Unit tests for core functionality",
+    "integration: Integration tests",
+    "performance: Performance and efficiency tests",
+    "edge_case: Edge case and boundary condition tests",
+    "slow: Tests that take significant time",
+]
+
+# ── ruff ─────────────────────────────────────────────────────────────────────
+[tool.ruff]
+line-length    = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select  = ["E", "F", "W", "I", "UP"]
+ignore  = ["E501"]   # line-too-long (black handles it)
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*"    = ["F401", "F811"]
+"examples/*" = ["F401"]
+
+# ── black ────────────────────────────────────────────────────────────────────
+[tool.black]
+line-length     = 100
+target-version  = ["py310", "py311", "py312"]
+
+# ── mypy ─────────────────────────────────────────────────────────────────────
+[tool.mypy]
+python_version        = "3.10"
+warn_return_any       = true
+warn_unused_configs   = true
+ignore_missing_imports = true
+exclude               = ["archive/", "THEOS_Lab/"]
+
+# ── coverage ─────────────────────────────────────────────────────────────────
+[tool.coverage.run]
+source   = ["code"]
+omit     = ["code/demo*.py", "*/tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+fail_under   = 70

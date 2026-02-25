@@ -1,0 +1,256 @@
+{
+  "experiment_id": "20260224_230148",
+  "model": "mock-llm-v1",
+  "backend": "MockLLM",
+  "timestamp": "2026-02-24T23:01:48.688079",
+  "questions_tested": 3,
+  "results": [
+    {
+      "question_id": 1,
+      "question_text": "What is the difference between egotism and arrogance?",
+      "condition_a": {
+        "condition": "A_single_pass",
+        "question_id": 1,
+        "answer": "Based on the prompt, the key insight concerns egotism, arrogance?, answer:. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #1]",
+        "trace": [
+          {
+            "step": "single_pass",
+            "prompt_summary": "You are a precise analytical thinker. Answer the question completely and honestly. Do not pad your answer. Do not use bu",
+            "response": "Based on the prompt, the key insight concerns egotism, arrogance?, answer:. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #1]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          }
+        ],
+        "total_tokens": 81,
+        "total_latency_ms": 1.0,
+        "score_accuracy": null,
+        "score_depth": null,
+        "score_utility": null,
+        "score_coherence": null,
+        "score_coverage": null
+      },
+      "condition_b": null,
+      "condition_c": {
+        "condition": "C_theos_two_pass",
+        "question_id": 1,
+        "answer": "Based on the prompt, the key insight concerns state, conclusion, clearly.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #7]",
+        "trace": [
+          {
+            "step": "pass1_inductive",
+            "prompt_summary": "Question: What is the difference between egotism and arrogance?\n\nInductive step \u2014 from observable facts and examples, wh",
+            "response": "Based on the prompt, the key insight concerns identify, relevant, question?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #2]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass1_abductive",
+            "prompt_summary": "Question: What is the difference between egotism and arrogance?\n\nObservations and patterns: Based on the prompt, the key",
+            "response": "Based on the prompt, the key insight concerns mechanism, explains, pattern?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #3]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass1_deductive",
+            "prompt_summary": "Question: What is the difference between egotism and arrogance?\n\nHypothesis: Based on the prompt, the key insight concer",
+            "response": "Based on the prompt, the key insight concerns state, conclusion, clearly.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #4]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass2_inductive",
+            "prompt_summary": "Question: What is the difference between egotism and arrogance?\n\nPrior conclusion to reflect on: Based on the prompt, th",
+            "response": "Based on the prompt, the key insight concerns about, underlying, structure?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #5]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass2_abductive",
+            "prompt_summary": "Question: What is the difference between egotism and arrogance?\n\nObservations and patterns: Based on the prompt, the key",
+            "response": "Based on the prompt, the key insight concerns mechanism, explains, pattern?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #6]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass2_deductive",
+            "prompt_summary": "Question: What is the difference between egotism and arrogance?\n\nHypothesis: Based on the prompt, the key insight concer",
+            "response": "Based on the prompt, the key insight concerns state, conclusion, clearly.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #7]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          }
+        ],
+        "total_tokens": 619,
+        "total_latency_ms": 6.0,
+        "score_accuracy": null,
+        "score_depth": null,
+        "score_utility": null,
+        "score_coherence": null,
+        "score_coverage": null
+      }
+    },
+    {
+      "question_id": 2,
+      "question_text": "What is the difference between knowledge and wisdom?",
+      "condition_a": {
+        "condition": "A_single_pass",
+        "question_id": 2,
+        "answer": "Based on the prompt, the key insight concerns knowledge, wisdom?, answer:. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #8]",
+        "trace": [
+          {
+            "step": "single_pass",
+            "prompt_summary": "You are a precise analytical thinker. Answer the question completely and honestly. Do not pad your answer. Do not use bu",
+            "response": "Based on the prompt, the key insight concerns knowledge, wisdom?, answer:. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #8]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          }
+        ],
+        "total_tokens": 81,
+        "total_latency_ms": 1.0,
+        "score_accuracy": null,
+        "score_depth": null,
+        "score_utility": null,
+        "score_coherence": null,
+        "score_coverage": null
+      },
+      "condition_b": null,
+      "condition_c": {
+        "condition": "C_theos_two_pass",
+        "question_id": 2,
+        "answer": "Based on the prompt, the key insight concerns state, conclusion, clearly.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #14]",
+        "trace": [
+          {
+            "step": "pass1_inductive",
+            "prompt_summary": "Question: What is the difference between knowledge and wisdom?\n\nInductive step \u2014 from observable facts and examples, wha",
+            "response": "Based on the prompt, the key insight concerns identify, relevant, question?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #9]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass1_abductive",
+            "prompt_summary": "Question: What is the difference between knowledge and wisdom?\n\nObservations and patterns: Based on the prompt, the key ",
+            "response": "Based on the prompt, the key insight concerns mechanism, explains, pattern?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #10]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass1_deductive",
+            "prompt_summary": "Question: What is the difference between knowledge and wisdom?\n\nHypothesis: Based on the prompt, the key insight concern",
+            "response": "Based on the prompt, the key insight concerns state, conclusion, clearly.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #11]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass2_inductive",
+            "prompt_summary": "Question: What is the difference between knowledge and wisdom?\n\nPrior conclusion to reflect on: Based on the prompt, the",
+            "response": "Based on the prompt, the key insight concerns about, underlying, structure?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #12]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass2_abductive",
+            "prompt_summary": "Question: What is the difference between knowledge and wisdom?\n\nObservations and patterns: Based on the prompt, the key ",
+            "response": "Based on the prompt, the key insight concerns mechanism, explains, pattern?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #13]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass2_deductive",
+            "prompt_summary": "Question: What is the difference between knowledge and wisdom?\n\nHypothesis: Based on the prompt, the key insight concern",
+            "response": "Based on the prompt, the key insight concerns state, conclusion, clearly.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #14]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          }
+        ],
+        "total_tokens": 619,
+        "total_latency_ms": 6.0,
+        "score_accuracy": null,
+        "score_depth": null,
+        "score_utility": null,
+        "score_coherence": null,
+        "score_coverage": null
+      }
+    },
+    {
+      "question_id": 3,
+      "question_text": "What is the difference between courage and recklessness?",
+      "condition_a": {
+        "condition": "A_single_pass",
+        "question_id": 3,
+        "answer": "Based on the prompt, the key insight concerns courage, recklessness?, answer:. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #15]",
+        "trace": [
+          {
+            "step": "single_pass",
+            "prompt_summary": "You are a precise analytical thinker. Answer the question completely and honestly. Do not pad your answer. Do not use bu",
+            "response": "Based on the prompt, the key insight concerns courage, recklessness?, answer:. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #15]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          }
+        ],
+        "total_tokens": 81,
+        "total_latency_ms": 1.0,
+        "score_accuracy": null,
+        "score_depth": null,
+        "score_utility": null,
+        "score_coherence": null,
+        "score_coverage": null
+      },
+      "condition_b": null,
+      "condition_c": {
+        "condition": "C_theos_two_pass",
+        "question_id": 3,
+        "answer": "Based on the prompt, the key insight concerns state, conclusion, clearly.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #21]",
+        "trace": [
+          {
+            "step": "pass1_inductive",
+            "prompt_summary": "Question: What is the difference between courage and recklessness?\n\nInductive step \u2014 from observable facts and examples,",
+            "response": "Based on the prompt, the key insight concerns identify, relevant, question?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #16]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass1_abductive",
+            "prompt_summary": "Question: What is the difference between courage and recklessness?\n\nObservations and patterns: Based on the prompt, the ",
+            "response": "Based on the prompt, the key insight concerns mechanism, explains, pattern?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #17]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass1_deductive",
+            "prompt_summary": "Question: What is the difference between courage and recklessness?\n\nHypothesis: Based on the prompt, the key insight con",
+            "response": "Based on the prompt, the key insight concerns state, conclusion, clearly.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #18]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass2_inductive",
+            "prompt_summary": "Question: What is the difference between courage and recklessness?\n\nPrior conclusion to reflect on: Based on the prompt,",
+            "response": "Based on the prompt, the key insight concerns about, underlying, structure?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #19]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass2_abductive",
+            "prompt_summary": "Question: What is the difference between courage and recklessness?\n\nObservations and patterns: Based on the prompt, the ",
+            "response": "Based on the prompt, the key insight concerns mechanism, explains, pattern?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #20]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          },
+          {
+            "step": "pass2_deductive",
+            "prompt_summary": "Question: What is the difference between courage and recklessness?\n\nHypothesis: Based on the prompt, the key insight con",
+            "response": "Based on the prompt, the key insight concerns state, conclusion, clearly.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #21]",
+            "tokens": 37,
+            "latency_ms": 1.0
+          }
+        ],
+        "total_tokens": 619,
+        "total_latency_ms": 6.0,
+        "score_accuracy": null,
+        "score_depth": null,
+        "score_utility": null,
+        "score_coherence": null,
+        "score_coverage": null
+      }
+    }
+  ],
+  "notes": ""
+}

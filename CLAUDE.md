@@ -25,7 +25,7 @@ python examples/theos_ai_safety.py
 python -m pytest tests/test_theos_implementation.py -v
 ```
 
-**Note:** `tests/test_theos_implementation.py` has hardcoded paths (`/home/ubuntu/THEOS_repo/`). To run tests locally, you must either update those `sys.path.insert` lines to point to `code/` and `examples/`, or run from the correct path context.
+**Note:** Tests use relative paths (`os.path.dirname(__file__)`) and work from any directory.
 
 ### Run a specific test
 ```bash

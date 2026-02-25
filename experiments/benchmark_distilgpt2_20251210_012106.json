@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "model_name": "distilgpt2",
+    "timestamp": "2025-12-10T01:05:51.260776",
+    "python_version": "3.11.0rc1 (main, Aug 12 2022, 10:02:14) [GCC 11.2.0]",
+    "torch_version": "2.9.1+cu128"
+  },
+  "benchmarks": [
+    {
+      "test": "energy_efficiency",
+      "num_prompts": 3,
+      "baseline": {
+        "total_time": 4.276799440383911,
+        "total_tokens": 150,
+        "tokens_per_second": 35.07295632888857
+      },
+      "theos": {
+        "total_time": 163.5792965888977,
+        "total_tokens": 0,
+        "total_cycles": 15,
+        "avg_cycles_per_prompt": 5.0,
+        "tokens_per_second": 0.0
+      },
+      "comparison": {
+        "time_reduction_percent": -3724.806350381814,
+        "token_reduction_percent": 100.0,
+        "efficiency_gain": -3724.806350381814
+      }
+    },
+    {
+      "test": "cache_performance",
+      "num_prompts": 3,
+      "cache_hits": 3,
+      "hit_rate": 1.0,
+      "avg_first_run_time": 37.47004175186157,
+      "avg_second_run_time": 9.314219156901042e-05,
+      "speedup_factor": 402288.5989761092,
+      "cache_stats": {
+        "size": 3,
+        "max_size": 1000,
+        "hits": 3,
+        "misses": 3,
+        "hit_rate": 0.5,
+        "ttl": 3600
+      }
+    },
+    {
+      "test": "convergence_analysis",
+      "num_prompts": 3,
+      "results": [
+        {
+          "max_cycles": 3,
+          "convergence_rate": 0.3333333333333333,
+          "avg_cycles_used": 3.0
+        },
+        {
+          "max_cycles": 5,
+          "convergence_rate": 0.3333333333333333,
+          "avg_cycles_used": 5.0
+        },
+        {
+          "max_cycles": 7,
+          "convergence_rate": 0.6666666666666666,
+          "avg_cycles_used": 5.333333333333333
+        },
+        {
+          "max_cycles": 10,
+          "convergence_rate": 0.3333333333333333,
+          "avg_cycles_used": 7.333333333333333
+        }
+      ]
+    }
+  ]
+}

@@ -1,281 +1,581 @@
-#!/usr/bin/env python3
 """
-Semantic Retrieval - Embedding-Based Wisdom Matching
+semantic_retrieval — Embedding-based wisdom retrieval
 =====================================================
 
-This module provides semantic similarity matching for wisdom retrieval.
-Uses embeddings to find conceptually similar past queries and resolutions.
+Provides semantic similarity matching for THEOS wisdom stores.  A layered
+abstraction lets you swap the storage backend without changing calling code:
 
-Supports:
-- OpenAI embeddings
-- Sentence transformers
-- Custom embedding functions
+.. code-block:: text
+
+    EmbeddingAdapter          ← generates vectors (mock / OpenAI / HF)
+         │
+    VectorStore (ABC)         ← abstract interface for add / search / persist
+         │
+    ├── InMemoryVectorStore   ← pure-Python, no deps  (default)
+    ├── ChromaVectorStore     ← chromadb backend  (pip install chromadb)
+    └── FAISSVectorStore      ← FAISS backend     (pip install faiss-cpu)
+
+Factory::
+
+    store = get_vector_store("memory")            # no deps
+    store = get_vector_store("chroma", path="./wisdom_db")
+    store = get_vector_store("faiss",  path="./wisdom.index")
+
+Integration with :class:`~theos_core.TheosCore`::
+
+    from semantic_retrieval import get_vector_store, MockEmbeddingAdapter
+
+    store = get_vector_store("memory", embedding=MockEmbeddingAdapter(384))
+
+    def retrieve_wisdom(query, W, threshold):
+        return store.search(query, top_k=5, threshold=threshold)
+
+    def update_wisdom(W, query, output, confidence):
+        store.add({"query": query, "output": str(output), "confidence": confidence})
+        return W + [{"query": query, "output": str(output), "confidence": confidence}]
 
 Author: Frederick Davis Stalnecker
-Date: February 22, 2026
+Date:   February 2026
 """
 
-from abc import ABC, abstractmethod
-from typing import List, Optional, Dict, Any, Tuple
-from dataclasses import dataclass
+from __future__ import annotations
+
 import json
 import math
+import os
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Embeddings
+# ─────────────────────────────────────────────────────────────────────────────
 
 
 @dataclass
 class EmbeddingVector:
-    """Embedding vector for a piece of text."""
-    text: str
+    """A dense vector representation of a piece of text.
+
+    Attributes:
+        text:   Original text that was embedded.
+        vector: Dense float vector.
+    """
+
+    text:   str
     vector: List[float]
-    
-    def __post_init__(self):
-        """Validate vector."""
-        if len(self.vector) == 0:
-            raise ValueError("Embedding vector cannot be empty")
-    
+
+    def __post_init__(self) -> None:
+        if not self.vector:
+            raise ValueError("EmbeddingVector cannot be empty")
+
     @property
     def dimension(self) -> int:
-        """Get vector dimension."""
         return len(self.vector)
 
 
 class EmbeddingAdapter(ABC):
+    """Abstract base class for embedding providers.
+
+    Subclass and implement :meth:`_embed` to plug in any embedding model.
+    Results are cached in-memory to avoid redundant API calls.
     """
-    Abstract base class for embedding providers.
-    
-    Implementations should override:
-    - _embed: Generate embedding for text
-    """
-    
-    def __init__(self, model_name: str):
-        """Initialize embedding adapter."""
+
+    def __init__(self, model_name: str) -> None:
         self.model_name = model_name
-        self.cache: Dict[str, List[float]] = {}
-    
+        self._cache: Dict[str, List[float]] = {}
+
     def embed(self, text: str) -> EmbeddingVector:
-        """
-        Generate embedding for text.
-        
-        Args:
-            text: Text to embed
-            
-        Returns:
-            EmbeddingVector with embedding
-        """
-        # Check cache
-        if text in self.cache:
-            vector = self.cache[text]
-            return EmbeddingVector(text=text, vector=vector)
-        
-        # Generate embedding
-        vector = self._embed(text)
-        
-        # Cache it
-        self.cache[text] = vector
-        
-        return EmbeddingVector(text=text, vector=vector)
-    
+        """Return an :class:`EmbeddingVector` for *text*, using cache."""
+        if text not in self._cache:
+            self._cache[text] = self._embed(text)
+        return EmbeddingVector(text=text, vector=self._cache[text])
+
     @abstractmethod
     def _embed(self, text: str) -> List[float]:
-        """Generate embedding for text."""
-        pass
+        """Generate a raw float vector for *text*."""
+
+    def clear_cache(self) -> None:
+        self._cache.clear()
 
 
 class MockEmbeddingAdapter(EmbeddingAdapter):
+    """Deterministic embedding adapter for tests and offline use.
+
+    Generates a unit-normalised vector based on the text's hash, ensuring:
+
+    * Same input  → same output (deterministic).
+    * Different inputs → different outputs (hash mixing).
+    * Zero external dependencies.
+
+    Args:
+        dimension: Embedding dimensionality (default 384, matching
+            ``sentence-transformers/all-MiniLM-L6-v2``).
     """
-    Mock embedding adapter for testing.
-    
-    Generates deterministic embeddings based on text hash.
-    """
-    
-    def __init__(self, dimension: int = 384):
-        """Initialize mock adapter."""
+
+    def __init__(self, dimension: int = 384) -> None:
         super().__init__(model_name="mock-embedding")
         self.dimension = dimension
-    
+
     def _embed(self, text: str) -> List[float]:
-        """Generate deterministic embedding."""
-        # Use hash to generate deterministic but varied embeddings
-        hash_val = hash(text)
-        
-        # Generate vector based on hash
-        vector = []
-        for i in range(self.dimension):
-            # Mix hash with index to get varied values
-            val = math.sin((hash_val + i * 12345) / 10000.0)
-            vector.append(val)
-        
-        # Normalize
-        magnitude = math.sqrt(sum(v**2 for v in vector))
-        vector = [v / magnitude for v in vector]
-        
-        return vector
+        h = hash(text)
+        vec = [math.sin((h + i * 12_345) / 10_000.0) for i in range(self.dimension)]
+        mag = math.sqrt(sum(v * v for v in vec)) or 1.0
+        return [v / mag for v in vec]
 
 
-class SemanticRetrieval:
+# ─────────────────────────────────────────────────────────────────────────────
+# VectorStore — abstract interface
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class VectorStore(ABC):
+    """Abstract interface for vector stores used by the THEOS wisdom layer.
+
+    A ``VectorStore`` holds wisdom records (arbitrary dicts with at least a
+    ``"query"`` key) and provides semantic search via embedding similarity.
+
+    Implementations
+    ---------------
+    * :class:`InMemoryVectorStore` — pure Python, no deps.
+    * :class:`ChromaVectorStore`   — persistent, requires ``chromadb``.
+    * :class:`FAISSVectorStore`    — high-perf, requires ``faiss-cpu``.
     """
-    Semantic similarity-based retrieval system.
-    
-    Finds similar wisdom records based on semantic embeddings.
-    """
-    
-    def __init__(self, embedding_adapter: EmbeddingAdapter):
-        """
-        Initialize semantic retrieval.
-        
+
+    @abstractmethod
+    def add(self, record: Dict[str, Any]) -> None:
+        """Persist one wisdom record.
+
         Args:
-            embedding_adapter: Adapter for generating embeddings
+            record: Dict containing at least ``"query"`` (str).
         """
-        self.embedding_adapter = embedding_adapter
-        self.wisdom_records: List[Dict[str, Any]] = []
-        self.embeddings: List[List[float]] = []
-    
-    def add_record(self, record: Dict[str, Any]) -> None:
-        """
-        Add a wisdom record.
-        
-        Args:
-            record: Wisdom record with 'query', 'resolution', 'confidence', etc.
-        """
-        # Store record
-        self.wisdom_records.append(record)
-        
-        # Generate embedding for query
-        query_text = record.get('query', '')
-        embedding = self.embedding_adapter.embed(query_text)
-        self.embeddings.append(embedding.vector)
-    
-    def retrieve_similar(
+
+    @abstractmethod
+    def search(
         self,
-        query: str,
+        query:     str,
+        top_k:     int   = 5,
         threshold: float = 0.7,
-        top_k: int = 5,
     ) -> List[Dict[str, Any]]:
-        """
-        Retrieve similar wisdom records.
-        
+        """Return the *top_k* most similar records above *threshold*.
+
+        Each returned dict is a copy of the stored record augmented with a
+        ``"similarity_score"`` key (float in [0, 1]).
+
         Args:
-            query: Query to find similar records for
-            threshold: Minimum similarity score (0-1)
-            top_k: Maximum number of results
-            
-        Returns:
-            List of similar records with similarity scores
+            query:     Free-text query.
+            top_k:     Maximum results.
+            threshold: Minimum cosine similarity (0 – 1).
         """
-        if not self.wisdom_records:
+
+    @abstractmethod
+    def persist(self, path: str) -> None:
+        """Serialise the store to *path*.
+
+        Args:
+            path: File or directory path (backend-specific).
+        """
+
+    @classmethod
+    @abstractmethod
+    def load(
+        cls,
+        path:              str,
+        embedding_adapter: EmbeddingAdapter,
+    ) -> "VectorStore":
+        """Deserialise a previously :meth:`persist`-ed store from *path*."""
+
+    @abstractmethod
+    def __len__(self) -> int:
+        """Number of records in the store."""
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}(records={len(self)})"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# InMemoryVectorStore — pure Python, no dependencies
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class InMemoryVectorStore(VectorStore):
+    """Pure-Python in-memory vector store.  Zero external dependencies.
+
+    Uses cosine similarity on normalised dense vectors produced by any
+    :class:`EmbeddingAdapter`.  Suitable for development, unit tests, and
+    small wisdom stores (< ~10 k records).
+
+    Args:
+        embedding_adapter: Adapter used to embed query and record texts.
+    """
+
+    def __init__(self, embedding_adapter: EmbeddingAdapter) -> None:
+        self._adapter:    EmbeddingAdapter     = embedding_adapter
+        self._records:    List[Dict[str, Any]] = []
+        self._embeddings: List[List[float]]    = []
+
+    # ── VectorStore interface ─────────────────────────────────────────────
+
+    def add(self, record: Dict[str, Any]) -> None:
+        query_text = record.get("query", "")
+        self._records.append(record)
+        self._embeddings.append(self._adapter.embed(query_text).vector)
+
+    def search(
+        self,
+        query:     str,
+        top_k:     int   = 5,
+        threshold: float = 0.7,
+    ) -> List[Dict[str, Any]]:
+        if not self._records:
             return []
-        
-        # Generate embedding for query
-        query_embedding = self.embedding_adapter.embed(query)
-        
-        # Compute similarities
-        similarities: List[Tuple[int, float]] = []
-        for i, record_embedding in enumerate(self.embeddings):
-            similarity = self._cosine_similarity(
-                query_embedding.vector,
-                record_embedding
-            )
-            
-            if similarity >= threshold:
-                similarities.append((i, similarity))
-        
-        # Sort by similarity (descending)
-        similarities.sort(key=lambda x: x[1], reverse=True)
-        
-        # Return top-k records with scores
+        q_vec = self._adapter.embed(query).vector
+        scored: List[Tuple[int, float]] = []
+        for i, rec_vec in enumerate(self._embeddings):
+            sim = _cosine_similarity(q_vec, rec_vec)
+            if sim >= threshold:
+                scored.append((i, sim))
+        scored.sort(key=lambda x: x[1], reverse=True)
         results = []
-        for idx, similarity in similarities[:top_k]:
-            record = self.wisdom_records[idx].copy()
-            record['similarity_score'] = similarity
-            results.append(record)
-        
+        for idx, sim in scored[:top_k]:
+            item = dict(self._records[idx])
+            item["similarity_score"] = sim
+            results.append(item)
         return results
-    
-    @staticmethod
-    def _cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
-        """
-        Compute cosine similarity between two vectors.
-        
-        Args:
-            vec1: First vector
-            vec2: Second vector
-            
-        Returns:
-            Similarity score in [0, 1]
-        """
-        if len(vec1) != len(vec2):
-            raise ValueError("Vectors must have same dimension")
-        
-        # Dot product
-        dot_product = sum(a * b for a, b in zip(vec1, vec2))
-        
-        # Magnitudes
-        mag1 = math.sqrt(sum(a**2 for a in vec1))
-        mag2 = math.sqrt(sum(b**2 for b in vec2))
-        
-        if mag1 == 0 or mag2 == 0:
-            return 0.0
-        
-        # Cosine similarity
-        similarity = dot_product / (mag1 * mag2)
-        
-        # Normalize to [0, 1]
-        return (similarity + 1) / 2
-    
+
+    def persist(self, path: str) -> None:
+        data = {
+            "model_name": self._adapter.model_name,
+            "records":    self._records,
+            "embeddings": self._embeddings,
+        }
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(data, fh, indent=2)
+
+    @classmethod
+    def load(
+        cls,
+        path:              str,
+        embedding_adapter: EmbeddingAdapter,
+    ) -> "InMemoryVectorStore":
+        with open(path, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+        store = cls(embedding_adapter)
+        store._records    = data.get("records", [])
+        store._embeddings = data.get("embeddings", [])
+        return store
+
+    def __len__(self) -> int:
+        return len(self._records)
+
     def get_statistics(self) -> Dict[str, Any]:
-        """Get retrieval statistics."""
+        """Return diagnostic statistics."""
         return {
-            'total_records': len(self.wisdom_records),
-            'embedding_model': self.embedding_adapter.model_name,
-            'embedding_dimension': len(self.embeddings[0]) if self.embeddings else 0,
-            'cache_size': len(self.embedding_adapter.cache),
+            "total_records":     len(self._records),
+            "embedding_model":   self._adapter.model_name,
+            "embedding_dim":     len(self._embeddings[0]) if self._embeddings else 0,
+            "cache_size":        len(self._adapter._cache),
         }
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# ChromaVectorStore — persistent, requires ``pip install chromadb``
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class ChromaVectorStore(VectorStore):
+    """ChromaDB-backed persistent vector store.
+
+    **Requires**: ``pip install chromadb``
+
+    Args:
+        embedding_adapter: Used for query embedding (not for indexing —
+            Chroma handles its own embeddings internally).
+        path:              Persist directory.  ``None`` = ephemeral in-memory.
+        collection_name:   Chroma collection name (default ``"theos_wisdom"``).
+
+    Raises:
+        ImportError: If ``chromadb`` is not installed.
+    """
+
+    def __init__(
+        self,
+        embedding_adapter: EmbeddingAdapter,
+        path:              Optional[str] = None,
+        collection_name:   str           = "theos_wisdom",
+    ) -> None:
+        try:
+            import chromadb  # type: ignore[import]
+        except ImportError as exc:
+            raise ImportError(
+                "ChromaVectorStore requires chromadb.\n"
+                "Install it with:  pip install chromadb"
+            ) from exc
+
+        self._adapter = embedding_adapter
+        self._collection_name = collection_name
+        if path:
+            self._client = chromadb.PersistentClient(path=path)
+        else:
+            self._client = chromadb.Client()
+        self._col = self._client.get_or_create_collection(collection_name)
+        self._next_id = 0
+
+    def add(self, record: Dict[str, Any]) -> None:
+        import chromadb  # type: ignore[import]  # noqa: F401
+        doc_id = str(self._next_id)
+        self._next_id += 1
+        self._col.add(
+            ids=[doc_id],
+            documents=[record.get("query", "")],
+            metadatas=[{k: str(v) for k, v in record.items()}],
+        )
+
+    def search(
+        self,
+        query:     str,
+        top_k:     int   = 5,
+        threshold: float = 0.7,
+    ) -> List[Dict[str, Any]]:
+        results = self._col.query(query_texts=[query], n_results=top_k)
+        out = []
+        for meta in (results.get("metadatas") or [[]])[0]:
+            out.append(dict(meta))
+        return out
+
+    def persist(self, path: str) -> None:
+        # ChromaDB PersistentClient auto-persists; this is a no-op.
+        pass
+
+    @classmethod
+    def load(
+        cls,
+        path:              str,
+        embedding_adapter: EmbeddingAdapter,
+    ) -> "ChromaVectorStore":
+        return cls(embedding_adapter, path=path)
+
+    def __len__(self) -> int:
+        return self._col.count()
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# FAISSVectorStore — high-performance, requires ``pip install faiss-cpu``
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class FAISSVectorStore(VectorStore):
+    """FAISS-backed vector store for high-throughput semantic search.
+
+    **Requires**: ``pip install faiss-cpu``  (or ``faiss-gpu`` on CUDA)
+
+    Suitable for wisdom stores with > 100 k records.  Uses an ``IndexFlatIP``
+    (inner-product / cosine on normalised vectors).
+
+    Args:
+        embedding_adapter: Provides the dense vectors.
+        dimension:         Embedding dimensionality (must match adapter output).
+
+    Raises:
+        ImportError: If ``faiss`` is not installed.
+    """
+
+    def __init__(
+        self,
+        embedding_adapter: EmbeddingAdapter,
+        dimension:         int = 384,
+    ) -> None:
+        try:
+            import faiss  # type: ignore[import]
+        except ImportError as exc:
+            raise ImportError(
+                "FAISSVectorStore requires faiss.\n"
+                "Install it with:  pip install faiss-cpu"
+            ) from exc
+
+        import faiss  # type: ignore[import]  # noqa: F811 (needed for local ref)
+        self._adapter   = embedding_adapter
+        self._dimension = dimension
+        self._index     = faiss.IndexFlatIP(dimension)
+        self._records:  List[Dict[str, Any]] = []
+
+    def add(self, record: Dict[str, Any]) -> None:
+        import numpy as np  # type: ignore[import]
+        vec = self._adapter.embed(record.get("query", "")).vector
+        arr = np.array([vec], dtype="float32")
+        self._index.add(arr)
+        self._records.append(record)
+
+    def search(
+        self,
+        query:     str,
+        top_k:     int   = 5,
+        threshold: float = 0.7,
+    ) -> List[Dict[str, Any]]:
+        import numpy as np  # type: ignore[import]
+        if not self._records:
+            return []
+        vec = self._adapter.embed(query).vector
+        arr = np.array([vec], dtype="float32")
+        distances, indices = self._index.search(arr, min(top_k, len(self._records)))
+        out = []
+        for dist, idx in zip(distances[0], indices[0]):
+            if idx < 0 or dist < threshold:
+                continue
+            item = dict(self._records[idx])
+            item["similarity_score"] = float(dist)
+            out.append(item)
+        return out
+
+    def persist(self, path: str) -> None:
+        import faiss   # type: ignore[import]
+        import pickle
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        faiss.write_index(self._index, path + ".faiss")
+        with open(path + ".records.pkl", "wb") as fh:
+            pickle.dump(self._records, fh)
+
+    @classmethod
+    def load(
+        cls,
+        path:              str,
+        embedding_adapter: EmbeddingAdapter,
+    ) -> "FAISSVectorStore":
+        import faiss   # type: ignore[import]
+        import pickle
+        dim   = embedding_adapter.embed("probe").dimension
+        store = cls(embedding_adapter, dimension=dim)
+        store._index = faiss.read_index(path + ".faiss")
+        with open(path + ".records.pkl", "rb") as fh:
+            store._records = pickle.load(fh)
+        return store
+
+    def __len__(self) -> int:
+        return len(self._records)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SemanticRetrieval — legacy high-level wrapper (kept for compatibility)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class SemanticRetrieval:
+    """High-level semantic retrieval backed by :class:`InMemoryVectorStore`.
+
+    .. deprecated::
+        Prefer :class:`InMemoryVectorStore` (or another :class:`VectorStore`)
+        directly.  This class is kept for backward compatibility.
+    """
+
+    def __init__(self, embedding_adapter: EmbeddingAdapter) -> None:
+        self._store = InMemoryVectorStore(embedding_adapter)
+        # expose for legacy callers that poke at internals
+        self.embedding_adapter = embedding_adapter
+        self.wisdom_records    = self._store._records
+        self.embeddings        = self._store._embeddings
+
+    def add_record(self, record: Dict[str, Any]) -> None:
+        self._store.add(record)
+
+    def retrieve_similar(
+        self,
+        query:     str,
+        threshold: float = 0.7,
+        top_k:     int   = 5,
+    ) -> List[Dict[str, Any]]:
+        return self._store.search(query, top_k=top_k, threshold=threshold)
+
+    def get_statistics(self) -> Dict[str, Any]:
+        return self._store.get_statistics()
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Factory
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def get_vector_store(
+    backend:           str                    = "memory",
+    embedding_adapter: Optional[EmbeddingAdapter] = None,
+    path:              Optional[str]          = None,
+    dimension:         int                    = 384,
+    **kwargs: Any,
+) -> VectorStore:
+    """Factory: return a :class:`VectorStore` for the requested *backend*.
+
+    Args:
+        backend:           ``"memory"`` | ``"chroma"`` | ``"faiss"``.
+        embedding_adapter: Defaults to :class:`MockEmbeddingAdapter` when omitted.
+        path:              Persistence path (required for ``"chroma"`` and
+                           ``"faiss"`` if loading an existing store).
+        dimension:         Vector dimensionality for FAISS.
+        **kwargs:          Passed to the backend constructor.
+
+    Returns:
+        A ready-to-use :class:`VectorStore` instance.
+
+    Raises:
+        ValueError:   Unknown *backend* name.
+        ImportError:  Backend dependencies not installed.
+    """
+    adapter = embedding_adapter or MockEmbeddingAdapter(dimension=dimension)
+
+    if backend == "memory":
+        return InMemoryVectorStore(adapter)
+    if backend == "chroma":
+        return ChromaVectorStore(adapter, path=path, **kwargs)
+    if backend == "faiss":
+        return FAISSVectorStore(adapter, dimension=dimension, **kwargs)
+
+    raise ValueError(
+        f"Unknown vector store backend {backend!r}. "
+        "Choose from: 'memory', 'chroma', 'faiss'."
+    )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Utility: cosine similarity
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def _cosine_similarity(v1: List[float], v2: List[float]) -> float:
+    """Cosine similarity mapped to [0, 1]."""
+    if len(v1) != len(v2):
+        raise ValueError("Vectors must have the same dimension")
+    dot   = sum(a * b for a, b in zip(v1, v2))
+    mag1  = math.sqrt(sum(a * a for a in v1))
+    mag2  = math.sqrt(sum(b * b for b in v2))
+    if mag1 == 0 or mag2 == 0:
+        return 0.0
+    return (dot / (mag1 * mag2) + 1.0) / 2.0   # map [-1,1] → [0,1]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Module self-test
+# ─────────────────────────────────────────────────────────────────────────────
+
 if __name__ == "__main__":
-    # Test semantic retrieval
-    print("Testing Semantic Retrieval...")
-    
-    # Create mock embedding adapter
-    embedding = MockEmbeddingAdapter(dimension=384)
-    
-    # Create retrieval system
-    retrieval = SemanticRetrieval(embedding)
-    
-    # Add some wisdom records
+    print("=== VectorStore demo ===\n")
+
+    store = get_vector_store("memory", dimension=64)
     records = [
-        {
-            'query': 'What is the relationship between freedom and responsibility?',
-            'resolution': 'Freedom and responsibility are interdependent. Greater freedom requires greater responsibility.',
-            'confidence': 0.85,
-        },
-        {
-            'query': 'How should AI systems handle ethical dilemmas?',
-            'resolution': 'AI systems should use multi-perspective reasoning to identify ethical trade-offs.',
-            'confidence': 0.80,
-        },
-        {
-            'query': 'What makes a good decision?',
-            'resolution': 'Good decisions balance multiple values, consider long-term consequences, and remain open to revision.',
-            'confidence': 0.82,
-        },
+        {"query": "What is the relationship between freedom and responsibility?",
+         "resolution": "Freedom and responsibility are interdependent.",
+         "confidence": 0.85},
+        {"query": "How should AI systems handle ethical dilemmas?",
+         "resolution": "Use multi-perspective reasoning.",
+         "confidence": 0.80},
+        {"query": "What makes a good decision?",
+         "resolution": "Balance values, consider long-term consequences.",
+         "confidence": 0.82},
     ]
-    
-    for record in records:
-        retrieval.add_record(record)
-    
-    # Test retrieval
-    test_query = 'What is the connection between liberty and accountability?'
-    
-    print(f"\nQuery: {test_query}")
-    print(f"\nSimilar wisdom records:")
-    
-    similar = retrieval.retrieve_similar(test_query, threshold=0.5, top_k=3)
-    
-    for i, record in enumerate(similar, 1):
-        print(f"\n  {i}. Similarity: {record['similarity_score']:.2f}")
-        print(f"     Query: {record['query']}")
-        print(f"     Resolution: {record['resolution']}")
-        print(f"     Confidence: {record['confidence']:.2f}")
-    
-    print(f"\nStatistics: {retrieval.get_statistics()}")
+    for r in records:
+        store.add(r)
+
+    test_query = "What is the connection between liberty and accountability?"
+    print(f"Query: {test_query}\n")
+    for i, r in enumerate(store.search(test_query, threshold=0.5, top_k=3), 1):
+        print(f"  {i}. [{r['similarity_score']:.2f}] {r['query']}")
+
+    print(f"\nStore: {store}")
+    print(f"Stats: {store.get_statistics()}")

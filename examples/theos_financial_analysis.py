@@ -18,7 +18,8 @@ Author: Frederick Davis Stalnecker
 """
 
 import sys
-sys.path.insert(0, '/home/ubuntu/THEOS_repo/code')
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'code'))
 
 from theos_system import create_numeric_system, TheosConfig
 from typing import Dict, List, Any

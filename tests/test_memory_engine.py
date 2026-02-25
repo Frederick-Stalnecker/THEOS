@@ -18,13 +18,7 @@ Run tests with:
     pytest tests/test_memory_engine.py -v
 """
 
-import sys
-from pathlib import Path
-
-# Add code directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "code"))
-
-import pytest
+import pytest  # sys.path injected by root conftest.py
 
 
 # ==============================================================================
