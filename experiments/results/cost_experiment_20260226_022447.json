@@ -1,0 +1,154 @@
+{
+  "experiment_id": "cost_experiment_20260226_022447",
+  "timestamp": "2026-02-26T02:24:47.420203",
+  "model": "claude-sonnet-4-6",
+  "wisdom_cost_reduction": {
+    "question": "What is the difference between egotism and arrogance?",
+    "runs": [
+      {
+        "run": 1,
+        "estimated_tokens": 7624,
+        "llm_calls": 16,
+        "latency_s": 117.65,
+        "wisdom_entries_before": 0,
+        "halt_reason": "diminishing_returns",
+        "confidence": 0.5
+      },
+      {
+        "run": 2,
+        "estimated_tokens": 7833,
+        "llm_calls": 16,
+        "latency_s": 118.07,
+        "wisdom_entries_before": 1,
+        "halt_reason": "diminishing_returns",
+        "confidence": 0.5
+      },
+      {
+        "run": 3,
+        "estimated_tokens": 8054,
+        "llm_calls": 16,
+        "latency_s": 112.97,
+        "wisdom_entries_before": 2,
+        "halt_reason": "diminishing_returns",
+        "confidence": 0.5
+      },
+      {
+        "run": 4,
+        "estimated_tokens": 8099,
+        "llm_calls": 16,
+        "latency_s": 119.79,
+        "wisdom_entries_before": 3,
+        "halt_reason": "diminishing_returns",
+        "confidence": 0.5
+      },
+      {
+        "run": 5,
+        "estimated_tokens": 8112,
+        "llm_calls": 16,
+        "latency_s": 116.24,
+        "wisdom_entries_before": 4,
+        "halt_reason": "diminishing_returns",
+        "confidence": 0.5
+      }
+    ],
+    "native_projections": [
+      {
+        "run": 1,
+        "layered_est_tokens": 7624,
+        "native_est_tokens": 762,
+        "projected_reduction_pct": 90.0
+      },
+      {
+        "run": 2,
+        "layered_est_tokens": 7833,
+        "native_est_tokens": 783,
+        "projected_reduction_pct": 90.0
+      },
+      {
+        "run": 3,
+        "layered_est_tokens": 8054,
+        "native_est_tokens": 805,
+        "projected_reduction_pct": 90.0
+      },
+      {
+        "run": 4,
+        "layered_est_tokens": 8099,
+        "native_est_tokens": 810,
+        "projected_reduction_pct": 90.0
+      },
+      {
+        "run": 5,
+        "layered_est_tokens": 8112,
+        "native_est_tokens": 811,
+        "projected_reduction_pct": 90.0
+      }
+    ],
+    "summary": {
+      "first_run_tokens": 7624,
+      "last_run_tokens": 8112,
+      "cost_reduction_pct": -6.4
+    }
+  },
+  "reflection_depth_curve": {
+    "question": "What makes an action morally wrong?",
+    "depths": [
+      {
+        "reflection_depth": 1,
+        "label": "No self-reflection",
+        "estimated_tokens": 3733,
+        "llm_calls": 8,
+        "answer_length_chars": 2341,
+        "contradiction": 0.835,
+        "confidence": 0.5,
+        "latency_s": 63.07,
+        "halt_reason": "diminishing_returns",
+        "answer_preview": "{'type': 'disagreement', 'left': '# Logical Conclusions Derived from the Hypothesis\\n\\n## Method\\n\\nI will treat the hypothesis as a set of premises and derive what follows with **deductive necessity** \u2014 conclusions that cannot be false if the premises are true. I will distinguish these from probabl"
+      },
+      {
+        "reflection_depth": 2,
+        "label": "Standard (2-pass)",
+        "estimated_tokens": 7588,
+        "llm_calls": 16,
+        "answer_length_chars": 2436,
+        "contradiction": 0.801,
+        "confidence": 0.5,
+        "latency_s": 137.86,
+        "halt_reason": "diminishing_returns",
+        "answer_preview": "{'type': 'disagreement', 'left': \"# Deductive Conclusions from the Hypothesis\\n\\n## Method Note\\n\\nI'll derive only what follows with logical necessity from the stated hypothesis, distinguishing strict entailments from probable implications.\\n\\n---\\n\\n## Tier 1: Strict Logical Entailments\\n\\n### 1. "
+      },
+      {
+        "reflection_depth": 3,
+        "label": "Deep (3-pass)",
+        "estimated_tokens": 11411,
+        "llm_calls": 24,
+        "answer_length_chars": 2347,
+        "contradiction": 0.838,
+        "confidence": 0.5,
+        "latency_s": 197.0,
+        "halt_reason": "diminishing_returns",
+        "answer_preview": "{'type': 'disagreement', 'left': '# Deductive Conclusions from the Flourishing-Damage Hypothesis\\n\\n## Method Note\\n\\nI will derive only what *necessarily follows* from the hypothesis as stated, distinguishing tight deductions from plausible implications, and flagging where the hypothesis creates in"
+      }
+    ],
+    "native_projections": [
+      {
+        "run": 1,
+        "layered_est_tokens": 3733,
+        "native_est_tokens": 747,
+        "projected_reduction_pct": 80.0
+      },
+      {
+        "run": 2,
+        "layered_est_tokens": 7588,
+        "native_est_tokens": 759,
+        "projected_reduction_pct": 90.0
+      },
+      {
+        "run": 3,
+        "layered_est_tokens": 11411,
+        "native_est_tokens": 761,
+        "projected_reduction_pct": 93.3
+      }
+    ]
+  },
+  "key_finding": "THEOS wisdom accumulation reduces token cost over repeated queries. Native architecture projects ~60-75% further cost reduction by eliminating redundant LLM calls through KV cache reuse and shared forward passes."
+}
