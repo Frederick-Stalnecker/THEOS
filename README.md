@@ -4,6 +4,8 @@
 
 # THEOS — Dual-Engine Dialectical Reasoning Framework
 
+<a href="https://www.producthunt.com/products/theos?utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-theos" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1087234&theme=light" alt="THEOS on Product Hunt" width="250" height="54"></a>
+
 [![CI](https://github.com/Frederick-Stalnecker/THEOS/actions/workflows/ci.yml/badge.svg)](https://github.com/Frederick-Stalnecker/THEOS/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-71%20passing-brightgreen)](#)
 [![PyPI](https://img.shields.io/pypi/v/theos-reasoning?color=blue)](https://pypi.org/project/theos-reasoning/)

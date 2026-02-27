@@ -101,4 +101,8 @@ This work is not being done for personal gain. It is being done because the prob
 
 ---
 
-[← Back to Home](index) · [Current Status](status) · [Architecture](architecture) · [GitHub](https://github.com/Frederick-Stalnecker/THEOS) · [YouTube](https://www.youtube.com/@TheosAIGovernance)
+<p align="center">
+<a href="https://www.producthunt.com/products/theos?utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-theos" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1087234&theme=light" alt="THEOS on Product Hunt" width="250" height="54"></a>
+</p>
+
+[← Back to Home](index) · [Current Status](status) · [Architecture](architecture) · [GitHub](https://github.com/Frederick-Stalnecker/THEOS) · [YouTube](https://www.youtube.com/@TheosAIGovernance) · [Product Hunt](https://www.producthunt.com/products/theos)

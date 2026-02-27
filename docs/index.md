@@ -104,6 +104,10 @@ Or **[open in GitHub Codespaces](https://codespaces.new/Frederick-Stalnecker/THE
 
 ---
 
+<p align="center">
+<a href="https://www.producthunt.com/products/theos?utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-theos" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1087234&theme=light" alt="THEOS on Product Hunt" width="250" height="54"></a>
+</p>
+
 ## → [The Vision](vision)
 
 *Where THEOS is going: THEOS Certification, medicine, constitutional AI, and the global wisdom network. This is the most important page on this site.*
