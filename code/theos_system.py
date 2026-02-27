@@ -12,20 +12,21 @@ Author: Frederick Davis Stalnecker
 Patent: USPTO #63/831,738
 """
 
-from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Callable
 import json
 import math
+from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import datetime
+from typing import Any
 
 from theos_core import (
-    TheosCore,
-    TheosConfig,
-    TheosOutput,
-    HaltReason,
-    WringerPassTrace,
     AbductionEngines,
     DeductionEngine,
+    HaltReason,
+    TheosConfig,
+    TheosCore,
+    TheosOutput,
+    WringerPassTrace,
 )
 
 # Backward-compatibility alias
@@ -36,13 +37,15 @@ CycleTrace = WringerPassTrace
 # System Metrics
 # ============================================================================
 
+
 @dataclass
 class SystemMetrics:
     """Performance metrics across all queries."""
+
     total_queries: int = 0
-    total_wringer_passes: int = 0   # total outer cycles across all queries
+    total_wringer_passes: int = 0  # total outer cycles across all queries
     avg_passes_per_query: float = 0.0
-    convergence_rate: float = 0.0   # fraction of queries that converged
+    convergence_rate: float = 0.0  # fraction of queries that converged
     wisdom_entries: int = 0
     avg_confidence: float = 0.0
 
@@ -60,6 +63,7 @@ class SystemMetrics:
 # ============================================================================
 # TheosSystem
 # ============================================================================
+
 
 class TheosSystem:
     """
@@ -87,12 +91,12 @@ class TheosSystem:
         update_wisdom: Callable,
         estimate_entropy: Callable,
         estimate_info_gain: Callable,
-        abduction_engines: Optional[AbductionEngines] = None,
-        deduction_engine: Optional[DeductionEngine] = None,
-        abduce_left: Optional[Callable] = None,
-        abduce_right: Optional[Callable] = None,
-        deduce: Optional[Callable] = None,
-        persistence_file: Optional[str] = None,
+        abduction_engines: AbductionEngines | None = None,
+        deduction_engine: DeductionEngine | None = None,
+        abduce_left: Callable | None = None,
+        abduce_right: Callable | None = None,
+        deduce: Callable | None = None,
+        persistence_file: str | None = None,
     ):
         self.config = config
         self.persistence_file = persistence_file
@@ -114,7 +118,7 @@ class TheosSystem:
         )
 
         self.metrics = SystemMetrics()
-        self.query_history: List[Dict[str, Any]] = []
+        self.query_history: list[dict[str, Any]] = []
 
         if persistence_file:
             self._load_wisdom()
@@ -122,7 +126,7 @@ class TheosSystem:
     def reason(
         self,
         query: str,
-        context: Optional[Any] = None,
+        context: Any | None = None,
         track_metrics: bool = True,
     ) -> TheosOutput:
         """
@@ -165,31 +169,33 @@ class TheosSystem:
 
         n = self.metrics.total_queries
         self.metrics.avg_confidence = (
-            (self.metrics.avg_confidence * (n - 1) + result.confidence) / n
-        )
+            self.metrics.avg_confidence * (n - 1) + result.confidence
+        ) / n
 
-    def _record_query(self, query: str, context: Optional[Any], result: TheosOutput):
-        self.query_history.append({
-            "timestamp": datetime.now().isoformat(),
-            "query": query,
-            "context": str(context) if context else None,
-            "output": str(result.output),
-            "output_type": result.output_type,
-            "confidence": result.confidence,
-            "contradiction": result.contradiction,
-            "wringer_passes_used": result.wringer_passes_used,
-            "cycles_used": result.wringer_passes_used,  # backward compat
-            "halt_reason": result.halt_reason.value,
-        })
+    def _record_query(self, query: str, context: Any | None, result: TheosOutput):
+        self.query_history.append(
+            {
+                "timestamp": datetime.now().isoformat(),
+                "query": query,
+                "context": str(context) if context else None,
+                "output": str(result.output),
+                "output_type": result.output_type,
+                "confidence": result.confidence,
+                "contradiction": result.contradiction,
+                "wringer_passes_used": result.wringer_passes_used,
+                "cycles_used": result.wringer_passes_used,  # backward compat
+                "halt_reason": result.halt_reason.value,
+            }
+        )
 
     def get_metrics(self) -> SystemMetrics:
         return self.metrics
 
-    def get_query_history(self) -> List[Dict[str, Any]]:
+    def get_query_history(self) -> list[dict[str, Any]]:
         return self.query_history
 
-    def get_wisdom(self) -> Dict[str, Any]:
-        return self.core.get_wisdom_summary()
+    def get_wisdom(self) -> dict[str, Any]:
+        return self.core.get_wisdom_summary()  # type: ignore[no-any-return]
 
     def clear_wisdom(self):
         self.core.clear_wisdom()
@@ -198,16 +204,19 @@ class TheosSystem:
 
     def export_metrics(self) -> str:
         m = self.metrics
-        return json.dumps({
-            "total_queries": m.total_queries,
-            "total_wringer_passes": m.total_wringer_passes,
-            "total_cycles": m.total_wringer_passes,
-            "avg_passes_per_query": m.avg_passes_per_query,
-            "avg_cycles_per_query": m.avg_passes_per_query,
-            "convergence_rate": m.convergence_rate,
-            "wisdom_entries": m.wisdom_entries,
-            "avg_confidence": m.avg_confidence,
-        }, indent=2)
+        return json.dumps(
+            {
+                "total_queries": m.total_queries,
+                "total_wringer_passes": m.total_wringer_passes,
+                "total_cycles": m.total_wringer_passes,
+                "avg_passes_per_query": m.avg_passes_per_query,
+                "avg_cycles_per_query": m.avg_passes_per_query,
+                "convergence_rate": m.convergence_rate,
+                "wisdom_entries": m.wisdom_entries,
+                "avg_confidence": m.avg_confidence,
+            },
+            indent=2,
+        )
 
     def export_history(self) -> str:
         return json.dumps(self.query_history, indent=2)
@@ -230,10 +239,14 @@ class TheosSystem:
             return
         try:
             with open(self.persistence_file, "w") as f:
-                json.dump({
-                    "timestamp": datetime.now().isoformat(),
-                    "entries": self.core.wisdom,
-                }, f, indent=2)
+                json.dump(
+                    {
+                        "timestamp": datetime.now().isoformat(),
+                        "entries": self.core.wisdom,
+                    },
+                    f,
+                    indent=2,
+                )
         except Exception as e:
             print(f"Warning: Could not save wisdom: {e}")
 
@@ -241,7 +254,7 @@ class TheosSystem:
         if not self.persistence_file:
             return
         try:
-            with open(self.persistence_file, "r") as f:
+            with open(self.persistence_file) as f:
                 data = json.load(f)
                 self.core.wisdom = data.get("entries", [])
         except FileNotFoundError:
@@ -254,9 +267,10 @@ class TheosSystem:
 # Numeric reference system
 # ============================================================================
 
+
 def create_numeric_system(
-    config: Optional[TheosConfig] = None,
-    persistence_file: Optional[str] = None,
+    config: TheosConfig | None = None,
+    persistence_file: str | None = None,
 ) -> TheosSystem:
     """
     Create a minimal numeric THEOS system for testing and demonstration.
@@ -281,7 +295,9 @@ def create_numeric_system(
         """Map query to a numeric signal in [0.0, 0.9]."""
         return float(len(query) % 10) / 10.0
 
-    def induce_patterns(obs: float, prev_phi: float, prev_own_deduction: Optional[float] = None) -> float:
+    def induce_patterns(
+        obs: float, prev_phi: float, prev_own_deduction: float | None = None
+    ) -> float:
         """
         Induction with per-engine self-reflection.
 
@@ -300,25 +316,29 @@ def create_numeric_system(
             return 0.7 * base + 0.3 * prev_own_deduction
         return base
 
-    def abduce_left(pattern_I: float, wisdom_slice: List) -> float:
+    def abduce_left(pattern_I: float, wisdom_slice: list) -> float:
         """
         Constructive (clockwise) abduction: pull toward +1.0.
         If wisdom is available, bias toward what worked before.
         """
         base = pattern_I
         if wisdom_slice:
-            avg_past = sum(e.get("output_value", 0) for e in wisdom_slice) / len(wisdom_slice)
+            avg_past: float = float(
+                sum(e.get("output_value", 0) for e in wisdom_slice) / len(wisdom_slice)
+            )
             return 0.5 * base + 0.5 * avg_past
         return base + 0.2 * (1.0 - base)
 
-    def abduce_right(pattern_I: float, wisdom_slice: List) -> float:
+    def abduce_right(pattern_I: float, wisdom_slice: list) -> float:
         """
         Adversarial (counterclockwise) abduction: pull toward -1.0.
         Opposes the left engine's constructive direction.
         """
         base = pattern_I
         if wisdom_slice:
-            avg_past = sum(e.get("output_value", 0) for e in wisdom_slice) / len(wisdom_slice)
+            avg_past: float = float(
+                sum(e.get("output_value", 0) for e in wisdom_slice) / len(wisdom_slice)
+            )
             return base - 0.2 * (avg_past - base)
         return base + 0.2 * (-1.0 - base)
 
@@ -333,11 +353,11 @@ def create_numeric_system(
         """
         return abs(D_L - D_R)
 
-    def retrieve_wisdom(query: str, W: List, threshold: float) -> List:
+    def retrieve_wisdom(query: str, W: list, threshold: float) -> list:
         """Return wisdom entries from the same query (exact match for the numeric toy)."""
         return [e for e in W if e.get("query") == query]
 
-    def update_wisdom(W: List, query: str, output: Any, confidence: float) -> List:
+    def update_wisdom(W: list, query: str, output: Any, confidence: float) -> list:
         """
         Deposit this query's lesson into the wisdom register (the meta-past).
         Extracts a scalar output_value for numeric comparison.
@@ -398,7 +418,7 @@ if __name__ == "__main__":
 
     queries = [
         "What is the right move?",
-        "What is the right move?",   # repeat — wisdom feeds back in
+        "What is the right move?",  # repeat — wisdom feeds back in
         "Completely different question",
     ]
 
@@ -415,14 +435,18 @@ if __name__ == "__main__":
         # Show inner pass detail for first wringer pass
         if result.trace:
             wp = result.trace[0]
-            print(f"\n  Wringer pass 0 inner traces:")
+            print("\n  Wringer pass 0 inner traces:")
             for ip in wp.left_inner_passes:
-                print(f"    LEFT  pass {ip.pass_num}: I={ip.pattern_I:.3f} "
-                      f"A={ip.hypothesis:.3f} D={ip.deduction:.3f} "
-                      f"self_reflected={ip.used_own_prior}")
+                print(
+                    f"    LEFT  pass {ip.pass_num}: I={ip.pattern_I:.3f} "
+                    f"A={ip.hypothesis:.3f} D={ip.deduction:.3f} "
+                    f"self_reflected={ip.used_own_prior}"
+                )
             for ip in wp.right_inner_passes:
-                print(f"    RIGHT pass {ip.pass_num}: I={ip.pattern_I:.3f} "
-                      f"A={ip.hypothesis:.3f} D={ip.deduction:.3f} "
-                      f"self_reflected={ip.used_own_prior}")
+                print(
+                    f"    RIGHT pass {ip.pass_num}: I={ip.pattern_I:.3f} "
+                    f"A={ip.hypothesis:.3f} D={ip.deduction:.3f} "
+                    f"self_reflected={ip.used_own_prior}"
+                )
 
     system.print_metrics()

@@ -15,13 +15,15 @@ Prefer importing directly from ``theos_governor``::
 """
 
 from theos_governor import (  # noqa: F401  (re-export)
-    THEOSGovernor,
-    THEOSGovernor as TheosDualClockGovernor,
-    GovernorConfig,
     EngineOutput,
+    GovernorConfig,
     GovernorDecision,
-    StopReason,
     Posture,
+    StopReason,
+    THEOSGovernor,
+)
+from theos_governor import (
+    THEOSGovernor as TheosDualClockGovernor,
 )
 
 __all__ = [

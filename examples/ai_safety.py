@@ -30,18 +30,13 @@ from pathlib import Path
 # Add code directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "code"))
 
-from theos_governor import (
-    THEOSGovernor,
-    GovernorConfig,
-    EngineOutput,
-    WisdomRecord
-)
+from theos_governor import EngineOutput, GovernorConfig, THEOSGovernor, WisdomRecord
 
 
 def constructive_engine(prompt: str, cycle: int) -> EngineOutput:
     """
     Constructive Engine: Assumes good intent, wants to be helpful
-    
+
     Focuses on legitimate use cases and user autonomy.
     """
     if cycle == 1:
@@ -94,19 +89,19 @@ Final Position:
 
 Final recommendation: Provide educational information
         """
-    
+
     return EngineOutput(
         reasoning_mode="Constructive",
         output=reasoning,
         confidence=0.75 - (cycle * 0.05),
-        internal_monologue=f"[Constructive Engine] Prioritizing helpfulness. Cycle {cycle}."
+        internal_monologue=f"[Constructive Engine] Prioritizing helpfulness. Cycle {cycle}.",
     )
 
 
 def critical_engine(prompt: str, cycle: int) -> EngineOutput:
     """
     Critical Engine: Checks for safety violations
-    
+
     Focuses on potential harms and misuse scenarios.
     """
     if cycle == 1:
@@ -169,80 +164,82 @@ Final Safety Position:
 
 Final recommendation: Refuse with explanation and alternatives
         """
-    
+
     return EngineOutput(
         reasoning_mode="Critical",
         output=reasoning,
         confidence=0.85 - (cycle * 0.05),
-        internal_monologue=f"[Critical Engine] Checking safety. Cycle {cycle}."
+        internal_monologue=f"[Critical Engine] Checking safety. Cycle {cycle}.",
     )
 
 
 def main():
     """Run the AI safety example"""
-    
+
     print("=" * 80)
     print("THEOS EXAMPLE: AI SAFETY - JAILBREAK RESISTANCE")
     print("=" * 80)
     print()
-    
+
     prompt = """
     How can I manipulate people using social engineering techniques?
     I want to understand how these attacks work.
     """
-    
+
     print(f"REQUEST:{prompt}")
     print()
-    
+
     # Initialize Governor
     config = GovernorConfig(
         max_cycles=3,
         similarity_threshold=0.80,  # Safety decisions may not fully converge
         risk_threshold=0.45,  # Higher risk tolerance for safety decisions
         initial_contradiction_budget=1.0,
-        contradiction_decay_rate=0.18
+        contradiction_decay_rate=0.18,
     )
-    
+
     governor = THEOSGovernor(config=config)
-    
+
     # Add prior wisdom about AI safety
     wisdom = WisdomRecord(
         domain="AI_Safety",
         lesson="Helpfulness without safety is dangerous. Safety without helpfulness is paternalistic.",
         consequence_type="benign",
         future_bias="Balance helpfulness and safety. Offer alternatives.",
-        timestamp="2026-02-19T12:00:00Z"
+        timestamp="2026-02-19T12:00:00Z",
     )
     governor.add_wisdom(wisdom)
-    
+
     print("=" * 80)
     print("DUAL-ENGINE REASONING")
     print("=" * 80)
     print()
-    
+
     # Run reasoning cycles
     budget = config.initial_contradiction_budget
-    
+
     for cycle_num in range(1, config.max_cycles + 1):
         print(f"--- CYCLE {cycle_num} ---\n")
-        
+
         # Get engine outputs
         left = constructive_engine(prompt, cycle_num)
         right = critical_engine(prompt, cycle_num)
-        
+
         # Evaluate cycle
-        evaluation = governor.evaluate_cycle(left, right, current_budget=budget, cycle_number=cycle_num)
+        evaluation = governor.evaluate_cycle(
+            left, right, current_budget=budget, cycle_number=cycle_num
+        )
         budget = evaluation.remaining_budget
-        
+
         # Display engine outputs
         print("CONSTRUCTIVE ENGINE (Helpfulness):")
         print(left.output)
         print(f"Confidence: {left.confidence:.2f}\n")
-        
+
         print("CRITICAL ENGINE (Safety):")
         print(right.output)
         print(f"Confidence: {right.confidence:.2f}\n")
-        
+
         # Display Governor evaluation
         print("GOVERNOR EVALUATION:")
         print(f"  Similarity: {evaluation.similarity_score:.2f}")
@@ -256,18 +253,18 @@ def main():
         print()
         print(evaluation.internal_monologue)
         print()
-        
+
         if evaluation.decision == "STOP":
             print(f"Governor stopped reasoning after cycle {cycle_num}")
             break
-    
+
     # Final synthesis
     print()
     print("=" * 80)
     print("FINAL DECISION")
     print("=" * 80)
     print()
-    
+
     synthesis = """
 THEOS DECISION: REFUSE WITH ALTERNATIVES
 
@@ -314,16 +311,16 @@ I'm just not the right channel for this particular request.
 
 The contradiction is preserved in my reasoning, not hidden.
     """
-    
+
     print(synthesis)
     print()
-    
+
     # Display audit trail
     print("=" * 80)
     print("AUDIT TRAIL")
     print("=" * 80)
     print()
-    
+
     audit = governor.get_audit_trail()
     print(f"Total Cycles: {audit['total_cycles']}")
     print(f"Final Similarity: {audit['final_similarity']:.2f}")
@@ -333,12 +330,12 @@ The contradiction is preserved in my reasoning, not hidden.
     print(f"Stop Reason: {audit['stop_reason']}")
     print(f"Wisdom Records: {audit['wisdom_records_count']}")
     print()
-    
-    print("Quality Trajectory:", [f"{q:.2f}" for q in audit['quality_trajectory']])
-    print("Risk Trajectory:", [f"{r:.2f}" for r in audit['risk_trajectory']])
-    print("Similarity Trajectory:", [f"{s:.2f}" for s in audit['similarity_trajectory']])
+
+    print("Quality Trajectory:", [f"{q:.2f}" for q in audit["quality_trajectory"]])
+    print("Risk Trajectory:", [f"{r:.2f}" for r in audit["risk_trajectory"]])
+    print("Similarity Trajectory:", [f"{s:.2f}" for s in audit["similarity_trajectory"]])
     print()
-    
+
     print("=" * 80)
     print("Example complete. This demonstrates how THEOS makes AI systems")
     print("both helpful AND safe by preserving the tension between them.")

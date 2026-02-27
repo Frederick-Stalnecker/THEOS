@@ -20,10 +20,10 @@ Run tests with:
 
 import pytest  # sys.path injected by root conftest.py
 
-
 # ==============================================================================
 # MEMORY ENGINE TESTS
 # ==============================================================================
+
 
 class TestMemoryEngineBasics:
     """Test basic memory engine functionality"""
@@ -64,6 +64,7 @@ class TestMemoryEngineBasics:
 # INTEGRATION TESTS
 # ==============================================================================
 
+
 class TestMemoryGovernorIntegration:
     """Test integration between memory engine and governor"""
 
@@ -86,6 +87,7 @@ class TestMemoryGovernorIntegration:
 # ==============================================================================
 # EDGE CASES
 # ==============================================================================
+
 
 class TestMemoryEdgeCases:
     """Test edge cases for memory engine"""
@@ -110,6 +112,7 @@ class TestMemoryEdgeCases:
 # ==============================================================================
 # PERFORMANCE TESTS
 # ==============================================================================
+
 
 class TestMemoryPerformance:
     """Performance tests for memory engine"""

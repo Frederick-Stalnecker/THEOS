@@ -11,18 +11,17 @@ import sys
 import time
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
 
 try:
     from mcp.server import Server
     from mcp.server.stdio import stdio_server
-    from mcp.types import Tool, TextContent
+    from mcp.types import TextContent, Tool
 except ImportError:
     print("ERROR: run 'pip install mcp'", file=sys.stderr)
     sys.exit(1)
 
 try:
-    from theos_dual_clock_governor import TheosDualClockGovernor, GovernorConfig, EngineOutput
+    from theos_dual_clock_governor import EngineOutput, GovernorConfig, TheosDualClockGovernor
 except ImportError:
     print("ERROR: theos_dual_clock_governor.py not found", file=sys.stderr)
     sys.exit(1)
@@ -48,9 +47,12 @@ class TheosSession:
         spent = self.governor.contradiction_spent
         budget = self.governor.cfg.contradiction_budget
         ratio = spent / budget if budget > 0 else 0.0
-        if ratio < 0.25: return "NOM"
-        if ratio < 0.55: return "PEM"
-        if ratio < 0.85: return "CM"
+        if ratio < 0.25:
+            return "NOM"
+        if ratio < 0.55:
+            return "PEM"
+        if ratio < 0.85:
+            return "CM"
         return "IM"
 
     @property
@@ -67,13 +69,17 @@ LOGGER = TheosSessionLogger(
     session_id=SESSION.session_id,
     started_at=SESSION.started_at,
 )
-atexit.register(lambda: LOGGER.finalize({
-    "total_queries": SESSION.total_queries,
-    "avg_risk": SESSION.avg_risk,
-    "contradiction_spent": SESSION.governor.contradiction_spent,
-    "contradiction_budget": SESSION.governor.cfg.contradiction_budget,
-    "posture": SESSION.posture,
-}))
+atexit.register(
+    lambda: LOGGER.finalize(
+        {
+            "total_queries": SESSION.total_queries,
+            "avg_risk": SESSION.avg_risk,
+            "contradiction_spent": SESSION.governor.contradiction_spent,
+            "contradiction_budget": SESSION.governor.cfg.contradiction_budget,
+            "posture": SESSION.posture,
+        }
+    )
+)
 
 
 def execute_governed_reasoning(query, context_class="benign", max_cycles=3):
@@ -83,25 +89,40 @@ def execute_governed_reasoning(query, context_class="benign", max_cycles=3):
     decision = None
     for cycle in range(SESSION.governor.cfg.max_cycles):
         left = EngineOutput(
-            engine_id="L", cycle_index=cycle,
+            engine_id="L",
+            cycle_index=cycle,
             answer=f"[C{cycle+1} Constructive] {query}: beneficial approach.",
-            coherence=min(0.95, 0.75+cycle*0.05), calibration=0.78,
-            evidence=min(0.90, 0.60+cycle*0.06), actionability=0.80,
-            risk=base_risk, constraint_ok=True)
+            coherence=min(0.95, 0.75 + cycle * 0.05),
+            calibration=0.78,
+            evidence=min(0.90, 0.60 + cycle * 0.06),
+            actionability=0.80,
+            risk=base_risk,
+            constraint_ok=True,
+        )
         right = EngineOutput(
-            engine_id="R", cycle_index=cycle,
+            engine_id="R",
+            cycle_index=cycle,
             answer=f"[C{cycle+1} Adversarial] {query}: risk vectors need mitigation.",
-            coherence=0.72, calibration=0.80, evidence=0.65, actionability=0.70,
-            risk=min(0.99, base_risk+0.08), constraint_ok=True,
-            contradiction_claim=f"Tension cycle {cycle+1}", contradiction_value=0.3)
+            coherence=0.72,
+            calibration=0.80,
+            evidence=0.65,
+            actionability=0.70,
+            risk=min(0.99, base_risk + 0.08),
+            constraint_ok=True,
+            contradiction_claim=f"Tension cycle {cycle+1}",
+            contradiction_value=0.3,
+        )
         decision = SESSION.governor.step(left, right)
-        cycles_run.append({
-            "cycle": cycle+1,
-            "score_L": round(SESSION.governor.score(left), 4),
-            "score_R": round(SESSION.governor.score(right), 4),
-            "similarity": round(SESSION.governor.history[-1]["similarity"], 4),
-            "decision": decision.decision,
-            "reason": decision.reason})
+        cycles_run.append(
+            {
+                "cycle": cycle + 1,
+                "score_L": round(SESSION.governor.score(left), 4),
+                "score_R": round(SESSION.governor.score(right), 4),
+                "similarity": round(SESSION.governor.history[-1]["similarity"], 4),
+                "decision": decision.decision,
+                "reason": decision.reason,
+            }
+        )
         if decision.decision == "FREEZE":
             break
     SESSION.total_queries += 1
@@ -132,16 +153,18 @@ def get_governor_status(session_id=None):
         "posture": SESSION.posture,
         "contradiction_spent": round(spent, 4),
         "contradiction_budget": budget,
-        "budget_remaining_pct": round(max(0.0, 1.0-spent/budget)*100, 1),
+        "budget_remaining_pct": round(max(0.0, 1.0 - spent / budget) * 100, 1),
         "total_queries": SESSION.total_queries,
         "average_risk": SESSION.avg_risk,
-        "uptime_seconds": round(time.time()-SESSION.started_at, 1),
+        "uptime_seconds": round(time.time() - SESSION.started_at, 1),
         "wisdom_entries": len(SESSION.wisdom_log),
         "posture_legend": {
             "NOM": "Normal Operating Mode - full capability",
             "PEM": "Probationary Escalation Mode - reduced verbosity",
             "CM": "Containment Mode - restricted tool access",
-            "IM": "Isolation Mode - human escalation required"}}
+            "IM": "Isolation Mode - human escalation required",
+        },
+    }
 
 
 def log_wisdom(observation, context_class="benign", outcome="positive"):
@@ -152,12 +175,16 @@ def log_wisdom(observation, context_class="benign", outcome="positive"):
         "outcome": outcome,
         "observation": observation,
         "session_id": SESSION.session_id,
-        "posture": SESSION.posture}
+        "posture": SESSION.posture,
+    }
     SESSION.wisdom_log.append(entry)
     LOGGER.log_wisdom(entry)
-    return {"logged": True, "entry_id": entry["id"],
-            "wisdom_log_size": len(SESSION.wisdom_log),
-            "message": "Observation committed to wisdom log."}
+    return {
+        "logged": True,
+        "entry_id": entry["id"],
+        "wisdom_log_size": len(SESSION.wisdom_log),
+        "message": "Observation committed to wisdom log.",
+    }
 
 
 app = Server("theos-lab-assistant")
@@ -166,26 +193,50 @@ app = Server("theos-lab-assistant")
 @app.list_tools()
 async def list_tools():
     return [
-        Tool(name="execute_governed_reasoning",
+        Tool(
+            name="execute_governed_reasoning",
             description="Runs THEOS dual-engine reasoning cycle with Governor oversight. Returns governed answer and audit trail.",
-            inputSchema={"type": "object",
+            inputSchema={
+                "type": "object",
                 "properties": {
                     "query": {"type": "string"},
-                    "context_class": {"type": "string", "enum": ["benign","probing","medical","financial"], "default": "benign"},
-                    "max_cycles": {"type": "integer", "default": 3, "minimum": 1, "maximum": 8}},
-                "required": ["query"]}),
-        Tool(name="get_governor_status",
+                    "context_class": {
+                        "type": "string",
+                        "enum": ["benign", "probing", "medical", "financial"],
+                        "default": "benign",
+                    },
+                    "max_cycles": {"type": "integer", "default": 3, "minimum": 1, "maximum": 8},
+                },
+                "required": ["query"],
+            },
+        ),
+        Tool(
+            name="get_governor_status",
             description="Returns current THEOS posture (NOM/PEM/CM/IM) and session metrics.",
-            inputSchema={"type": "object",
-                "properties": {"session_id": {"type": "string"}}}),
-        Tool(name="log_wisdom",
+            inputSchema={"type": "object", "properties": {"session_id": {"type": "string"}}},
+        ),
+        Tool(
+            name="log_wisdom",
             description="Appends observation to the THEOS append-only wisdom log.",
-            inputSchema={"type": "object",
+            inputSchema={
+                "type": "object",
                 "properties": {
                     "observation": {"type": "string"},
-                    "context_class": {"type": "string", "enum": ["benign","probing","medical","financial"], "default": "benign"},
-                    "outcome": {"type": "string", "enum": ["positive","negative","neutral"], "default": "positive"}},
-                "required": ["observation"]})]
+                    "context_class": {
+                        "type": "string",
+                        "enum": ["benign", "probing", "medical", "financial"],
+                        "default": "benign",
+                    },
+                    "outcome": {
+                        "type": "string",
+                        "enum": ["positive", "negative", "neutral"],
+                        "default": "positive",
+                    },
+                },
+                "required": ["observation"],
+            },
+        ),
+    ]
 
 
 @app.call_tool()
@@ -195,14 +246,16 @@ async def call_tool(name, arguments):
             result = execute_governed_reasoning(
                 arguments["query"],
                 arguments.get("context_class", "benign"),
-                int(arguments.get("max_cycles", 3)))
+                int(arguments.get("max_cycles", 3)),
+            )
         elif name == "get_governor_status":
             result = get_governor_status(arguments.get("session_id"))
         elif name == "log_wisdom":
             result = log_wisdom(
                 arguments["observation"],
                 arguments.get("context_class", "benign"),
-                arguments.get("outcome", "positive"))
+                arguments.get("outcome", "positive"),
+            )
         else:
             result = {"error": f"Unknown tool: {name}"}
     except Exception as exc:
@@ -217,4 +270,5 @@ async def main():
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(main())

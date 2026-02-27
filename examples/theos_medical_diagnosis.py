@@ -17,18 +17,20 @@ This example shows how THEOS can improve diagnostic accuracy by:
 Author: Frederick Davis Stalnecker
 """
 
-import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'code'))
+import sys
 
-from theos_system import create_numeric_system, TheosConfig
-from typing import Dict, List, Any
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "code"))
+
 import json
+from typing import Any
+
+from theos_system import TheosConfig, create_numeric_system
 
 
 class MedicalDiagnosisEngine:
     """THEOS-based medical diagnosis system."""
-    
+
     def __init__(self):
         """Initialize with medical knowledge base."""
         # Symptom to condition mappings
@@ -39,7 +41,7 @@ class MedicalDiagnosisEngine:
             "headache": ["migraine", "tension", "meningitis", "stroke"],
             "fatigue": ["anemia", "depression", "thyroid", "infection"],
         }
-        
+
         # Risk factors
         self.risk_factors = {
             "age_over_60": 0.3,
@@ -48,14 +50,14 @@ class MedicalDiagnosisEngine:
             "hypertension": 0.3,
             "family_history": 0.25,
         }
-        
+
         # Contraindications (conditions that rule out diagnoses)
         self.contraindications = {
             "MI": {"EKG": "normal", "troponin": "normal"},
             "PE": {"D_dimer": "normal", "CXR": "normal"},
             "meningitis": {"CSF": "normal", "head_CT": "normal"},
         }
-        
+
         # Initialize THEOS system
         config = TheosConfig(
             max_cycles=5,
@@ -63,30 +65,30 @@ class MedicalDiagnosisEngine:
             verbose=False,
         )
         self.theos = create_numeric_system(config)
-    
+
     def diagnose(
         self,
-        symptoms: List[str],
-        risk_factors: List[str],
-        test_results: Dict[str, str],
-    ) -> Dict[str, Any]:
+        symptoms: list[str],
+        risk_factors: list[str],
+        test_results: dict[str, str],
+    ) -> dict[str, Any]:
         """
         Run THEOS reasoning for medical diagnosis.
-        
+
         Args:
             symptoms: List of reported symptoms
             risk_factors: List of patient risk factors
             test_results: Dict of test results
-            
+
         Returns:
             Diagnosis result with confidence and reasoning
         """
         # Build query
         query = self._build_query(symptoms, risk_factors, test_results)
-        
+
         # Run THEOS reasoning
         result = self.theos.reason(query)
-        
+
         # Interpret result
         diagnosis = self._interpret_result(
             result,
@@ -94,14 +96,14 @@ class MedicalDiagnosisEngine:
             risk_factors,
             test_results,
         )
-        
+
         return diagnosis
-    
+
     def _build_query(
         self,
-        symptoms: List[str],
-        risk_factors: List[str],
-        test_results: Dict[str, str],
+        symptoms: list[str],
+        risk_factors: list[str],
+        test_results: dict[str, str],
     ) -> str:
         """Build query string for THEOS."""
         query_parts = [
@@ -110,28 +112,28 @@ class MedicalDiagnosisEngine:
             f"Test results: {', '.join(f'{k}={v}' for k, v in test_results.items())}",
         ]
         return " | ".join(query_parts)
-    
+
     def _interpret_result(
         self,
         result,
-        symptoms: List[str],
-        risk_factors: List[str],
-        test_results: Dict[str, str],
-    ) -> Dict[str, Any]:
+        symptoms: list[str],
+        risk_factors: list[str],
+        test_results: dict[str, str],
+    ) -> dict[str, Any]:
         """Interpret THEOS result as medical diagnosis."""
         # Generate differential diagnosis
         differential = []
         for symptom in symptoms:
             if symptom in self.symptom_conditions:
                 differential.extend(self.symptom_conditions[symptom])
-        
+
         # Remove duplicates and sort by frequency
         differential = list(set(differential))
         differential.sort(key=lambda x: differential.count(x), reverse=True)
-        
+
         # Calculate confidence based on THEOS result
         base_confidence = result.confidence
-        
+
         # Adjust for test results
         test_confidence = 1.0
         for condition in differential[:3]:  # Top 3 diagnoses
@@ -139,9 +141,9 @@ class MedicalDiagnosisEngine:
                 for test, contraindication in self.contraindications[condition].items():
                     if test in test_results and test_results[test] == contraindication:
                         test_confidence *= 0.5  # Reduce confidence if contraindicated
-        
+
         final_confidence = base_confidence * test_confidence
-        
+
         return {
             "differential_diagnosis": differential[:5],
             "primary_diagnosis": differential[0] if differential else "Unknown",
@@ -150,9 +152,11 @@ class MedicalDiagnosisEngine:
             "cycles_used": result.cycles_used,
             "halt_reason": result.halt_reason.value,
             "wisdom_entries": len(self.theos.core.wisdom),
-            "recommendation": self._get_recommendation(final_confidence, differential[0] if differential else "Unknown"),
+            "recommendation": self._get_recommendation(
+                final_confidence, differential[0] if differential else "Unknown"
+            ),
         }
-    
+
     def _get_recommendation(self, confidence: float, diagnosis: str) -> str:
         """Get clinical recommendation based on confidence."""
         if confidence > 0.8:
@@ -168,11 +172,11 @@ class MedicalDiagnosisEngine:
 def run_medical_examples():
     """Run medical diagnosis examples."""
     engine = MedicalDiagnosisEngine()
-    
+
     print("\n" + "=" * 70)
     print("THEOS Medical Diagnosis System - Examples")
     print("=" * 70)
-    
+
     # Example 1: Acute Coronary Syndrome
     print("\n--- Example 1: Acute Coronary Syndrome ---")
     result1 = engine.diagnose(
@@ -185,7 +189,7 @@ def run_medical_examples():
         },
     )
     print(json.dumps(result1, indent=2))
-    
+
     # Example 2: Pulmonary Embolism
     print("\n--- Example 2: Pulmonary Embolism ---")
     result2 = engine.diagnose(
@@ -198,7 +202,7 @@ def run_medical_examples():
         },
     )
     print(json.dumps(result2, indent=2))
-    
+
     # Example 3: Infection/Fever
     print("\n--- Example 3: Systemic Infection ---")
     result3 = engine.diagnose(
@@ -211,7 +215,7 @@ def run_medical_examples():
         },
     )
     print(json.dumps(result3, indent=2))
-    
+
     # Show system metrics
     print("\n" + "=" * 70)
     engine.theos.print_metrics()

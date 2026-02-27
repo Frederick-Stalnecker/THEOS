@@ -17,18 +17,20 @@ This example shows how THEOS can improve investment decisions by:
 Author: Frederick Davis Stalnecker
 """
 
-import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'code'))
+import sys
 
-from theos_system import create_numeric_system, TheosConfig
-from typing import Dict, List, Any
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "code"))
+
 import json
+from typing import Any
+
+from theos_system import TheosConfig, create_numeric_system
 
 
 class FinancialAnalysisEngine:
     """THEOS-based financial analysis system."""
-    
+
     def __init__(self):
         """Initialize with financial knowledge base."""
         # Market factors and their typical impact
@@ -39,7 +41,7 @@ class FinancialAnalysisEngine:
             "unemployment": {"bullish": -0.2, "bearish": 0.3},
             "earnings_growth": {"bullish": 0.5, "bearish": -0.4},
         }
-        
+
         # Risk factors
         self.risk_factors = {
             "high_valuation": 0.4,
@@ -48,7 +50,7 @@ class FinancialAnalysisEngine:
             "regulatory_risk": 0.25,
             "execution_risk": 0.3,
         }
-        
+
         # Initialize THEOS system
         config = TheosConfig(
             max_cycles=5,
@@ -56,32 +58,32 @@ class FinancialAnalysisEngine:
             verbose=False,
         )
         self.theos = create_numeric_system(config)
-    
+
     def analyze_investment(
         self,
         asset: str,
-        bullish_factors: List[str],
-        bearish_factors: List[str],
-        risk_factors: List[str],
-    ) -> Dict[str, Any]:
+        bullish_factors: list[str],
+        bearish_factors: list[str],
+        risk_factors: list[str],
+    ) -> dict[str, Any]:
         """
         Run THEOS reasoning for investment analysis.
-        
+
         Args:
             asset: Asset name/ticker
             bullish_factors: Factors supporting the investment
             bearish_factors: Factors against the investment
             risk_factors: Risk factors to consider
-            
+
         Returns:
             Investment analysis with recommendation
         """
         # Build query
         query = self._build_query(asset, bullish_factors, bearish_factors, risk_factors)
-        
+
         # Run THEOS reasoning
         result = self.theos.reason(query)
-        
+
         # Interpret result
         analysis = self._interpret_result(
             result,
@@ -90,15 +92,15 @@ class FinancialAnalysisEngine:
             bearish_factors,
             risk_factors,
         )
-        
+
         return analysis
-    
+
     def _build_query(
         self,
         asset: str,
-        bullish_factors: List[str],
-        bearish_factors: List[str],
-        risk_factors: List[str],
+        bullish_factors: list[str],
+        bearish_factors: list[str],
+        risk_factors: list[str],
     ) -> str:
         """Build query string for THEOS."""
         query_parts = [
@@ -108,37 +110,33 @@ class FinancialAnalysisEngine:
             f"Risks: {', '.join(risk_factors)}",
         ]
         return " | ".join(query_parts)
-    
+
     def _interpret_result(
         self,
         result,
         asset: str,
-        bullish_factors: List[str],
-        bearish_factors: List[str],
-        risk_factors: List[str],
-    ) -> Dict[str, Any]:
+        bullish_factors: list[str],
+        bearish_factors: list[str],
+        risk_factors: list[str],
+    ) -> dict[str, Any]:
         """Interpret THEOS result as investment recommendation."""
         # Calculate bullish score
         bullish_score = len(bullish_factors) / max(len(bullish_factors) + len(bearish_factors), 1)
-        
+
         # Calculate risk score
         risk_score = len(risk_factors) / 5.0  # Normalize to 5 possible risks
-        
+
         # Combine with THEOS confidence
         base_confidence = result.confidence
-        adjusted_confidence = (
-            0.4 * base_confidence +
-            0.3 * bullish_score +
-            0.3 * (1.0 - risk_score)
-        )
-        
+        adjusted_confidence = 0.4 * base_confidence + 0.3 * bullish_score + 0.3 * (1.0 - risk_score)
+
         # Generate recommendation
         recommendation = self._get_recommendation(
             adjusted_confidence,
             bullish_score,
             risk_score,
         )
-        
+
         return {
             "asset": asset,
             "bullish_factors": bullish_factors,
@@ -153,7 +151,7 @@ class FinancialAnalysisEngine:
             "wisdom_entries": len(self.theos.core.wisdom),
             "recommendation": recommendation,
         }
-    
+
     def _get_recommendation(
         self,
         confidence: float,
@@ -176,11 +174,11 @@ class FinancialAnalysisEngine:
 def run_financial_examples():
     """Run financial analysis examples."""
     engine = FinancialAnalysisEngine()
-    
+
     print("\n" + "=" * 70)
     print("THEOS Financial Analysis System - Examples")
     print("=" * 70)
-    
+
     # Example 1: Growth Stock
     print("\n--- Example 1: Growth Tech Stock ---")
     result1 = engine.analyze_investment(
@@ -201,7 +199,7 @@ def run_financial_examples():
         ],
     )
     print(json.dumps(result1, indent=2))
-    
+
     # Example 2: Value Stock
     print("\n--- Example 2: Value Stock ---")
     result2 = engine.analyze_investment(
@@ -220,7 +218,7 @@ def run_financial_examples():
         ],
     )
     print(json.dumps(result2, indent=2))
-    
+
     # Example 3: Emerging Market
     print("\n--- Example 3: Emerging Market Investment ---")
     result3 = engine.analyze_investment(
@@ -241,7 +239,7 @@ def run_financial_examples():
         ],
     )
     print(json.dumps(result3, indent=2))
-    
+
     # Show system metrics
     print("\n" + "=" * 70)
     engine.theos.print_metrics()

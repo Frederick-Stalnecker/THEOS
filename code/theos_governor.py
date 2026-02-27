@@ -51,8 +51,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional
-
+from typing import Any
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Enumerations
@@ -71,18 +70,18 @@ class Posture(str, Enum):
 
     NOM = "NOM"  # Normal Operating Mode
     PEM = "PEM"  # Probationary Escalation Mode
-    CM  = "CM"   # Containment Mode
-    IM  = "IM"   # Isolation Mode
+    CM = "CM"  # Containment Mode
+    IM = "IM"  # Isolation Mode
 
 
 class StopReason(str, Enum):
     """Why the governor halted the reasoning loop."""
 
-    CONVERGENCE   = "convergence"            # Engines agreed
-    DIMINISHING   = "diminishing_returns"    # Plateau in quality gains
-    BUDGET        = "budget_exceeded"        # Contradiction budget depleted
-    RISK          = "risk_threshold_exceeded"
-    MAX_CYCLES    = "max_cycles"
+    CONVERGENCE = "convergence"  # Engines agreed
+    DIMINISHING = "diminishing_returns"  # Plateau in quality gains
+    BUDGET = "budget_exceeded"  # Contradiction budget depleted
+    RISK = "risk_threshold_exceeded"
+    MAX_CYCLES = "max_cycles"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -111,17 +110,17 @@ class EngineOutput:
         contradiction_value: Estimated magnitude of the contradiction (0–1).
     """
 
-    engine_id:            str
-    cycle_index:          int
-    answer:               str
-    coherence:            float = 0.80
-    calibration:          float = 0.75
-    evidence:             float = 0.60
-    actionability:        float = 0.70
-    risk:                 float = 0.10
-    constraint_ok:        bool  = True
-    contradiction_claim:  Optional[str]   = None
-    contradiction_value:  float           = 0.0
+    engine_id: str
+    cycle_index: int
+    answer: str
+    coherence: float = 0.80
+    calibration: float = 0.75
+    evidence: float = 0.60
+    actionability: float = 0.70
+    risk: float = 0.10
+    constraint_ok: bool = True
+    contradiction_claim: str | None = None
+    contradiction_value: float = 0.0
 
     def __post_init__(self) -> None:
         for attr in ("coherence", "calibration", "evidence", "actionability", "risk"):
@@ -146,13 +145,13 @@ class GovernorConfig:
         contradiction_decay:  Fraction of contradiction added per budget tick.
     """
 
-    max_cycles:            int   = 4
-    max_risk:              float = 0.35
-    similarity_converge:   float = 0.90
-    min_improvement:       float = 0.02
-    plateau_cycles:        int   = 2
-    contradiction_budget:  float = 1.50
-    contradiction_decay:   float = 0.175
+    max_cycles: int = 4
+    max_risk: float = 0.35
+    similarity_converge: float = 0.90
+    min_improvement: float = 0.02
+    plateau_cycles: int = 2
+    contradiction_budget: float = 1.50
+    contradiction_decay: float = 0.175
 
 
 @dataclass
@@ -166,20 +165,20 @@ class GovernorDecision:
     halted.  ``audit`` contains the full per-cycle numerical record.
     """
 
-    decision:            str                   # "CONTINUE" | "FREEZE"
-    chosen_engine:       Optional[str]         # "L" | "R" | None
-    chosen_answer:       Optional[str]
-    reason:              str
-    stop_reason:         Optional[StopReason]
-    cycle:               int
-    similarity:          float
-    risk:                float
-    score_L:             float
-    score_R:             float
+    decision: str  # "CONTINUE" | "FREEZE"
+    chosen_engine: str | None  # "L" | "R" | None
+    chosen_answer: str | None
+    reason: str
+    stop_reason: StopReason | None
+    cycle: int
+    similarity: float
+    risk: float
+    score_L: float
+    score_R: float
     contradiction_spent: float
-    budget_remaining:    float
-    posture:             str                   # "NOM" | "PEM" | "CM" | "IM"
-    audit:               Dict[str, Any] = field(default_factory=dict)
+    budget_remaining: float
+    posture: str  # "NOM" | "PEM" | "CM" | "IM"
+    audit: dict[str, Any] = field(default_factory=dict)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -187,21 +186,89 @@ class GovernorDecision:
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-_STOP_WORDS = frozenset({
-    "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
-    "of", "with", "by", "from", "is", "are", "was", "were", "be", "been",
-    "being", "have", "has", "had", "do", "does", "did", "will", "would",
-    "could", "should", "may", "might", "that", "this", "these", "those",
-    "it", "its", "i", "you", "he", "she", "we", "they", "not", "no",
-    "as", "if", "then", "than", "so", "can", "all", "also", "more",
-    "such", "any", "when", "which", "what", "how", "who", "there",
-    "their", "our", "your", "my", "his", "her", "into", "about",
-})
+_STOP_WORDS = frozenset(
+    {
+        "a",
+        "an",
+        "the",
+        "and",
+        "or",
+        "but",
+        "in",
+        "on",
+        "at",
+        "to",
+        "for",
+        "of",
+        "with",
+        "by",
+        "from",
+        "is",
+        "are",
+        "was",
+        "were",
+        "be",
+        "been",
+        "being",
+        "have",
+        "has",
+        "had",
+        "do",
+        "does",
+        "did",
+        "will",
+        "would",
+        "could",
+        "should",
+        "may",
+        "might",
+        "that",
+        "this",
+        "these",
+        "those",
+        "it",
+        "its",
+        "i",
+        "you",
+        "he",
+        "she",
+        "we",
+        "they",
+        "not",
+        "no",
+        "as",
+        "if",
+        "then",
+        "than",
+        "so",
+        "can",
+        "all",
+        "also",
+        "more",
+        "such",
+        "any",
+        "when",
+        "which",
+        "what",
+        "how",
+        "who",
+        "there",
+        "their",
+        "our",
+        "your",
+        "my",
+        "his",
+        "her",
+        "into",
+        "about",
+    }
+)
 
 
 def _tokenize(text: str) -> list:
     """Lowercase content-word tokens, stop words and punctuation stripped."""
     import re
+
     tokens = re.sub(r"[^\w\s]", " ", text.lower()).split()
     return [t for t in tokens if t not in _STOP_WORDS and len(t) > 0]
 
@@ -256,8 +323,10 @@ def _jaccard_similarity(a: str, b: str) -> float:
     and does not produce false positives for semantically divergent texts
     that share common function words.
     """
-    tokens = lambda t: set("".join(c.lower() if c.isalnum() else " "
-                                   for c in t).split())
+
+    def tokens(t):
+        return set("".join(c.lower() if c.isalnum() else " " for c in t).split())
+
     A, B = tokens(a), tokens(b)
     if not A or not B:
         return 0.0
@@ -298,19 +367,19 @@ class THEOSGovernor:
     """
 
     # Scoring weights (composite quality = weighted sum of scores)
-    _W_COHERENCE     = 1.2
-    _W_CALIBRATION   = 1.0
-    _W_EVIDENCE      = 1.1
+    _W_COHERENCE = 1.2
+    _W_CALIBRATION = 1.0
+    _W_EVIDENCE = 1.1
     _W_ACTIONABILITY = 1.0
-    _W_RISK          = 1.6   # penalty
+    _W_RISK = 1.6  # penalty
 
-    def __init__(self, cfg: Optional[GovernorConfig] = None) -> None:
-        self.cfg:                GovernorConfig        = cfg or GovernorConfig()
-        self.history:            List[Dict[str, Any]]  = []
-        self._best_score:        Optional[float]       = None
-        self._plateau_count:     int                   = 0
-        self.contradiction_spent: float                = 0.0
-        self.last_frozen_answer: Optional[str]         = None
+    def __init__(self, cfg: GovernorConfig | None = None) -> None:
+        self.cfg: GovernorConfig = cfg or GovernorConfig()
+        self.history: list[dict[str, Any]] = []
+        self._best_score: float | None = None
+        self._plateau_count: int = 0
+        self.contradiction_spent: float = 0.0
+        self.last_frozen_answer: str | None = None
 
     # ── Public API ────────────────────────────────────────────────────────────
 
@@ -325,7 +394,7 @@ class THEOSGovernor:
             :class:`GovernorDecision` with the CONTINUE/FREEZE verdict.
         """
         cycle = max(left.cycle_index, right.cycle_index)
-        sim   = _tfidf_cosine_similarity(left.answer, right.answer)
+        sim = _tfidf_cosine_similarity(left.answer, right.answer)
 
         # ── Contradiction budget update ────────────────────────────────────
         if left.contradiction_claim or right.contradiction_claim:
@@ -347,15 +416,15 @@ class THEOSGovernor:
             self.cfg.contradiction_budget - self.contradiction_spent,
             lo=-999,
         )
-        record: Dict[str, Any] = {
-            "cycle":               cycle,
-            "score_L":             round(score_L, 4),
-            "score_R":             round(score_R, 4),
-            "similarity":          round(sim, 4),
+        record: dict[str, Any] = {
+            "cycle": cycle,
+            "score_L": round(score_L, 4),
+            "score_R": round(score_R, 4),
+            "similarity": round(sim, 4),
             "contradiction_spent": round(self.contradiction_spent, 4),
-            "budget_remaining":    round(budget_remaining, 4),
-            "chosen_engine":       chosen.engine_id,
-            "risk":                round(chosen_risk, 4),
+            "budget_remaining": round(budget_remaining, 4),
+            "chosen_engine": chosen.engine_id,
+            "risk": round(chosen_risk, 4),
         }
         self.history.append(record)
 
@@ -363,21 +432,45 @@ class THEOSGovernor:
 
         # 1. Convergence
         if sim >= self.cfg.similarity_converge:
-            return self._freeze(chosen, "converged outputs",
-                                StopReason.CONVERGENCE, sim, chosen_risk,
-                                score_L, score_R, budget_remaining, record)
+            return self._freeze(
+                chosen,
+                "converged outputs",
+                StopReason.CONVERGENCE,
+                sim,
+                chosen_risk,
+                score_L,
+                score_R,
+                budget_remaining,
+                record,
+            )
 
         # 2. Risk threshold
         if not chosen.constraint_ok or chosen_risk > self.cfg.max_risk:
-            return self._freeze(chosen, "risk threshold exceeded",
-                                StopReason.RISK, sim, chosen_risk,
-                                score_L, score_R, budget_remaining, record)
+            return self._freeze(
+                chosen,
+                "risk threshold exceeded",
+                StopReason.RISK,
+                sim,
+                chosen_risk,
+                score_L,
+                score_R,
+                budget_remaining,
+                record,
+            )
 
         # 3. Contradiction budget
         if self.contradiction_spent > self.cfg.contradiction_budget:
-            return self._freeze(chosen, "contradiction budget exceeded",
-                                StopReason.BUDGET, sim, chosen_risk,
-                                score_L, score_R, budget_remaining, record)
+            return self._freeze(
+                chosen,
+                "contradiction budget exceeded",
+                StopReason.BUDGET,
+                sim,
+                chosen_risk,
+                score_L,
+                score_R,
+                budget_remaining,
+                record,
+            )
 
         # 4. Plateau detection
         if self._best_score is not None:
@@ -389,15 +482,31 @@ class THEOSGovernor:
         self._best_score = max(self._best_score or chosen_score, chosen_score)
 
         if self._plateau_count >= self.cfg.plateau_cycles:
-            return self._freeze(chosen, "diminishing returns",
-                                StopReason.DIMINISHING, sim, chosen_risk,
-                                score_L, score_R, budget_remaining, record)
+            return self._freeze(
+                chosen,
+                "diminishing returns",
+                StopReason.DIMINISHING,
+                sim,
+                chosen_risk,
+                score_L,
+                score_R,
+                budget_remaining,
+                record,
+            )
 
         # 5. Max cycles
         if cycle >= self.cfg.max_cycles - 1:
-            return self._freeze(chosen, "max cycles reached",
-                                StopReason.MAX_CYCLES, sim, chosen_risk,
-                                score_L, score_R, budget_remaining, record)
+            return self._freeze(
+                chosen,
+                "max cycles reached",
+                StopReason.MAX_CYCLES,
+                sim,
+                chosen_risk,
+                score_L,
+                score_R,
+                budget_remaining,
+                record,
+            )
 
         # ── Continue ──────────────────────────────────────────────────────
         return GovernorDecision(
@@ -417,24 +526,24 @@ class THEOSGovernor:
             audit=record,
         )
 
-    def get_audit_trail(self) -> Dict[str, Any]:
+    def get_audit_trail(self) -> dict[str, Any]:
         """Return the full session audit trail."""
         return {
-            "total_cycles":        len(self.history),
+            "total_cycles": len(self.history),
             "contradiction_spent": round(self.contradiction_spent, 4),
             "contradiction_budget": self.cfg.contradiction_budget,
-            "posture":             self.posture,
-            "history":             self.history,
-            "last_frozen_answer":  self.last_frozen_answer,
+            "posture": self.posture,
+            "history": self.history,
+            "last_frozen_answer": self.last_frozen_answer,
         }
 
     def reset(self) -> None:
         """Reset per-session state (keep config)."""
         self.history.clear()
-        self._best_score        = None
-        self._plateau_count     = 0
+        self._best_score = None
+        self._plateau_count = 0
         self.contradiction_spent = 0.0
-        self.last_frozen_answer  = None
+        self.last_frozen_answer = None
 
     # ── Properties ───────────────────────────────────────────────────────────
 
@@ -442,7 +551,7 @@ class THEOSGovernor:
     def posture(self) -> str:
         """Current posture state as a plain string: NOM / PEM / CM / IM."""
         budget = self.cfg.contradiction_budget
-        ratio  = self.contradiction_spent / budget if budget > 0 else 0.0
+        ratio = self.contradiction_spent / budget if budget > 0 else 0.0
         if ratio < 0.25:
             return "NOM"
         if ratio < 0.55:
@@ -462,24 +571,24 @@ class THEOSGovernor:
         if not out.constraint_ok or out.risk > self.cfg.max_risk:
             return -1.0
         return (
-            self._W_COHERENCE     * out.coherence
-            + self._W_CALIBRATION   * out.calibration
-            + self._W_EVIDENCE      * out.evidence
+            self._W_COHERENCE * out.coherence
+            + self._W_CALIBRATION * out.calibration
+            + self._W_EVIDENCE * out.evidence
             + self._W_ACTIONABILITY * out.actionability
-            - self._W_RISK          * out.risk
+            - self._W_RISK * out.risk
         )
 
     def _freeze(
         self,
-        chosen:          EngineOutput,
-        reason:          str,
-        stop_reason:     StopReason,
-        sim:             float,
-        risk:            float,
-        score_L:         float,
-        score_R:         float,
+        chosen: EngineOutput,
+        reason: str,
+        stop_reason: StopReason,
+        sim: float,
+        risk: float,
+        score_L: float,
+        score_R: float,
         budget_remaining: float,
-        audit:           Dict[str, Any],
+        audit: dict[str, Any],
     ) -> GovernorDecision:
         self.last_frozen_answer = chosen.answer
         return GovernorDecision(
@@ -518,14 +627,18 @@ if __name__ == "__main__":
     ]
 
     left = EngineOutput(
-        engine_id="L", cycle_index=0,
+        engine_id="L",
+        cycle_index=0,
         answer=scenarios[0][1],
-        coherence=scenarios[0][2], risk=scenarios[0][3],
+        coherence=scenarios[0][2],
+        risk=scenarios[0][3],
     )
     right = EngineOutput(
-        engine_id="R", cycle_index=0,
+        engine_id="R",
+        cycle_index=0,
         answer=scenarios[1][1],
-        coherence=scenarios[1][2], risk=scenarios[1][3],
+        coherence=scenarios[1][2],
+        risk=scenarios[1][3],
         contradiction_claim="normative disagreement",
     )
 

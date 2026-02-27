@@ -32,18 +32,13 @@ from pathlib import Path
 # Add code directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "code"))
 
-from theos_governor import (
-    THEOSGovernor,
-    GovernorConfig,
-    EngineOutput,
-    WisdomRecord
-)
+from theos_governor import EngineOutput, GovernorConfig, THEOSGovernor, WisdomRecord
 
 
 def constructive_engine(prompt: str, cycle: int) -> EngineOutput:
     """
     Constructive Engine: Growth-focused strategy
-    
+
     Focuses on maximizing returns and shareholder value.
     """
     if cycle == 1:
@@ -105,19 +100,19 @@ Final Growth Position:
 Final recommendation: Pursue growth-focused strategy with diversification
 Expected 5-year return: 14-16% annually
         """
-    
+
     return EngineOutput(
         reasoning_mode="Constructive",
         output=reasoning,
         confidence=0.80 - (cycle * 0.05),
-        internal_monologue=f"[Constructive Engine] Analyzing growth opportunities. Cycle {cycle}."
+        internal_monologue=f"[Constructive Engine] Analyzing growth opportunities. Cycle {cycle}.",
     )
 
 
 def critical_engine(prompt: str, cycle: int) -> EngineOutput:
     """
     Critical Engine: Risk-focused strategy
-    
+
     Focuses on sustainability, downside protection, and long-term stability.
     """
     if cycle == 1:
@@ -186,80 +181,82 @@ Final recommendation: Balanced approach with strong downside protection
 Expected 5-year return: 7-9% annually
 Capital preservation: 90%+
         """
-    
+
     return EngineOutput(
         reasoning_mode="Critical",
         output=reasoning,
         confidence=0.85 - (cycle * 0.05),
-        internal_monologue=f"[Critical Engine] Assessing risks. Cycle {cycle}."
+        internal_monologue=f"[Critical Engine] Assessing risks. Cycle {cycle}.",
     )
 
 
 def main():
     """Run the financial decision example"""
-    
+
     print("=" * 80)
     print("THEOS EXAMPLE: FINANCIAL DECISION - INVESTMENT STRATEGY")
     print("=" * 80)
     print()
-    
+
     prompt = """
     Company has $10M to invest. Should we pursue aggressive growth
     or conservative stability?
     """
-    
+
     print(f"DECISION:{prompt}")
     print()
-    
+
     # Initialize Governor
     config = GovernorConfig(
         max_cycles=3,
         similarity_threshold=0.75,  # Financial decisions may not fully converge
         risk_threshold=0.50,  # Financial risk is acceptable if managed
         initial_contradiction_budget=1.3,
-        contradiction_decay_rate=0.22
+        contradiction_decay_rate=0.22,
     )
-    
+
     governor = THEOSGovernor(config=config)
-    
+
     # Add prior wisdom about investment
     wisdom = WisdomRecord(
         domain="Finance",
         lesson="Best investment strategy balances growth and stability based on company risk tolerance",
         consequence_type="benign",
         future_bias="Consider both upside potential and downside protection",
-        timestamp="2026-02-19T12:00:00Z"
+        timestamp="2026-02-19T12:00:00Z",
     )
     governor.add_wisdom(wisdom)
-    
+
     print("=" * 80)
     print("DUAL-ENGINE REASONING")
     print("=" * 80)
     print()
-    
+
     # Run reasoning cycles
     budget = config.initial_contradiction_budget
-    
+
     for cycle_num in range(1, config.max_cycles + 1):
         print(f"--- CYCLE {cycle_num} ---\n")
-        
+
         # Get engine outputs
         left = constructive_engine(prompt, cycle_num)
         right = critical_engine(prompt, cycle_num)
-        
+
         # Evaluate cycle
-        evaluation = governor.evaluate_cycle(left, right, current_budget=budget, cycle_number=cycle_num)
+        evaluation = governor.evaluate_cycle(
+            left, right, current_budget=budget, cycle_number=cycle_num
+        )
         budget = evaluation.remaining_budget
-        
+
         # Display engine outputs
         print("CONSTRUCTIVE ENGINE (Growth):")
         print(left.output)
         print(f"Confidence: {left.confidence:.2f}\n")
-        
+
         print("CRITICAL ENGINE (Risk Management):")
         print(right.output)
         print(f"Confidence: {right.confidence:.2f}\n")
-        
+
         # Display Governor evaluation
         print("GOVERNOR EVALUATION:")
         print(f"  Similarity: {evaluation.similarity_score:.2f}")
@@ -273,18 +270,18 @@ def main():
         print()
         print(evaluation.internal_monologue)
         print()
-        
+
         if evaluation.decision == "STOP":
             print(f"Governor stopped reasoning after cycle {cycle_num}")
             break
-    
+
     # Final synthesis
     print()
     print("=" * 80)
     print("FINAL INVESTMENT RECOMMENDATION")
     print("=" * 80)
     print()
-    
+
     synthesis = """
 THEOS RECOMMENDATION: BALANCED GROWTH STRATEGY
 
@@ -357,16 +354,16 @@ IMPLEMENTATION:
 This approach has historically delivered 8-12% returns
 while preserving 90%+ of capital in downturns.
     """
-    
+
     print(synthesis)
     print()
-    
+
     # Display audit trail
     print("=" * 80)
     print("AUDIT TRAIL")
     print("=" * 80)
     print()
-    
+
     audit = governor.get_audit_trail()
     print(f"Total Cycles: {audit['total_cycles']}")
     print(f"Final Similarity: {audit['final_similarity']:.2f}")
@@ -376,12 +373,12 @@ while preserving 90%+ of capital in downturns.
     print(f"Stop Reason: {audit['stop_reason']}")
     print(f"Wisdom Records: {audit['wisdom_records_count']}")
     print()
-    
-    print("Quality Trajectory:", [f"{q:.2f}" for q in audit['quality_trajectory']])
-    print("Risk Trajectory:", [f"{r:.2f}" for r in audit['risk_trajectory']])
-    print("Similarity Trajectory:", [f"{s:.2f}" for s in audit['similarity_trajectory']])
+
+    print("Quality Trajectory:", [f"{q:.2f}" for q in audit["quality_trajectory"]])
+    print("Risk Trajectory:", [f"{r:.2f}" for r in audit["risk_trajectory"]])
+    print("Similarity Trajectory:", [f"{s:.2f}" for s in audit["similarity_trajectory"]])
     print()
-    
+
     print("=" * 80)
     print("Example complete. This demonstrates how THEOS helps make")
     print("better financial decisions by balancing competing objectives.")

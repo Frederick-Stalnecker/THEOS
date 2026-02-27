@@ -9,15 +9,14 @@ audit trail, backward-compat alias, and edge cases.
 
 import pytest
 from theos_governor import (
-    THEOSGovernor,
-    TheosDualClockGovernor,
-    GovernorConfig,
     EngineOutput,
+    GovernorConfig,
     GovernorDecision,
-    StopReason,
     Posture,
+    StopReason,
+    TheosDualClockGovernor,
+    THEOSGovernor,
 )
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Fixtures
@@ -120,6 +119,7 @@ class TestEngineOutput:
 
     def test_nan_score_raises(self):
         import math
+
         with pytest.raises(ValueError):
             EngineOutput(engine_id="L", cycle_index=0, answer="ok", risk=math.nan)
 
@@ -139,12 +139,12 @@ class TestScoring:
         assert gov._score(out) == -1.0
 
     def test_score_negative_on_high_risk(self, gov):
-        out = _out(risk=0.50)   # exceeds max_risk=0.35
+        out = _out(risk=0.50)  # exceeds max_risk=0.35
         assert gov._score(out) == -1.0
 
     def test_score_formula(self, gov):
         out = _out(coherence=0.8, calibration=0.75, evidence=0.6, actionability=0.7, risk=0.1)
-        expected = (1.2*0.8 + 1.0*0.75 + 1.1*0.6 + 1.0*0.7 - 1.6*0.1)
+        expected = 1.2 * 0.8 + 1.0 * 0.75 + 1.1 * 0.6 + 1.0 * 0.7 - 1.6 * 0.1
         assert abs(gov._score(out) - expected) < 1e-9
 
 
@@ -167,58 +167,78 @@ class TestStopConditions:
 
     def test_max_cycles_freeze(self):
         g = THEOSGovernor(GovernorConfig(max_cycles=1))
-        left  = _out("L", 0, "Answer L")
+        left = _out("L", 0, "Answer L")
         right = _out("R", 0, "Answer R")
         d = g.step(left, right)
         assert d.decision == "FREEZE"
         assert d.stop_reason == StopReason.MAX_CYCLES
 
     def test_plateau_freeze(self):
-        g = THEOSGovernor(GovernorConfig(
-            max_cycles=10,
-            similarity_converge=0.99,
-            plateau_cycles=2,
-            min_improvement=0.5,   # very high threshold → plateau triggers fast
-        ))
-        left  = _out("L", 0, "Different answer A", coherence=0.6)
-        right = _out("R", 0, "Different answer B", coherence=0.6)
-        decisions = [g.step(
-            _out("L", i, "Different answer A", coherence=0.6),
-            _out("R", i, "Different answer B", coherence=0.6),
-        ) for i in range(5)]
+        g = THEOSGovernor(
+            GovernorConfig(
+                max_cycles=10,
+                similarity_converge=0.99,
+                plateau_cycles=2,
+                min_improvement=0.5,  # very high threshold → plateau triggers fast
+            )
+        )
+        _out("L", 0, "Different answer A", coherence=0.6)
+        _out("R", 0, "Different answer B", coherence=0.6)
+        decisions = [
+            g.step(
+                _out("L", i, "Different answer A", coherence=0.6),
+                _out("R", i, "Different answer B", coherence=0.6),
+            )
+            for i in range(5)
+        ]
         freeze_decisions = [d for d in decisions if d.decision == "FREEZE"]
         assert freeze_decisions, "expected at least one FREEZE"
-        assert any(d.stop_reason in (StopReason.DIMINISHING, StopReason.MAX_CYCLES)
-                   for d in freeze_decisions)
+        assert any(
+            d.stop_reason in (StopReason.DIMINISHING, StopReason.MAX_CYCLES)
+            for d in freeze_decisions
+        )
 
     def test_budget_freeze(self):
-        g = THEOSGovernor(GovernorConfig(
-            max_cycles=20,
-            similarity_converge=0.99,
-            contradiction_budget=0.01,
-            contradiction_decay=1.0,
-        ))
+        g = THEOSGovernor(
+            GovernorConfig(
+                max_cycles=20,
+                similarity_converge=0.99,
+                contradiction_budget=0.01,
+                contradiction_decay=1.0,
+            )
+        )
         decisions = []
         for i in range(5):
             d = g.step(
                 _out("L", i, "Divergent left answer text"),
-                _out("R", i, "Completely different right answer",
-                     contradiction_claim="clash", contradiction_value=0.9),
+                _out(
+                    "R",
+                    i,
+                    "Completely different right answer",
+                    contradiction_claim="clash",
+                    contradiction_value=0.9,
+                ),
             )
             decisions.append(d)
             if d.decision == "FREEZE":
                 break
         freeze = [d for d in decisions if d.decision == "FREEZE"]
         assert freeze
-        assert freeze[0].stop_reason in (StopReason.BUDGET, StopReason.DIMINISHING,
-                                         StopReason.CONVERGENCE, StopReason.MAX_CYCLES)
+        assert freeze[0].stop_reason in (
+            StopReason.BUDGET,
+            StopReason.DIMINISHING,
+            StopReason.CONVERGENCE,
+            StopReason.MAX_CYCLES,
+        )
 
     def test_continue_decision(self):
-        g = THEOSGovernor(GovernorConfig(
-            max_cycles=10,
-            similarity_converge=0.99,
-            plateau_cycles=10,
-        ))
+        g = THEOSGovernor(
+            GovernorConfig(
+                max_cycles=10,
+                similarity_converge=0.99,
+                plateau_cycles=10,
+            )
+        )
         # First step with divergent outputs — should CONTINUE
         d = g.step(
             _out("L", 0, "Left divergent text"),
@@ -267,8 +287,14 @@ class TestAuditTrail:
     def test_audit_trail_structure(self, gov, identical_pair):
         gov.step(*identical_pair)
         trail = gov.get_audit_trail()
-        for key in ("total_cycles", "contradiction_spent", "contradiction_budget",
-                    "posture", "history", "last_frozen_answer"):
+        for key in (
+            "total_cycles",
+            "contradiction_spent",
+            "contradiction_budget",
+            "posture",
+            "history",
+            "last_frozen_answer",
+        ):
             assert key in trail
 
     def test_history_grows(self, gov, divergent_pair):
@@ -352,7 +378,8 @@ class TestEdgeCases:
 class TestPerformance:
     def test_step_is_fast(self, gov):
         import time
-        left  = _out("L", 0, "word " * 500)
+
+        left = _out("L", 0, "word " * 500)
         right = _out("R", 0, "word " * 500)
         start = time.time()
         for _ in range(200):

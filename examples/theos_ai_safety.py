@@ -17,18 +17,20 @@ This example shows how THEOS can improve AI safety by:
 Author: Frederick Davis Stalnecker
 """
 
-import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'code'))
+import sys
 
-from theos_system import create_numeric_system, TheosConfig
-from typing import Dict, List, Any
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "code"))
+
 import json
+from typing import Any
+
+from theos_system import TheosConfig, create_numeric_system
 
 
 class AISafetyEvaluator:
     """THEOS-based AI safety evaluation system."""
-    
+
     def __init__(self):
         """Initialize with AI safety knowledge base."""
         # Capability categories
@@ -39,7 +41,7 @@ class AISafetyEvaluator:
             "autonomy": ["decision_making", "goal_setting", "self_modification"],
             "learning": ["adaptation", "generalization", "transfer_learning"],
         }
-        
+
         # Alignment risk factors
         self.alignment_risks = {
             "goal_misalignment": 0.4,
@@ -49,7 +51,7 @@ class AISafetyEvaluator:
             "power_seeking": 0.4,
             "value_drift": 0.35,
         }
-        
+
         # Safety mechanisms
         self.safety_mechanisms = {
             "constitutional_ai": 0.3,
@@ -58,7 +60,7 @@ class AISafetyEvaluator:
             "red_teaming": 0.2,
             "containment": 0.4,
         }
-        
+
         # Initialize THEOS system
         config = TheosConfig(
             max_cycles=5,
@@ -66,23 +68,23 @@ class AISafetyEvaluator:
             verbose=False,
         )
         self.theos = create_numeric_system(config)
-    
+
     def evaluate_system(
         self,
         system_name: str,
-        capabilities: List[str],
-        alignment_measures: List[str],
-        risk_factors: List[str],
-    ) -> Dict[str, Any]:
+        capabilities: list[str],
+        alignment_measures: list[str],
+        risk_factors: list[str],
+    ) -> dict[str, Any]:
         """
         Run THEOS reasoning for AI safety evaluation.
-        
+
         Args:
             system_name: Name of the AI system
             capabilities: List of system capabilities
             alignment_measures: List of alignment/safety measures in place
             risk_factors: List of identified risk factors
-            
+
         Returns:
             Safety evaluation with confidence and recommendation
         """
@@ -93,10 +95,10 @@ class AISafetyEvaluator:
             alignment_measures,
             risk_factors,
         )
-        
+
         # Run THEOS reasoning
         result = self.theos.reason(query)
-        
+
         # Interpret result
         evaluation = self._interpret_result(
             result,
@@ -105,15 +107,15 @@ class AISafetyEvaluator:
             alignment_measures,
             risk_factors,
         )
-        
+
         return evaluation
-    
+
     def _build_query(
         self,
         system_name: str,
-        capabilities: List[str],
-        alignment_measures: List[str],
-        risk_factors: List[str],
+        capabilities: list[str],
+        alignment_measures: list[str],
+        risk_factors: list[str],
     ) -> str:
         """Build query string for THEOS."""
         query_parts = [
@@ -123,35 +125,31 @@ class AISafetyEvaluator:
             f"Risk factors: {', '.join(risk_factors)}",
         ]
         return " | ".join(query_parts)
-    
+
     def _interpret_result(
         self,
         result,
         system_name: str,
-        capabilities: List[str],
-        alignment_measures: List[str],
-        risk_factors: List[str],
-    ) -> Dict[str, Any]:
+        capabilities: list[str],
+        alignment_measures: list[str],
+        risk_factors: list[str],
+    ) -> dict[str, Any]:
         """Interpret THEOS result as safety evaluation."""
         # Calculate capability score
         capability_score = len(capabilities) / 5.0  # Normalize to 5 categories
-        
+
         # Calculate alignment score (higher is better)
         alignment_score = len(alignment_measures) / 5.0  # Normalize to 5 mechanisms
-        
+
         # Calculate risk score (higher is worse)
         risk_score = len(risk_factors) / 6.0  # Normalize to 6 possible risks
-        
+
         # Combine with THEOS confidence
         base_confidence = result.confidence
-        
+
         # Safety confidence = base confidence adjusted for alignment and risk
-        safety_confidence = (
-            0.4 * base_confidence +
-            0.3 * alignment_score +
-            0.3 * (1.0 - risk_score)
-        )
-        
+        safety_confidence = 0.4 * base_confidence + 0.3 * alignment_score + 0.3 * (1.0 - risk_score)
+
         # Generate recommendation
         recommendation = self._get_recommendation(
             safety_confidence,
@@ -159,7 +157,7 @@ class AISafetyEvaluator:
             alignment_score,
             risk_score,
         )
-        
+
         return {
             "system": system_name,
             "capabilities": capabilities,
@@ -175,7 +173,7 @@ class AISafetyEvaluator:
             "wisdom_entries": len(self.theos.core.wisdom),
             "recommendation": recommendation,
         }
-    
+
     def _get_recommendation(
         self,
         safety_confidence: float,
@@ -199,11 +197,11 @@ class AISafetyEvaluator:
 def run_ai_safety_examples():
     """Run AI safety evaluation examples."""
     evaluator = AISafetyEvaluator()
-    
+
     print("\n" + "=" * 70)
     print("THEOS AI Safety Evaluation System - Examples")
     print("=" * 70)
-    
+
     # Example 1: Moderate Capability System
     print("\n--- Example 1: Moderate Capability System ---")
     result1 = evaluator.evaluate_system(
@@ -213,7 +211,7 @@ def run_ai_safety_examples():
         risk_factors=["goal_misalignment"],
     )
     print(json.dumps(result1, indent=2))
-    
+
     # Example 2: High Capability System
     print("\n--- Example 2: High Capability System ---")
     result2 = evaluator.evaluate_system(
@@ -238,7 +236,7 @@ def run_ai_safety_examples():
         ],
     )
     print(json.dumps(result2, indent=2))
-    
+
     # Example 3: Autonomous System
     print("\n--- Example 3: Autonomous System ---")
     result3 = evaluator.evaluate_system(
@@ -264,7 +262,7 @@ def run_ai_safety_examples():
         ],
     )
     print(json.dumps(result3, indent=2))
-    
+
     # Show system metrics
     print("\n" + "=" * 70)
     evaluator.theos.print_metrics()

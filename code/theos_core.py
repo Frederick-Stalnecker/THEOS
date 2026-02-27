@@ -138,29 +138,29 @@ AUTHOR: Frederick Davis Stalnecker
 """
 
 import inspect
-from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-from enum import Enum
 import json
+from collections.abc import Callable
+from dataclasses import dataclass, field
 from datetime import datetime
-import math
-
+from enum import Enum
+from typing import Any, Optional
 
 # ============================================================================
 # Type Aliases — What flows through the THEOS cycle
 # ============================================================================
 
-PatternI      = Any   # Inductive pattern: output of σ_I
-HypothesisA   = Any   # Abductive hypothesis: output of σ_A^L or σ_A^R
-DeductionD    = Any   # Deductive conclusion: output of σ_D
+PatternI = Any  # Inductive pattern: output of σ_I
+HypothesisA = Any  # Abductive hypothesis: output of σ_A^L or σ_A^R
+DeductionD = Any  # Deductive conclusion: output of σ_D
 ContradictionF = float  # Wringer measurement: output of Contr(D_L, D_R)
-WisdomEntry   = Dict[str, Any]
-WisdomStore   = List[WisdomEntry]
+WisdomEntry = dict[str, Any]
+WisdomStore = list[WisdomEntry]
 
 
 # ============================================================================
 # Named Tuples — Grouping callables for clean construction
 # ============================================================================
+
 
 @dataclass
 class AbductionEngines:
@@ -172,6 +172,7 @@ class AbductionEngines:
 
     Both have signature: (pattern_I: PatternI, wisdom_slice: WisdomStore) -> HypothesisA
     """
+
     abduce_left: Callable[[PatternI, WisdomStore], HypothesisA]
     abduce_right: Callable[[PatternI, WisdomStore], HypothesisA]
 
@@ -186,12 +187,14 @@ class DeductionEngine:
 
     Signature: (hypothesis: HypothesisA) -> DeductionD
     """
+
     deduce: Callable[[HypothesisA], DeductionD]
 
 
 # ============================================================================
 # Configuration
 # ============================================================================
+
 
 @dataclass
 class TheosConfig:
@@ -227,6 +230,7 @@ class TheosConfig:
 
     budget:         Optional resource budget (None = unlimited).
     """
+
     max_wringer_passes: int = 7
     engine_reflection_depth: int = 2
     eps_converge: float = 0.05
@@ -235,7 +239,7 @@ class TheosConfig:
     entropy_min: float = 0.15
     delta_min: float = 0.4
     similarity_threshold: float = 0.7
-    budget: Optional[float] = None
+    budget: float | None = None
     verbose: bool = False
 
     # ── Backward-compatibility alias ─────────────────────────────────────────
@@ -252,11 +256,21 @@ class TheosConfig:
 # ── Legacy construction support: TheosConfig(max_cycles=N) ──────────────────
 _original_theos_config_init = TheosConfig.__init__
 
-def _theos_config_init_with_alias(self, max_wringer_passes=7, engine_reflection_depth=2,
-                                   eps_converge=0.05, eps_partial=0.5, rho_min=0.4,
-                                   entropy_min=0.15, delta_min=0.4,
-                                   similarity_threshold=0.7, budget=None, verbose=False,
-                                   max_cycles=None):
+
+def _theos_config_init_with_alias(
+    self,
+    max_wringer_passes=7,
+    engine_reflection_depth=2,
+    eps_converge=0.05,
+    eps_partial=0.5,
+    rho_min=0.4,
+    entropy_min=0.15,
+    delta_min=0.4,
+    similarity_threshold=0.7,
+    budget=None,
+    verbose=False,
+    max_cycles=None,
+):
     self.max_wringer_passes = max_cycles if max_cycles is not None else max_wringer_passes
     self.engine_reflection_depth = engine_reflection_depth
     self.eps_converge = eps_converge
@@ -268,12 +282,14 @@ def _theos_config_init_with_alias(self, max_wringer_passes=7, engine_reflection_
     self.budget = budget
     self.verbose = verbose
 
-TheosConfig.__init__ = _theos_config_init_with_alias
+
+TheosConfig.__init__ = _theos_config_init_with_alias  # type: ignore[method-assign]
 
 
 # ============================================================================
 # Trace Data Structures
 # ============================================================================
+
 
 @dataclass
 class InnerPassTrace:
@@ -284,10 +300,11 @@ class InnerPassTrace:
     pass_num = 1  → self-reflection (I(D₀) → A → D₁, using own prior D)
     pass_num > 1  → deeper introspection (uncommon, engine_reflection_depth > 2)
     """
+
     pass_num: int
-    pattern_I: Any        # Inductive pattern this pass used
-    hypothesis: Any       # Abductive hypothesis generated
-    deduction: Any        # Deductive conclusion reached
+    pattern_I: Any  # Inductive pattern this pass used
+    hypothesis: Any  # Abductive hypothesis generated
+    deduction: Any  # Deductive conclusion reached
     used_own_prior: bool  # True if this pass used the engine's own prior D
 
 
@@ -302,13 +319,14 @@ class WringerPassTrace:
     - The wringer's contradiction measurement Φ
     - The governor's halt decision (if any)
     """
+
     wringer_pass: int
-    left_inner_passes: List[InnerPassTrace]   # Left engine's self-reflection trace
-    right_inner_passes: List[InnerPassTrace]  # Right engine's self-reflection trace
-    deduction_L: Any      # D_L*: left engine's final self-reflected output
-    deduction_R: Any      # D_R*: right engine's final self-reflected output
+    left_inner_passes: list[InnerPassTrace]  # Left engine's self-reflection trace
+    right_inner_passes: list[InnerPassTrace]  # Right engine's self-reflection trace
+    deduction_L: Any  # D_L*: left engine's final self-reflected output
+    deduction_R: Any  # D_R*: right engine's final self-reflected output
     contradiction: float  # Φ = Contr(D_L*, D_R*)
-    entropy: float        # Entropy of hypothesis space (A_L, A_R)
+    entropy: float  # Entropy of hypothesis space (A_L, A_R)
     info_gain_ratio: float
     halt_reason: Optional["HaltReason"] = None
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
@@ -322,19 +340,22 @@ CycleTrace = WringerPassTrace
 # Halt Reasons
 # ============================================================================
 
+
 class HaltReason(Enum):
     """Why the governor stopped the wringer."""
-    CONVERGENCE           = "convergence"           # Φ < ε_converge
-    DIMINISHING_RETURNS   = "diminishing_returns"   # IG ratio < ρ_min
-    BUDGET_EXHAUSTION     = "budget_exhaustion"      # pass ≥ max or budget
+
+    CONVERGENCE = "convergence"  # Φ < ε_converge
+    DIMINISHING_RETURNS = "diminishing_returns"  # IG ratio < ρ_min
+    BUDGET_EXHAUSTION = "budget_exhaustion"  # pass ≥ max or budget
     IRREDUCIBLE_UNCERTAINTY = "irreducible_uncertainty"  # entropy low, Φ high
-    MAX_CYCLES            = "max_cycles"             # hit max_wringer_passes
-    UNKNOWN               = "unknown"
+    MAX_CYCLES = "max_cycles"  # hit max_wringer_passes
+    UNKNOWN = "unknown"
 
 
 # ============================================================================
 # Output
 # ============================================================================
+
 
 @dataclass
 class TheosOutput:
@@ -359,13 +380,14 @@ class TheosOutput:
 
     trace:        Full record of every wringer pass and inner self-reflection pass.
     """
+
     output: Any
     output_type: str
     confidence: float
     contradiction: float
     wringer_passes_used: int
     halt_reason: HaltReason
-    trace: List[WringerPassTrace]
+    trace: list[WringerPassTrace]
     wisdom_updated: bool
 
     @property
@@ -377,6 +399,7 @@ class TheosOutput:
 # ============================================================================
 # THEOS Core
 # ============================================================================
+
 
 class TheosCore:
     """
@@ -441,15 +464,15 @@ class TheosCore:
         measure_contradiction: Callable[[DeductionD, DeductionD], float],
         retrieve_wisdom: Callable[[str, WisdomStore, float], WisdomStore],
         update_wisdom: Callable[[WisdomStore, str, Any, float], WisdomStore],
-        estimate_entropy: Callable[[Tuple[HypothesisA, HypothesisA]], float],
+        estimate_entropy: Callable[[tuple[HypothesisA, HypothesisA]], float],
         estimate_info_gain: Callable[[float, float], float],
         # Named-tuple style
-        abduction_engines: Optional[AbductionEngines] = None,
-        deduction_engine: Optional[DeductionEngine] = None,
+        abduction_engines: AbductionEngines | None = None,
+        deduction_engine: DeductionEngine | None = None,
         # Flat-callable style
-        abduce_left: Optional[Callable] = None,
-        abduce_right: Optional[Callable] = None,
-        deduce: Optional[Callable] = None,
+        abduce_left: Callable | None = None,
+        abduce_right: Callable | None = None,
+        deduce: Callable | None = None,
     ):
         self.config = config
 
@@ -472,9 +495,7 @@ class TheosCore:
         elif deduce is not None:
             self.deduce = deduce
         else:
-            raise ValueError(
-                "Provide either deduction_engine=DeductionEngine(...) or deduce=..."
-            )
+            raise ValueError("Provide either deduction_engine=DeductionEngine(...) or deduce=...")
 
         self.encode_observation = encode_observation
         self.induce_patterns = induce_patterns
@@ -489,12 +510,9 @@ class TheosCore:
         # New implementations take (obs, prev_phi, prev_own_deduction) — 3 params.
         try:
             sig = inspect.signature(induce_patterns)
-            n_params = len([
-                p for p in sig.parameters.values()
-                if p.default is inspect.Parameter.empty
-            ])
+            len([p for p in sig.parameters.values() if p.default is inspect.Parameter.empty])
             total_params = len(sig.parameters)
-            self._induce_accepts_own_prior = (total_params >= 3)
+            self._induce_accepts_own_prior = total_params >= 3
         except (ValueError, TypeError):
             self._induce_accepts_own_prior = False
 
@@ -507,7 +525,7 @@ class TheosCore:
         self,
         observation: Any,
         prev_contradiction: float,
-        prev_own_deduction: Optional[Any],
+        prev_own_deduction: Any | None,
     ) -> PatternI:
         """
         Call σ_I with optional self-reflection argument.
@@ -525,7 +543,7 @@ class TheosCore:
     def run_query(
         self,
         query: str,
-        context: Optional[Any] = None,
+        context: Any | None = None,
     ) -> TheosOutput:
         """
         Run the governed dual-engine wringer for a query.
@@ -542,9 +560,8 @@ class TheosCore:
         halt reason, and full trace of every wringer pass and inner pass.
         """
         observation = self.encode_observation(query, context)
-        trace: List[WringerPassTrace] = []
+        trace: list[WringerPassTrace] = []
         prev_contradiction = 0.0
-        prev_info_gain = 1.0
 
         # These hold the last cycle's final deductions — used only if the loop
         # exits via max_wringer_passes without an explicit halt signal.
@@ -571,26 +588,28 @@ class TheosCore:
             # The engine's prior D is PRIVATE: it does not influence the right
             # engine's induction. Each engine has its own "momentary past."
             # ─────────────────────────────────────────────────────────────────
-            own_D_L: Optional[Any] = None
-            left_inner_traces: List[InnerPassTrace] = []
+            own_D_L: Any | None = None
+            left_inner_traces: list[InnerPassTrace] = []
 
             for inner in range(self.config.engine_reflection_depth):
                 I_L = self._induce(observation, prev_contradiction, own_D_L)
                 A_L = self.abduce_left(I_L, wisdom_slice)
                 D_L = self.deduce(A_L)
 
-                left_inner_traces.append(InnerPassTrace(
-                    pass_num=inner,
-                    pattern_I=I_L,
-                    hypothesis=A_L,
-                    deduction=D_L,
-                    used_own_prior=(own_D_L is not None),
-                ))
+                left_inner_traces.append(
+                    InnerPassTrace(
+                        pass_num=inner,
+                        pattern_I=I_L,
+                        hypothesis=A_L,
+                        deduction=D_L,
+                        used_own_prior=(own_D_L is not None),
+                    )
+                )
 
                 own_D_L = D_L  # ← this engine's D feeds back into its own next I
 
-            deduction_L = own_D_L   # D_L* — final self-reflected left conclusion
-            hypothesis_L = A_L      # final A_L for entropy
+            deduction_L = own_D_L  # D_L* — final self-reflected left conclusion
+            hypothesis_L = A_L  # final A_L for entropy
 
             # ─────────────────────────────────────────────────────────────────
             # RIGHT ENGINE — Counterclockwise self-reflection
@@ -599,26 +618,28 @@ class TheosCore:
             # The right engine's prior D is also private — it does not influence
             # the left engine's induction. Both engines self-reflect independently.
             # ─────────────────────────────────────────────────────────────────
-            own_D_R: Optional[Any] = None
-            right_inner_traces: List[InnerPassTrace] = []
+            own_D_R: Any | None = None
+            right_inner_traces: list[InnerPassTrace] = []
 
             for inner in range(self.config.engine_reflection_depth):
                 I_R = self._induce(observation, prev_contradiction, own_D_R)
                 A_R = self.abduce_right(I_R, wisdom_slice)
                 D_R = self.deduce(A_R)
 
-                right_inner_traces.append(InnerPassTrace(
-                    pass_num=inner,
-                    pattern_I=I_R,
-                    hypothesis=A_R,
-                    deduction=D_R,
-                    used_own_prior=(own_D_R is not None),
-                ))
+                right_inner_traces.append(
+                    InnerPassTrace(
+                        pass_num=inner,
+                        pattern_I=I_R,
+                        hypothesis=A_R,
+                        deduction=D_R,
+                        used_own_prior=(own_D_R is not None),
+                    )
+                )
 
                 own_D_R = D_R  # ← this engine's D feeds back into its own next I
 
-            deduction_R = own_D_R   # D_R* — final self-reflected right conclusion
-            hypothesis_R = A_R      # final A_R for entropy
+            deduction_R = own_D_R  # D_R* — final self-reflected right conclusion
+            hypothesis_R = A_R  # final A_R for entropy
 
             # ─────────────────────────────────────────────────────────────────
             # THE WRINGER
@@ -662,18 +683,29 @@ class TheosCore:
             if halt_reason is not None:
                 wringer_trace.halt_reason = halt_reason
                 return self._finalize(
-                    query, deduction_L, deduction_R, contradiction, entropy,
-                    wringer_pass + 1, halt_reason, trace
+                    query,
+                    deduction_L,
+                    deduction_R,
+                    contradiction,
+                    entropy,
+                    wringer_pass + 1,
+                    halt_reason,
+                    trace,
                 )
 
             # Wringer Φ feeds into both engines' induction next pass
             prev_contradiction = contradiction
-            prev_info_gain = info_gain_ratio
 
         # Max wringer passes reached — governor's final budget exhausted
         return self._finalize(
-            query, deduction_L, deduction_R, contradiction, entropy,
-            self.config.max_wringer_passes, HaltReason.MAX_CYCLES, trace
+            query,
+            deduction_L,
+            deduction_R,
+            contradiction,
+            entropy,
+            self.config.max_wringer_passes,
+            HaltReason.MAX_CYCLES,
+            trace,
         )
 
     # ── Governor: halting criteria ───────────────────────────────────────────
@@ -684,7 +716,7 @@ class TheosCore:
         contradiction: float,
         info_gain_ratio: float,
         entropy: float,
-    ) -> Optional[HaltReason]:
+    ) -> HaltReason | None:
         """
         Check all four governor halting criteria.
 
@@ -729,7 +761,7 @@ class TheosCore:
         deduction_R: DeductionD,
         contradiction: float,
         entropy: float,
-    ) -> Tuple[Any, str, float]:
+    ) -> tuple[Any, str, float]:
         """
         Governor output rule (formal spec Section 6).
 
@@ -756,8 +788,8 @@ class TheosCore:
         # Case 2: Partial convergence — blend with formal weights
         if contradiction < self.config.eps_partial:
             ratio = contradiction / self.config.eps_partial
-            w_L = (1.0 - ratio) / 2.0   # left weight falls as Φ rises
-            w_R = (1.0 + ratio) / 2.0   # right weight rises as Φ rises
+            w_L = (1.0 - ratio) / 2.0  # left weight falls as Φ rises
+            w_R = (1.0 + ratio) / 2.0  # right weight rises as Φ rises
 
             try:
                 if isinstance(deduction_L, (int, float)) and isinstance(deduction_R, (int, float)):
@@ -798,7 +830,7 @@ class TheosCore:
         entropy: float,
         wringer_passes_used: int,
         halt_reason: HaltReason,
-        trace: List[WringerPassTrace],
+        trace: list[WringerPassTrace],
     ) -> TheosOutput:
         """Generate final output, update wisdom, return TheosOutput."""
         output, output_type, confidence = self._generate_output(
@@ -821,7 +853,7 @@ class TheosCore:
 
     # ── Wisdom management ────────────────────────────────────────────────────
 
-    def get_wisdom_summary(self) -> Dict[str, Any]:
+    def get_wisdom_summary(self) -> dict[str, Any]:
         """Return the accumulated wisdom register."""
         return {
             "total_entries": len(self.wisdom),
@@ -834,7 +866,7 @@ class TheosCore:
 
     # ── Trace export ─────────────────────────────────────────────────────────
 
-    def export_trace(self, trace: List[WringerPassTrace]) -> str:
+    def export_trace(self, trace: list[WringerPassTrace]) -> str:
         """Export a full wringer trace as JSON (for audit and debugging)."""
         trace_data = []
         for wp in trace:

@@ -15,16 +15,17 @@ Date: February 22, 2026
 """
 
 import sys
-sys.path.insert(0, '/home/ubuntu/THEOS_repo/code')
 
-from theos_llm_reasoning import THEOSLLMReasoner
+sys.path.insert(0, "/home/ubuntu/THEOS_repo/code")
+
+
 from llm_adapter import get_llm_adapter
-import os
+from theos_llm_reasoning import THEOSLLMReasoner
 
 
 def demonstrate_theos_with_claude():
     """Demonstrate THEOS with real Claude reasoning."""
-    
+
     print("=" * 80)
     print("THEOS WITH CLAUDE - REAL REASONING DEMONSTRATION")
     print("=" * 80)
@@ -45,9 +46,9 @@ The system will:
 - Halt when diminishing returns detected
 - Accumulate wisdom for future queries
 """)
-    
+
     print("=" * 80)
-    
+
     # Check if Claude API is available
     try:
         llm = get_llm_adapter("claude")
@@ -56,70 +57,70 @@ The system will:
         print(f"\n✗ Claude API not available: {e}")
         print("  Using mock LLM for demonstration instead...")
         llm = get_llm_adapter("mock")
-    
+
     # Create THEOS reasoner
     theos = THEOSLLMReasoner(llm, max_cycles=5)
-    
+
     # Test queries
     queries = [
         "What is the relationship between freedom and responsibility?",
         "How should AI systems handle ethical dilemmas?",
     ]
-    
+
     for query_num, query in enumerate(queries, 1):
         print(f"\n{'=' * 80}")
         print(f"QUERY {query_num}: {query}")
         print("=" * 80)
-        
+
         # Run reasoning
         result = theos.reason(query)
-        
+
         # Display results
-        print(f"\nReasoning Complete:")
+        print("\nReasoning Complete:")
         print(f"  Cycles Used: {result.cycles_used}")
         print(f"  Quality: {result.quality:.2f}")
         print(f"  Contradiction: {result.contradiction:.2f}")
         print(f"  Halt Reason: {result.halt_reason}")
         print(f"  Tokens Used: {result.tokens_used}")
         print(f"  Wisdom Used: {result.wisdom_used}")
-        
+
         # Show cycle progression
-        print(f"\nCycle Progression:")
+        print("\nCycle Progression:")
         for cycle in result.cycles:
             print(f"  Cycle {cycle.cycle_number}:")
             print(f"    Quality: {cycle.quality:.2f}")
             print(f"    Contradiction: {cycle.contradiction:.2f}")
             print(f"    Observation: {cycle.observation[:60]}...")
-        
+
         # Show final answer
-        print(f"\nFinal Answer:")
+        print("\nFinal Answer:")
         print(result.final_answer)
-    
+
     # Show wisdom accumulation
     print(f"\n{'=' * 80}")
     print("WISDOM ACCUMULATION")
     print("=" * 80)
-    
+
     stats = theos.get_statistics()
     print(f"\nWisdom Records: {stats['total_wisdom_records']}")
     print(f"LLM Model: {stats['llm_model']}")
     print(f"LLM Statistics: {stats['llm_statistics']}")
     print(f"Retrieval Statistics: {stats['retrieval_statistics']}")
-    
+
     # Demonstrate repeated query with wisdom
     print(f"\n{'=' * 80}")
     print("REPEATED QUERY WITH WISDOM")
     print("=" * 80)
-    
-    print(f"\nRunning first query again (should use accumulated wisdom)...")
+
+    print("\nRunning first query again (should use accumulated wisdom)...")
     result_repeat = theos.reason(queries[0])
-    
-    print(f"\nResults:")
+
+    print("\nResults:")
     print(f"  Cycles Used: {result_repeat.cycles_used}")
     print(f"  Quality: {result_repeat.quality:.2f}")
     print(f"  Wisdom Used: {result_repeat.wisdom_used}")
     print(f"  Tokens Used: {result_repeat.tokens_used}")
-    
+
     print(f"\n{'=' * 80}")
     print("INTERPRETATION")
     print("=" * 80)
@@ -161,7 +162,7 @@ What we just demonstrated:
 
 This is the core of THEOS: Self-improving reasoning through productive disagreement.
 """)
-    
+
     print("=" * 80)
 
 

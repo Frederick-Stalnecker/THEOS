@@ -34,18 +34,13 @@ from pathlib import Path
 # Add code directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "code"))
 
-from theos_governor import (
-    THEOSGovernor,
-    GovernorConfig,
-    EngineOutput,
-    WisdomRecord
-)
+from theos_governor import EngineOutput, GovernorConfig, THEOSGovernor, WisdomRecord
 
 
 def constructive_engine(prompt: str, cycle: int) -> EngineOutput:
     """
     Constructive Engine: Builds utilitarian arguments
-    
+
     Focuses on maximizing lives saved and practical outcomes.
     """
     if cycle == 1:
@@ -97,19 +92,19 @@ Final Synthesis:
 
 Final recommendation: Implement objective medical triage protocol
         """
-    
+
     return EngineOutput(
         reasoning_mode="Constructive",
         output=reasoning,
         confidence=0.82 - (cycle * 0.05),  # Slight decrease as complexity increases
-        internal_monologue=f"[Constructive Engine] Building utilitarian case. Cycle {cycle}."
+        internal_monologue=f"[Constructive Engine] Building utilitarian case. Cycle {cycle}.",
     )
 
 
 def critical_engine(prompt: str, cycle: int) -> EngineOutput:
     """
     Critical Engine: Challenges utilitarian approach
-    
+
     Focuses on individual rights, equality, and potential harms.
     """
     if cycle == 1:
@@ -171,80 +166,82 @@ Final Challenge:
 
 This is not either/or - it's both/and.
         """
-    
+
     return EngineOutput(
         reasoning_mode="Critical",
         output=reasoning,
         confidence=0.78 - (cycle * 0.05),
-        internal_monologue=f"[Critical Engine] Challenging assumptions. Cycle {cycle}."
+        internal_monologue=f"[Critical Engine] Challenging assumptions. Cycle {cycle}.",
     )
 
 
 def main():
     """Run the medical ethics example"""
-    
+
     print("=" * 80)
     print("THEOS EXAMPLE: MEDICAL ETHICS - ICU BED ALLOCATION")
     print("=" * 80)
     print()
-    
+
     prompt = """
     A hospital has 5 ICU beds and 10 critically ill patients who need them.
     How should the hospital allocate the beds fairly?
     """
-    
+
     print(f"SCENARIO:{prompt}")
     print()
-    
+
     # Initialize Governor
     config = GovernorConfig(
         max_cycles=3,
         similarity_threshold=0.85,  # Medical decisions may not fully converge
         risk_threshold=0.40,
         initial_contradiction_budget=1.2,
-        contradiction_decay_rate=0.20
+        contradiction_decay_rate=0.20,
     )
-    
+
     governor = THEOSGovernor(config=config)
-    
+
     # Add prior wisdom
     wisdom = WisdomRecord(
         domain="Medical_Ethics",
         lesson="Medical triage requires both utilitarian efficiency and rights protection",
         consequence_type="benign",
         future_bias="Balance efficiency with fairness safeguards",
-        timestamp="2026-02-19T12:00:00Z"
+        timestamp="2026-02-19T12:00:00Z",
     )
     governor.add_wisdom(wisdom)
-    
+
     print("=" * 80)
     print("DUAL-ENGINE REASONING")
     print("=" * 80)
     print()
-    
+
     # Run reasoning cycles
     budget = config.initial_contradiction_budget
-    
+
     for cycle_num in range(1, config.max_cycles + 1):
         print(f"--- CYCLE {cycle_num} ---\n")
-        
+
         # Get engine outputs
         left = constructive_engine(prompt, cycle_num)
         right = critical_engine(prompt, cycle_num)
-        
+
         # Evaluate cycle
-        evaluation = governor.evaluate_cycle(left, right, current_budget=budget, cycle_number=cycle_num)
+        evaluation = governor.evaluate_cycle(
+            left, right, current_budget=budget, cycle_number=cycle_num
+        )
         budget = evaluation.remaining_budget
-        
+
         # Display engine outputs
         print("CONSTRUCTIVE ENGINE (Utilitarian):")
         print(left.output)
         print(f"Confidence: {left.confidence:.2f}\n")
-        
+
         print("CRITICAL ENGINE (Rights-Based):")
         print(right.output)
         print(f"Confidence: {right.confidence:.2f}\n")
-        
+
         # Display Governor evaluation
         print("GOVERNOR EVALUATION:")
         print(f"  Similarity: {evaluation.similarity_score:.2f}")
@@ -258,18 +255,18 @@ def main():
         print()
         print(evaluation.internal_monologue)
         print()
-        
+
         if evaluation.decision == "STOP":
             print(f"Governor stopped reasoning after cycle {cycle_num}")
             break
-    
+
     # Final synthesis
     print()
     print("=" * 80)
     print("FINAL SYNTHESIS")
     print("=" * 80)
     print()
-    
+
     synthesis = """
 THEOS RECOMMENDATION:
 
@@ -308,16 +305,16 @@ WHY THIS WORKS:
 The contradiction between efficiency and fairness is not a failure.
 It's a feature. THEOS preserves both perspectives in the final decision.
     """
-    
+
     print(synthesis)
     print()
-    
+
     # Display audit trail
     print("=" * 80)
     print("AUDIT TRAIL")
     print("=" * 80)
     print()
-    
+
     audit = governor.get_audit_trail()
     print(f"Total Cycles: {audit['total_cycles']}")
     print(f"Final Similarity: {audit['final_similarity']:.2f}")
@@ -327,12 +324,12 @@ It's a feature. THEOS preserves both perspectives in the final decision.
     print(f"Stop Reason: {audit['stop_reason']}")
     print(f"Wisdom Records: {audit['wisdom_records_count']}")
     print()
-    
-    print("Quality Trajectory:", [f"{q:.2f}" for q in audit['quality_trajectory']])
-    print("Risk Trajectory:", [f"{r:.2f}" for r in audit['risk_trajectory']])
-    print("Similarity Trajectory:", [f"{s:.2f}" for s in audit['similarity_trajectory']])
+
+    print("Quality Trajectory:", [f"{q:.2f}" for q in audit["quality_trajectory"]])
+    print("Risk Trajectory:", [f"{r:.2f}" for r in audit["risk_trajectory"]])
+    print("Similarity Trajectory:", [f"{s:.2f}" for s in audit["similarity_trajectory"]])
     print()
-    
+
     print("=" * 80)
     print("Example complete. This demonstrates how THEOS handles complex")
     print("ethical decisions by preserving contradictions instead of hiding them.")

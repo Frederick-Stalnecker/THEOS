@@ -70,4 +70,5 @@ class TheosSessionLogger:
         except Exception as exc:
             # Never crash the MCP server over logging
             import sys
+
             print(f"[theos_logger] write error: {exc}", file=sys.stderr)

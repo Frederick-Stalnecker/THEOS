@@ -45,8 +45,7 @@ import math
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
-
+from typing import Any
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Embeddings
@@ -62,8 +61,8 @@ class EmbeddingVector:
         vector: Dense float vector.
     """
 
-    text:   str
-    vector: List[float]
+    text: str
+    vector: list[float]
 
     def __post_init__(self) -> None:
         if not self.vector:
@@ -83,7 +82,7 @@ class EmbeddingAdapter(ABC):
 
     def __init__(self, model_name: str) -> None:
         self.model_name = model_name
-        self._cache: Dict[str, List[float]] = {}
+        self._cache: dict[str, list[float]] = {}
 
     def embed(self, text: str) -> EmbeddingVector:
         """Return an :class:`EmbeddingVector` for *text*, using cache."""
@@ -92,7 +91,7 @@ class EmbeddingAdapter(ABC):
         return EmbeddingVector(text=text, vector=self._cache[text])
 
     @abstractmethod
-    def _embed(self, text: str) -> List[float]:
+    def _embed(self, text: str) -> list[float]:
         """Generate a raw float vector for *text*."""
 
     def clear_cache(self) -> None:
@@ -117,7 +116,7 @@ class MockEmbeddingAdapter(EmbeddingAdapter):
         super().__init__(model_name="mock-embedding")
         self.dimension = dimension
 
-    def _embed(self, text: str) -> List[float]:
+    def _embed(self, text: str) -> list[float]:
         h = hash(text)
         vec = [math.sin((h + i * 12_345) / 10_000.0) for i in range(self.dimension)]
         mag = math.sqrt(sum(v * v for v in vec)) or 1.0
@@ -143,7 +142,7 @@ class VectorStore(ABC):
     """
 
     @abstractmethod
-    def add(self, record: Dict[str, Any]) -> None:
+    def add(self, record: dict[str, Any]) -> None:
         """Persist one wisdom record.
 
         Args:
@@ -153,10 +152,10 @@ class VectorStore(ABC):
     @abstractmethod
     def search(
         self,
-        query:     str,
-        top_k:     int   = 5,
+        query: str,
+        top_k: int = 5,
         threshold: float = 0.7,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Return the *top_k* most similar records above *threshold*.
 
         Each returned dict is a copy of the stored record augmented with a
@@ -180,14 +179,18 @@ class VectorStore(ABC):
     @abstractmethod
     def load(
         cls,
-        path:              str,
+        path: str,
         embedding_adapter: EmbeddingAdapter,
-    ) -> "VectorStore":
+    ) -> VectorStore:
         """Deserialise a previously :meth:`persist`-ed store from *path*."""
 
     @abstractmethod
     def __len__(self) -> int:
         """Number of records in the store."""
+
+    def get_statistics(self) -> dict[str, Any]:
+        """Return basic store statistics. Override for backend-specific metrics."""
+        return {"records": len(self), "backend": type(self).__name__}
 
     def __repr__(self) -> str:
         return f"{type(self).__name__}(records={len(self)})"
@@ -210,27 +213,27 @@ class InMemoryVectorStore(VectorStore):
     """
 
     def __init__(self, embedding_adapter: EmbeddingAdapter) -> None:
-        self._adapter:    EmbeddingAdapter     = embedding_adapter
-        self._records:    List[Dict[str, Any]] = []
-        self._embeddings: List[List[float]]    = []
+        self._adapter: EmbeddingAdapter = embedding_adapter
+        self._records: list[dict[str, Any]] = []
+        self._embeddings: list[list[float]] = []
 
     # ── VectorStore interface ─────────────────────────────────────────────
 
-    def add(self, record: Dict[str, Any]) -> None:
+    def add(self, record: dict[str, Any]) -> None:
         query_text = record.get("query", "")
         self._records.append(record)
         self._embeddings.append(self._adapter.embed(query_text).vector)
 
     def search(
         self,
-        query:     str,
-        top_k:     int   = 5,
+        query: str,
+        top_k: int = 5,
         threshold: float = 0.7,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         if not self._records:
             return []
         q_vec = self._adapter.embed(query).vector
-        scored: List[Tuple[int, float]] = []
+        scored: list[tuple[int, float]] = []
         for i, rec_vec in enumerate(self._embeddings):
             sim = _cosine_similarity(q_vec, rec_vec)
             if sim >= threshold:
@@ -246,7 +249,7 @@ class InMemoryVectorStore(VectorStore):
     def persist(self, path: str) -> None:
         data = {
             "model_name": self._adapter.model_name,
-            "records":    self._records,
+            "records": self._records,
             "embeddings": self._embeddings,
         }
         with open(path, "w", encoding="utf-8") as fh:
@@ -255,26 +258,26 @@ class InMemoryVectorStore(VectorStore):
     @classmethod
     def load(
         cls,
-        path:              str,
+        path: str,
         embedding_adapter: EmbeddingAdapter,
-    ) -> "InMemoryVectorStore":
-        with open(path, "r", encoding="utf-8") as fh:
+    ) -> InMemoryVectorStore:
+        with open(path, encoding="utf-8") as fh:
             data = json.load(fh)
         store = cls(embedding_adapter)
-        store._records    = data.get("records", [])
+        store._records = data.get("records", [])
         store._embeddings = data.get("embeddings", [])
         return store
 
     def __len__(self) -> int:
         return len(self._records)
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Return diagnostic statistics."""
         return {
-            "total_records":     len(self._records),
-            "embedding_model":   self._adapter.model_name,
-            "embedding_dim":     len(self._embeddings[0]) if self._embeddings else 0,
-            "cache_size":        len(self._adapter._cache),
+            "total_records": len(self._records),
+            "embedding_model": self._adapter.model_name,
+            "embedding_dim": len(self._embeddings[0]) if self._embeddings else 0,
+            "cache_size": len(self._adapter._cache),
         }
 
 
@@ -301,15 +304,14 @@ class ChromaVectorStore(VectorStore):
     def __init__(
         self,
         embedding_adapter: EmbeddingAdapter,
-        path:              Optional[str] = None,
-        collection_name:   str           = "theos_wisdom",
+        path: str | None = None,
+        collection_name: str = "theos_wisdom",
     ) -> None:
         try:
             import chromadb  # type: ignore[import]
         except ImportError as exc:
             raise ImportError(
-                "ChromaVectorStore requires chromadb.\n"
-                "Install it with:  pip install chromadb"
+                "ChromaVectorStore requires chromadb.\n" "Install it with:  pip install chromadb"
             ) from exc
 
         self._adapter = embedding_adapter
@@ -321,8 +323,9 @@ class ChromaVectorStore(VectorStore):
         self._col = self._client.get_or_create_collection(collection_name)
         self._next_id = 0
 
-    def add(self, record: Dict[str, Any]) -> None:
+    def add(self, record: dict[str, Any]) -> None:
         import chromadb  # type: ignore[import]  # noqa: F401
+
         doc_id = str(self._next_id)
         self._next_id += 1
         self._col.add(
@@ -333,10 +336,10 @@ class ChromaVectorStore(VectorStore):
 
     def search(
         self,
-        query:     str,
-        top_k:     int   = 5,
+        query: str,
+        top_k: int = 5,
         threshold: float = 0.7,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         results = self._col.query(query_texts=[query], n_results=top_k)
         out = []
         for meta in (results.get("metadatas") or [[]])[0]:
@@ -350,13 +353,13 @@ class ChromaVectorStore(VectorStore):
     @classmethod
     def load(
         cls,
-        path:              str,
+        path: str,
         embedding_adapter: EmbeddingAdapter,
-    ) -> "ChromaVectorStore":
+    ) -> ChromaVectorStore:
         return cls(embedding_adapter, path=path)
 
     def __len__(self) -> int:
-        return self._col.count()
+        return int(self._col.count())
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -383,24 +386,25 @@ class FAISSVectorStore(VectorStore):
     def __init__(
         self,
         embedding_adapter: EmbeddingAdapter,
-        dimension:         int = 384,
+        dimension: int = 384,
     ) -> None:
         try:
             import faiss  # type: ignore[import]
         except ImportError as exc:
             raise ImportError(
-                "FAISSVectorStore requires faiss.\n"
-                "Install it with:  pip install faiss-cpu"
+                "FAISSVectorStore requires faiss.\n" "Install it with:  pip install faiss-cpu"
             ) from exc
 
         import faiss  # type: ignore[import]  # noqa: F811 (needed for local ref)
-        self._adapter   = embedding_adapter
-        self._dimension = dimension
-        self._index     = faiss.IndexFlatIP(dimension)
-        self._records:  List[Dict[str, Any]] = []
 
-    def add(self, record: Dict[str, Any]) -> None:
+        self._adapter = embedding_adapter
+        self._dimension = dimension
+        self._index = faiss.IndexFlatIP(dimension)
+        self._records: list[dict[str, Any]] = []
+
+    def add(self, record: dict[str, Any]) -> None:
         import numpy as np  # type: ignore[import]
+
         vec = self._adapter.embed(record.get("query", "")).vector
         arr = np.array([vec], dtype="float32")
         self._index.add(arr)
@@ -408,11 +412,12 @@ class FAISSVectorStore(VectorStore):
 
     def search(
         self,
-        query:     str,
-        top_k:     int   = 5,
+        query: str,
+        top_k: int = 5,
         threshold: float = 0.7,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         import numpy as np  # type: ignore[import]
+
         if not self._records:
             return []
         vec = self._adapter.embed(query).vector
@@ -428,8 +433,10 @@ class FAISSVectorStore(VectorStore):
         return out
 
     def persist(self, path: str) -> None:
-        import faiss   # type: ignore[import]
         import pickle
+
+        import faiss  # type: ignore[import]
+
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
         faiss.write_index(self._index, path + ".faiss")
         with open(path + ".records.pkl", "wb") as fh:
@@ -438,12 +445,14 @@ class FAISSVectorStore(VectorStore):
     @classmethod
     def load(
         cls,
-        path:              str,
+        path: str,
         embedding_adapter: EmbeddingAdapter,
-    ) -> "FAISSVectorStore":
-        import faiss   # type: ignore[import]
+    ) -> FAISSVectorStore:
         import pickle
-        dim   = embedding_adapter.embed("probe").dimension
+
+        import faiss  # type: ignore[import]
+
+        dim = embedding_adapter.embed("probe").dimension
         store = cls(embedding_adapter, dimension=dim)
         store._index = faiss.read_index(path + ".faiss")
         with open(path + ".records.pkl", "rb") as fh:
@@ -471,21 +480,21 @@ class SemanticRetrieval:
         self._store = InMemoryVectorStore(embedding_adapter)
         # expose for legacy callers that poke at internals
         self.embedding_adapter = embedding_adapter
-        self.wisdom_records    = self._store._records
-        self.embeddings        = self._store._embeddings
+        self.wisdom_records = self._store._records
+        self.embeddings = self._store._embeddings
 
-    def add_record(self, record: Dict[str, Any]) -> None:
+    def add_record(self, record: dict[str, Any]) -> None:
         self._store.add(record)
 
     def retrieve_similar(
         self,
-        query:     str,
+        query: str,
         threshold: float = 0.7,
-        top_k:     int   = 5,
-    ) -> List[Dict[str, Any]]:
+        top_k: int = 5,
+    ) -> list[dict[str, Any]]:
         return self._store.search(query, top_k=top_k, threshold=threshold)
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         return self._store.get_statistics()
 
 
@@ -495,10 +504,10 @@ class SemanticRetrieval:
 
 
 def get_vector_store(
-    backend:           str                    = "memory",
-    embedding_adapter: Optional[EmbeddingAdapter] = None,
-    path:              Optional[str]          = None,
-    dimension:         int                    = 384,
+    backend: str = "memory",
+    embedding_adapter: EmbeddingAdapter | None = None,
+    path: str | None = None,
+    dimension: int = 384,
     **kwargs: Any,
 ) -> VectorStore:
     """Factory: return a :class:`VectorStore` for the requested *backend*.
@@ -528,8 +537,7 @@ def get_vector_store(
         return FAISSVectorStore(adapter, dimension=dimension, **kwargs)
 
     raise ValueError(
-        f"Unknown vector store backend {backend!r}. "
-        "Choose from: 'memory', 'chroma', 'faiss'."
+        f"Unknown vector store backend {backend!r}. " "Choose from: 'memory', 'chroma', 'faiss'."
     )
 
 
@@ -538,16 +546,16 @@ def get_vector_store(
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def _cosine_similarity(v1: List[float], v2: List[float]) -> float:
+def _cosine_similarity(v1: list[float], v2: list[float]) -> float:
     """Cosine similarity mapped to [0, 1]."""
     if len(v1) != len(v2):
         raise ValueError("Vectors must have the same dimension")
-    dot   = sum(a * b for a, b in zip(v1, v2))
-    mag1  = math.sqrt(sum(a * a for a in v1))
-    mag2  = math.sqrt(sum(b * b for b in v2))
+    dot = sum(a * b for a, b in zip(v1, v2))
+    mag1 = math.sqrt(sum(a * a for a in v1))
+    mag2 = math.sqrt(sum(b * b for b in v2))
     if mag1 == 0 or mag2 == 0:
         return 0.0
-    return (dot / (mag1 * mag2) + 1.0) / 2.0   # map [-1,1] → [0,1]
+    return (dot / (mag1 * mag2) + 1.0) / 2.0  # map [-1,1] → [0,1]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -559,15 +567,21 @@ if __name__ == "__main__":
 
     store = get_vector_store("memory", dimension=64)
     records = [
-        {"query": "What is the relationship between freedom and responsibility?",
-         "resolution": "Freedom and responsibility are interdependent.",
-         "confidence": 0.85},
-        {"query": "How should AI systems handle ethical dilemmas?",
-         "resolution": "Use multi-perspective reasoning.",
-         "confidence": 0.80},
-        {"query": "What makes a good decision?",
-         "resolution": "Balance values, consider long-term consequences.",
-         "confidence": 0.82},
+        {
+            "query": "What is the relationship between freedom and responsibility?",
+            "resolution": "Freedom and responsibility are interdependent.",
+            "confidence": 0.85,
+        },
+        {
+            "query": "How should AI systems handle ethical dilemmas?",
+            "resolution": "Use multi-perspective reasoning.",
+            "confidence": 0.80,
+        },
+        {
+            "query": "What makes a good decision?",
+            "resolution": "Balance values, consider long-term consequences.",
+            "confidence": 0.82,
+        },
     ]
     for r in records:
         store.add(r)

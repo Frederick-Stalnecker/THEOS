@@ -26,36 +26,36 @@ Package layout
 * ``theos_mcp_server``   — MCP stdio server (requires ``pip install mcp``)
 """
 
-from .theos_core import (
-    TheosCore,
-    TheosConfig,
-    TheosOutput,
-    HaltReason,
-    CycleTrace,
-)
-from .theos_system import TheosSystem, create_numeric_system
-from .theos_governor import (
-    THEOSGovernor,
-    TheosDualClockGovernor,   # backward-compat alias
-    GovernorConfig,
-    EngineOutput,
-    GovernorDecision,
-    StopReason,
-    Posture,
-)
 from .semantic_retrieval import (
     EmbeddingAdapter,
+    InMemoryVectorStore,
     MockEmbeddingAdapter,
     SemanticRetrieval,
     VectorStore,
-    InMemoryVectorStore,
     get_vector_store,
 )
+from .theos_core import (
+    CycleTrace,
+    HaltReason,
+    TheosConfig,
+    TheosCore,
+    TheosOutput,
+)
+from .theos_governor import (
+    EngineOutput,
+    GovernorConfig,
+    GovernorDecision,
+    Posture,
+    StopReason,
+    TheosDualClockGovernor,  # backward-compat alias
+    THEOSGovernor,
+)
+from .theos_system import TheosSystem, create_numeric_system
 
-__version__  = "1.0.0"
-__author__   = "Frederick Davis Stalnecker"
-__license__  = "MIT"
-__patent__   = "USPTO #63/831,738"
+__version__ = "1.0.0"
+__author__ = "Frederick Davis Stalnecker"
+__license__ = "MIT"
+__patent__ = "USPTO #63/831,738"
 
 __all__ = [
     # ── Core ──────────────────────────────────────────────────────────────
