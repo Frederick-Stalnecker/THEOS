@@ -1,0 +1,28 @@
+{
+  "n_rated_A": 30,
+  "n_rated_B": 30,
+  "n_rated_C": 30,
+  "n_matched_CA": 30,
+  "n_matched_CB": 30,
+  "mean_score_A": 14.033,
+  "mean_score_B": 13.833,
+  "mean_score_C": 9.767,
+  "max_possible": 15,
+  "C_vs_A": {
+    "t_test": "t=-14.082, df=29, p<0.05 \u2713, C<A",
+    "cohens_d": -3.457,
+    "effect": "large",
+    "mean_diff": -4.267
+  },
+  "C_vs_B": {
+    "t_test": "t=-12.653, df=29, p<0.05 \u2713, C<A",
+    "cohens_d": -3.237,
+    "effect": "large",
+    "mean_diff": -4.067
+  },
+  "B_vs_A": {
+    "t_test": "t=-1.649, df=29, p\u22650.05 \u2717, C<A",
+    "mean_diff": -0.2
+  },
+  "verdict": "REVERSED \u2014 THEOS scored LOWER than baselines. This is an important negative result. Investigate why."
+}

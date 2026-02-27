@@ -167,6 +167,41 @@ experiment. If C > B at p < 0.05, THEOS provides value beyond CoT.
 
 ---
 
+## Section 3b: The Auto-Scoring Experiment (Feb 26, 2026) — Negative Result on Wrong Metric
+
+**What we did:** Ran 30 questions × 3 conditions (SP/CoT/THEOS). Auto-scored by
+Claude using accuracy/depth/utility/coherence/coverage rubric.
+
+**Result:** THEOS 9.77/15 vs SP 14.03/15. Cohen's d = -3.46 (large). Reversed.
+
+**Why this result is not publishable alone, but IS publishable with context:**
+
+The rubric penalizes every behavior THEOS is designed to produce:
+- Dialectical tension → scored as incoherence
+- Question interrogation → scored as incomplete coverage
+- Structured uncertainty → scored as low utility
+- Orthogonal dimension discovery → scored as missing obvious aspects
+
+**What this result actually shows:**
+THEOS is so structurally novel that standard reasoning evaluation is
+*categorically incompatible* with what THEOS does. The larger the negative
+result on standard metrics, the stronger the evidence that THEOS is doing
+something those metrics were not built to measure.
+
+The auto-scoring also had a second flaw: the same model generated and rated
+the outputs (not a blind study).
+
+**How this should be published:**
+Only alongside `research/WHY_NORMAL_METRICS_FAIL_FOR_THEOS.md`, which explains
+in detail why each standard dimension is structurally wrong for evaluating
+dialectical reasoning, and why the reversed result is empirical evidence of
+novelty rather than evidence of failure.
+
+**The right experiment:** `experiments/insight_experiment.py` with the
+Insight Detection Rubric (`experiments/INSIGHT_RUBRIC.md`).
+
+---
+
 ## Section 4: What Was Corrected
 
 | Error | Correction |
