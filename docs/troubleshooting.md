@@ -3,6 +3,8 @@ layout: default
 title: Troubleshooting — THEOS
 ---
 
+<p align="center"><img src="{{ site.baseurl }}/assets/theos_logo.png" alt="THEOS" width="110"></p>
+
 # Troubleshooting
 
 Common issues and their solutions.

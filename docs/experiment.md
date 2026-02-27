@@ -3,6 +3,8 @@ layout: default
 title: The Experiment — THEOS
 ---
 
+<p align="center"><img src="{{ site.baseurl }}/assets/theos_logo.png" alt="THEOS" width="110"></p>
+
 # The Experiment
 
 ## What We Are Testing

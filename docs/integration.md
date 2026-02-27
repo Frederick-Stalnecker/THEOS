@@ -3,6 +3,8 @@ layout: default
 title: LLM Integration Guide — THEOS
 ---
 
+<p align="center"><img src="{{ site.baseurl }}/assets/theos_logo.png" alt="THEOS" width="110"></p>
+
 # LLM Integration Guide
 
 How to wire a real LLM (Claude, GPT-4, or any other) into THEOS as the reasoning engine.

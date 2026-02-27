@@ -3,6 +3,8 @@ layout: default
 title: Current Status — THEOS
 ---
 
+<p align="center"><img src="{{ site.baseurl }}/assets/theos_logo.png" alt="THEOS" width="110"></p>
+
 # Current Status
 
 An honest accounting of what THEOS is and is not, as of February 2026.

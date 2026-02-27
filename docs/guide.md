@@ -3,6 +3,8 @@ layout: default
 title: Developer Guide — THEOS
 ---
 
+<p align="center"><img src="{{ site.baseurl }}/assets/theos_logo.png" alt="THEOS" width="110"></p>
+
 # Developer Guide
 
 How to build a THEOS-powered reasoning system for your own domain.

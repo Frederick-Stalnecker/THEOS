@@ -3,6 +3,8 @@ layout: default
 title: Architecture — THEOS
 ---
 
+<p align="center"><img src="{{ site.baseurl }}/assets/theos_logo.png" alt="THEOS" width="110"></p>
+
 # Architecture
 
 ## The Wringer
