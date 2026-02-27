@@ -1,50 +1,29 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Setting up THEOS Research Environment..."
+echo "Setting up THEOS Development Environment..."
 
 # Update pip
 python -m pip install --upgrade pip
 
-# Install dependencies
-echo "📦 Installing Python dependencies..."
-pip install -r requirements.txt
+# Install THEOS package in editable mode with all dev and LLM dependencies
+echo "Installing THEOS package and dependencies..."
+pip install -e ".[dev,llm]"
 
-# Install development dependencies
-echo "🛠️ Installing development tools..."
-pip install \
-    pytest pytest-cov pytest-asyncio \
-    black isort flake8 pylint \
-    jupyter jupyterlab \
-    pandas matplotlib seaborn \
-    psutil memory-profiler \
-    bandit safety
+# Create results directory for experiments
+mkdir -p experiments/results
 
-# Create necessary directories
-echo "📁 Creating directories..."
-mkdir -p results benchmarks/data docs/dashboard
-
-# Initialize git hooks (optional)
-if [ -f .githooks/pre-commit ]; then
-    git config core.hooksPath .githooks
-    echo "✅ Git hooks configured"
-fi
-
-# Download test data if needed
-if [ ! -f benchmarks/data/test_scenarios.json ]; then
-    echo "📥 Downloading test scenarios..."
-    # Add download logic here
-fi
-
-echo "✅ Environment setup complete!"
 echo ""
-echo "📚 Quick Start:"
-echo "  - Run tests: pytest tests/"
-echo "  - Run benchmarks: python benchmarks/multi_llm_test_suite.py"
-echo "  - Start Jupyter: jupyter lab"
-echo "  - View dashboard: python -m http.server 8000 --directory docs/dashboard"
+echo "THEOS environment ready."
 echo ""
-echo "🔗 Resources:"
-echo "  - Documentation: docs/README.md"
-echo "  - Benchmarking: benchmarks/README.md"
-echo "  - Contributing: CONTRIBUTING.md"
+echo "Quick Start:"
+echo "  Run tests:           pytest tests/ -v"
+echo "  Run demo:            python code/theos_system.py"
+echo "  Run experiment:      python experiments/insight_experiment.py --backend mock --questions 3"
+echo "  Real experiment:     ANTHROPIC_API_KEY=sk-... python experiments/insight_experiment.py --backend anthropic --questions 10"
+echo ""
+echo "Key files:"
+echo "  code/theos_core.py        — The I->A->D->I cycle"
+echo "  code/theos_governor.py    — The contradiction governor"
+echo "  experiments/INSIGHT_RUBRIC.md — How to evaluate THEOS output"
+echo ""
