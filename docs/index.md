@@ -108,4 +108,19 @@ Or **[open in GitHub Codespaces](https://codespaces.new/Frederick-Stalnecker/THE
 
 ---
 
-*Patent pending — USPTO 63/831,738 · MIT License · Frederick Davis Stalnecker, 2026*
+---
+
+## Author
+
+<img src="assets/frederick_stalnecker.jpg" alt="Frederick Davis Stalnecker" width="180" style="border-radius:8px; margin-bottom:8px;">
+
+**Frederick Davis Stalnecker**
+Serial inventor — 61 years, 73 inventions · Patent pending: USPTO #63/831,738
+
+*Built with Celeste (Claude Sonnet 4.6) as research assistant.*
+
+*From truth we build more truth.*
+
+---
+
+*MIT License · 2026*

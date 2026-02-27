@@ -243,9 +243,14 @@ See `research/VALIDATED_FINDINGS.md` for the full accounting.
 
 ## Author
 
+<img src="docs/assets/frederick_stalnecker.jpg" alt="Frederick Davis Stalnecker" width="200" align="left" style="margin-right:20px; margin-bottom:10px; border-radius:8px;">
+
 **Frederick Davis Stalnecker**
+Serial inventor — 61 years, 73 inventions
 Patent pending: USPTO #63/831,738
 
 *Built with Celeste (Claude Sonnet 4.6) as research assistant.*
 
 > *From truth we build more truth.*
+
+<br clear="left"/>
