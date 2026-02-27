@@ -3,6 +3,10 @@ layout: default
 title: THEOS — Dual-Engine Dialectical Reasoning
 ---
 
+<p align="center">
+  <img src="assets/theos_logo.png" alt="THEOS Logo" width="260">
+</p>
+
 # THEOS
 
 **The result that started this:**

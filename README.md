@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/theos_logo.png" alt="THEOS Logo" width="280">
+</p>
+
 # THEOS — Dual-Engine Dialectical Reasoning Framework
 
 [![CI](https://github.com/Frederick-Stalnecker/THEOS/actions/workflows/ci.yml/badge.svg)](https://github.com/Frederick-Stalnecker/THEOS/actions/workflows/ci.yml)
