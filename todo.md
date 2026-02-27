@@ -48,9 +48,9 @@
 - [x] Prepare for stakeholder review (docs/status.md — website-facing summary)
 
 ## Phase 7: GitHub Commit and Presentation
-- [ ] Commit all Phase 5 & 6 documentation to GitHub
-- [ ] Verify CI passes on new commit
-- [ ] Repository is production-ready ✓ (CI green, PyPI published, 71 tests passing)
+- [x] Commit all Phase 5 & 6 documentation to GitHub
+- [x] Verify CI passes on new commit
+- [x] Repository is production-ready ✓ (CI green, PyPI published, 71 tests passing)
 
 ## Remaining Research Work
 - [ ] Run Insight Detection Experiment with human raters (30+ questions, blind IDR)

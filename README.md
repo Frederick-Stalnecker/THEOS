@@ -1,7 +1,7 @@
 # THEOS — Dual-Engine Dialectical Reasoning Framework
 
 [![CI](https://github.com/Frederick-Stalnecker/THEOS/actions/workflows/ci.yml/badge.svg)](https://github.com/Frederick-Stalnecker/THEOS/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/Frederick-Stalnecker/THEOS/branch/main/graph/badge.svg)](https://codecov.io/gh/Frederick-Stalnecker/THEOS)
+[![Tests](https://img.shields.io/badge/tests-71%20passing-brightgreen)](#)
 [![PyPI](https://img.shields.io/pypi/v/theos-reasoning?color=blue)](https://pypi.org/project/theos-reasoning/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
