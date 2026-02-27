@@ -7,6 +7,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Patent Pending](https://img.shields.io/badge/patent-pending%20USPTO%2063%2F831%2C738-orange)](#)
 
+**[Documentation Site](https://frederick-stalnecker.github.io/THEOS/) · [API Reference](https://frederick-stalnecker.github.io/THEOS/api) · [Developer Guide](https://frederick-stalnecker.github.io/THEOS/guide) · [Current Status](https://frederick-stalnecker.github.io/THEOS/status)**
+
 ---
 
 ## The Result That Started This
@@ -55,6 +57,8 @@ THEOS is a **dual-engine dialectical reasoning framework** written in pure Pytho
 3. **Deduction** — each engine derives conclusions from its own hypothesis
 
 Each engine runs a **private self-reflection**: its first-pass deduction feeds back into its own induction for a second inner pass — before the wringer measures contradiction between engines. This is not shared feedback. It is each engine reasoning about what it just concluded.
+
+**The key insight:** circular reasoning creates a *momentary past*. Each engine has a lived record of what it just concluded — which it examines and refines before committing to an answer. This is second-order cognition: thought about thought. Every existing AI system makes one forward pass and returns; it has no memory of having reasoned. THEOS builds a temporary past within each cycle, and the wisdom register accumulates compressed lessons across queries — building on what has been learned before.
 
 **The governor halts when:**
 - Contradiction `Φ < ε` (engines converged — true answer found)
@@ -172,10 +176,12 @@ See `examples/` for working domain engines: medical diagnosis, financial analysi
 
 ```
 THEOS/
-├── code/                          # Core package (pip-installable as 'theos')
+├── code/                          # Core package (pip-installable as 'theos-reasoning')
 │   ├── theos_core.py              # TheosCore — I→A→D→I wringer loop
-│   ├── theos_system.py            # TheosSystem + create_numeric_system()
+│   ├── theos_system.py            # TheosSystem + metrics + wisdom persistence
 │   ├── theos_governor.py          # Unified governor (THEOSGovernor)
+│   ├── llm_adapter.py             # Claude / GPT-4 / mock adapters
+│   ├── theos_mcp_server.py        # MCP server for Claude Desktop
 │   └── semantic_retrieval.py      # VectorStore + embedding adapters
 ├── examples/                      # Domain engines
 │   ├── theos_medical_diagnosis.py
@@ -183,15 +189,25 @@ THEOS/
 │   └── theos_ai_safety.py
 ├── tests/                         # 71 passing tests
 ├── experiments/                   # Validation framework
+│   ├── insight_experiment.py            # IDR experiment (correct instrument)
 │   ├── theos_validation_experiment.py   # Quality experiment (SP/CoT/THEOS)
-│   ├── wisdom_cost_experiment.py        # Cost reduction experiment
+│   ├── INSIGHT_RUBRIC.md                # Insight Detection Rubric
 │   ├── question_bank.py                 # 30 open-ended test questions
-│   └── results/                         # Measured experiment outputs
+│   └── results/                         # All measured experiment outputs
+├── docs/                          # GitHub Pages documentation site
+│   ├── index.md                   # Landing page
+│   ├── api.md                     # API reference
+│   ├── guide.md                   # Developer implementation guide
+│   ├── integration.md             # LLM integration guide
+│   ├── troubleshooting.md         # Common issues
+│   ├── status.md                  # Honest current status
+│   ├── architecture.md            # The wringer · the governor · the math
+│   ├── experiment.md              # Experiment design and how to contribute
+│   └── research/                  # Research papers (web)
 ├── research/
-│   ├── VALIDATED_FINDINGS.md            # What is proven vs. what needs testing
-│   ├── MATHEMATICAL_AUDIT.md            # Claim-by-claim audit
-│   ├── COST_EXPERIMENT_FINDINGS.md      # Cost experiment analysis
-│   └── ABDUCTION_FORMULA_INVESTIGATION.md
+│   ├── VALIDATED_FINDINGS.md      # What is proven vs. what needs testing
+│   ├── MATHEMATICAL_AUDIT.md      # Claim-by-claim audit
+│   └── COMPARATIVE_STUDY_FEB26.md # THEOS vs. 5 single-pass AIs
 ├── THEOS_ARCHITECTURE.md          # Full architecture reference
 └── archive/                       # Preserved prior work, clearly labeled
 ```
@@ -220,7 +236,7 @@ See `research/VALIDATED_FINDINGS.md` for the full accounting.
 | Governor (halting, posture) | Complete, 35 tests |
 | Wisdom accumulation | Working |
 | Domain examples | 3 working (medical, financial, AI safety) |
-| Quality experiment | Run (3 questions); needs 30 for significance |
+| Quality experiment | 30 questions run; IDR human-rating pending |
 | Native architecture | Not yet built — projected only |
 
 ---
