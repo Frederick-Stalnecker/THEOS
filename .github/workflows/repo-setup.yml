@@ -1,0 +1,105 @@
+name: Repository Setup (run once)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type YES to run setup"
+        required: true
+        default: "YES"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set repository topics
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.repos.replaceAllTopics({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              names: [
+                "artificial-intelligence",
+                "dialectical-reasoning",
+                "llm-governance",
+                "ai-safety",
+                "reasoning-framework",
+                "dual-engine",
+                "python",
+                "llm",
+                "epistemology",
+                "governance"
+              ]
+            });
+            console.log("Topics set successfully");
+
+      - name: Enable GitHub Pages (GitHub Actions source)
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              await github.rest.repos.createPagesSite({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                build_type: "workflow"
+              });
+              console.log("GitHub Pages enabled with GitHub Actions source");
+            } catch (e) {
+              if (e.status === 409) {
+                console.log("Pages already enabled — updating source...");
+                await github.rest.repos.updateInformationAboutPagesSite({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  build_type: "workflow"
+                });
+                console.log("Pages source updated to GitHub Actions");
+              } else {
+                console.log("Pages note:", e.message);
+              }
+            }
+
+      - name: Enable Discussions
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Discussions must be enabled via GraphQL mutation
+            const mutation = `
+              mutation EnableDiscussions($id: ID!) {
+                updateRepository(input: {repositoryId: $id, hasDiscussionsEnabled: true}) {
+                  repository {
+                    hasDiscussionsEnabled
+                  }
+                }
+              }
+            `;
+            // Get repo ID first
+            const repo = await github.rest.repos.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            const repoId = repo.data.node_id;
+            try {
+              const result = await github.graphql(mutation, { id: repoId });
+              console.log("Discussions enabled:", result.updateRepository.repository.hasDiscussionsEnabled);
+            } catch (e) {
+              console.log("Discussions note:", e.message);
+            }
+
+      - name: Print summary
+        run: |
+          echo "Repository setup complete:"
+          echo "  Topics: artificial-intelligence, dialectical-reasoning, llm-governance, ai-safety, reasoning-framework, dual-engine, python, llm, epistemology, governance"
+          echo "  GitHub Pages: enabled (GitHub Actions source)"
+          echo "  GitHub Discussions: enabled"
+          echo ""
+          echo "Pages will be live at: https://frederick-stalnecker.github.io/THEOS"
+          echo "After the pages.yml workflow runs successfully."
