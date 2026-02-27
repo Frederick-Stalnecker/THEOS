@@ -11,7 +11,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Patent Pending](https://img.shields.io/badge/patent-pending%20USPTO%2063%2F831%2C738-orange)](#)
 
-**[Documentation Site](https://frederick-stalnecker.github.io/THEOS/) · [API Reference](https://frederick-stalnecker.github.io/THEOS/api) · [Developer Guide](https://frederick-stalnecker.github.io/THEOS/guide) · [Current Status](https://frederick-stalnecker.github.io/THEOS/status)**
+**[→ The Vision](https://frederick-stalnecker.github.io/THEOS/vision) · [Documentation Site](https://frederick-stalnecker.github.io/THEOS/) · [API Reference](https://frederick-stalnecker.github.io/THEOS/api) · [Developer Guide](https://frederick-stalnecker.github.io/THEOS/guide) · [Current Status](https://frederick-stalnecker.github.io/THEOS/status)**
+
+> *THEOS Certification · Medicine · Constitutional AI · Global Wisdom Network — [read the vision →](https://frederick-stalnecker.github.io/THEOS/vision)*
 
 ---
 

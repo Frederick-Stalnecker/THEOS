@@ -5,7 +5,29 @@ title: Architecture — THEOS
 
 <p align="center"><img src="{{ site.baseurl }}/assets/theos_logo.png" alt="THEOS" width="110"></p>
 
-# Architecture
+# Architecture — The Human Thought Model Made Computable
+
+## The Architecture of Human Thought
+
+Every great answer a human being produces emerges from a tension between two forces: the creative mind that generates possibility, and the critical mind that challenges it. This tension is not a flaw in human cognition. It is the mechanism of it.
+
+THEOS makes that mechanism explicit and computable.
+
+---
+
+## The Two Engines
+
+**The left engine runs clockwise.**
+It is constructive — generative, language-forward, hypothesis-building. It takes the question, induces patterns, abduces its strongest hypothesis, and deduces a conclusion. Then it does something no single-pass AI does: it feeds that conclusion back into its own induction for a second pass, refining what it just thought in light of having thought it. This is the *momentary past*. The engine has a lived record of its own reasoning.
+
+**The right engine runs counterclockwise.**
+It is adversarial — skeptical, contradiction-seeking, structurally opposed. It runs the same I→A→D→I cycle but from the opposite posture. Its job is not to be wrong. Its job is to find every place the left engine's answer could fail.
+
+These two engines do not compete. They collaborate through opposition — the same way the left and right hemispheres of the human brain produce thought together precisely *because* they see differently.
+
+The governor holds the position the frontal lobe holds in the human brain: judgment, restraint, and the decision of when enough has been thought.
+
+---
 
 ## The Wringer
 
@@ -70,6 +92,10 @@ The `disagreement` output is not a failure. It means: *this question cannot be a
 ---
 
 ## The Governor
+
+The governor measures the contradiction Φ between the two deductions after every cycle. It does not stop at the first satisfactory answer — it sustains cycles of I→A→D→I until the best available answer has emerged from the tension between them. For a simple question this may take two or three cycles. For deeply nuanced questions — constitutional interpretation, novel scientific hypotheses, medical safety determinations — the engines may run through many cycles of contradiction and refinement, each pass surfacing structure the previous pass missed. Unexpected theoretical resolutions can emerge that neither engine could have produced alone. When Φ finally shrinks below ε, the engines have genuinely converged on a real answer. When Φ cannot shrink further, the governor reports irreducible disagreement — an honest answer in domains where certainty is impossible. In every case, the full reasoning trace is preserved and auditable.
+
+**Transparency is not optional.** Every step — every induction, every hypothesis, every contradiction measurement, every governor decision — is observable and auditable. This is the design, not a feature. The glass cube is not a metaphor. You can see through it because nothing is hidden.
 
 The governor (`code/theos_governor.py`) implements five stop conditions:
 

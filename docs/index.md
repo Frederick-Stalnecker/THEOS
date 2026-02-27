@@ -96,18 +96,29 @@ Or **[open in GitHub Codespaces](https://codespaces.new/Frederick-Stalnecker/THE
 
 ---
 
+## → [The Vision](vision)
+
+*Where THEOS is going: THEOS Certification, medicine, constitutional AI, and the global wisdom network. This is the most important page on this site.*
+
+<p align="center">
+  <a href="vision"><img src="{{ site.baseurl }}/assets/theos_certified.png" alt="THEOS Certified — See the Vision" width="200"></a>
+</p>
+
+---
+
 ## Navigation
 
 | | |
 |--|--|
+| **[→ The Vision](vision)** | **THEOS Certification · Medicine · Constitutional AI · Global wisdom network** |
+| [Architecture](architecture) | The wringer · The governor · Brain hemisphere model · The formal math |
+| [Current Status](status) | What is proven · What is not yet tested · What was corrected |
 | [Research](research/) | Why standard metrics fail · Comparative studies · Experiment design |
 | [The Experiment](experiment) | Insight Detection Rubric · How to contribute results |
-| [Architecture](architecture) | The wringer · The governor · The formal math |
 | [API Reference](api) | TheosCore · TheosConfig · TheosOutput · LLM adapters |
 | [Developer Guide](guide) | Build a THEOS domain · Operator contract · Self-reflection |
 | [Integration Guide](integration) | Claude · GPT-4 · MCP server · Token costs |
 | [Troubleshooting](troubleshooting) | Common issues · CI · Evaluation pitfalls |
-| [Current Status](status) | What is proven · What is not yet tested · What was corrected |
 | [GitHub](https://github.com/Frederick-Stalnecker/THEOS) | Code · Tests · Contributing |
 
 ---
