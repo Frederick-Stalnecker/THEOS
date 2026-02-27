@@ -4,7 +4,7 @@ title: THEOS — Dual-Engine Dialectical Reasoning
 ---
 
 <p align="center">
-  <img src="assets/theos_logo.png" alt="THEOS Logo" width="260">
+  <img src="{{ site.baseurl }}/assets/theos_logo.png" alt="THEOS Logo" width="260">
 </p>
 
 # THEOS
@@ -116,7 +116,7 @@ Or **[open in GitHub Codespaces](https://codespaces.new/Frederick-Stalnecker/THE
 
 ## Author
 
-<img src="assets/frederick_stalnecker.jpg" alt="Frederick Davis Stalnecker" width="180" style="border-radius:8px; margin-bottom:8px;">
+<img src="{{ site.baseurl }}/assets/frederick_stalnecker.jpg" alt="Frederick Davis Stalnecker" width="180" style="border-radius:8px; margin-bottom:8px;">
 
 **Frederick Davis Stalnecker**
 Serial inventor — 61 years, 73 inventions · Patent pending: USPTO #63/831,738
