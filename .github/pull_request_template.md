@@ -1,53 +1,27 @@
-## Description
+## What does this PR do?
 
-Please include a summary of the changes and related context.
+(Clear description — one paragraph max. Fixes #issue if applicable.)
 
-Fixes # (issue)
+## Type of change
 
-## Type of Change
-
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to change)
+- [ ] Bug fix
+- [ ] New domain implementation (`examples/`)
+- [ ] Experiment result / research addition
 - [ ] Documentation update
-- [ ] Code quality improvement
-- [ ] Test addition/improvement
+- [ ] Infrastructure / CI change
 
-## Testing
-
-Please describe the tests that you ran to verify your changes.
-
-- [ ] Unit tests pass locally
-- [ ] Integration tests pass locally
-- [ ] Examples run successfully
-- [ ] No new warnings or errors
+## How was it tested?
 
 ```bash
-pytest tests/ -v
-python examples/medical_ethics.py
+python -m pytest tests/ -v
+# paste relevant output here
 ```
-
-## Code Quality
-
-- [ ] Code follows the style guidelines of this project
-- [ ] Code has been formatted with black
-- [ ] Imports are sorted with isort
-- [ ] No new linting warnings (flake8)
-- [ ] Type hints are added where appropriate
-
-## Documentation
-
-- [ ] Documentation has been updated
-- [ ] Docstrings are complete and accurate
-- [ ] README.md has been updated if needed
-- [ ] Examples have been updated if needed
 
 ## Checklist
 
-- [ ] My code follows the code style of this project
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests passed locally with my changes
+- [ ] All existing tests pass (`python -m pytest tests/ -v`)
+- [ ] New functionality has tests
+- [ ] `ruff check code/` passes
+- [ ] `black --check code/` passes
+- [ ] No fabricated benchmarks or unverifiable performance claims
+- [ ] Type annotations on public functions

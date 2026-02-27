@@ -30,26 +30,30 @@
 - [x] Unit tests for wisdom system
 - [x] Unit tests for governor
 - [x] Integration tests
-- [x] All 21 tests passing — fixed hardcoded paths
+- [x] All 71 tests passing
 
 ## Phase 5: Documentation and Integration Guides
-- [ ] Create API documentation
-- [ ] Create implementation guide for developers
-- [ ] Create integration guide for LLMs
-- [ ] Create troubleshooting guide
-- [ ] Update README with new content
-- [ ] Create architecture diagrams
+- [x] Create API documentation (docs/api.md)
+- [x] Create implementation guide for developers (docs/guide.md)
+- [x] Create integration guide for LLMs (docs/integration.md)
+- [x] Create troubleshooting guide (docs/troubleshooting.md)
+- [x] Update docs/index.md navigation with all new pages
+- [x] Architecture diagrams — docs/architecture.md (ASCII wringer diagram)
 
 ## Phase 6: Honest Audit Document
-- [ ] Create comprehensive status report
-- [ ] Document what's complete vs incomplete
-- [ ] Identify gaps and limitations
-- [ ] Provide roadmap for future work
-- [ ] Prepare for stakeholder review
+- [x] Create comprehensive status report (docs/status.md)
+- [x] Document what's complete vs incomplete (research/VALIDATED_FINDINGS.md)
+- [x] Identify gaps and limitations (research/VALIDATED_FINDINGS.md §3)
+- [x] Provide roadmap for future work (research/VALIDATED_FINDINGS.md §5)
+- [x] Prepare for stakeholder review (docs/status.md — website-facing summary)
 
 ## Phase 7: GitHub Commit and Presentation
-- [ ] Review all changes
-- [ ] Commit to GitHub
-- [ ] Create release notes
-- [ ] Prepare presentation materials
-- [ ] Verify repository is production-ready
+- [ ] Commit all Phase 5 & 6 documentation to GitHub
+- [ ] Verify CI passes on new commit
+- [ ] Repository is production-ready ✓ (CI green, PyPI published, 71 tests passing)
+
+## Remaining Research Work
+- [ ] Run Insight Detection Experiment with human raters (30+ questions, blind IDR)
+- [ ] Statistical analysis of IDR results (p-value, Cohen's d)
+- [ ] Build native architecture (KV cache reuse — cost reduction from 12–20× to ~0.5×)
+- [ ] Compare THEOS vs. chain-of-thought (B condition) with IDR

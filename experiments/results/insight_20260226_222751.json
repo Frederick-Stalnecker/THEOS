@@ -1,0 +1,212 @@
+{
+  "experiment": "insight_detection_v1",
+  "rubric": "IDR \u2014 Insight Detection Rubric",
+  "conditions": {
+    "A": "SP \u2014 Single-pass direct answer",
+    "B": "IAD-P \u2014 Structured I\u2192A\u2192D in one prompt",
+    "C": "THEOS \u2014 Two-engine multi-pass I\u2192A\u2192D"
+  },
+  "model": "mock-llm-v1",
+  "timestamp": "2026-02-26T22:27:51.983680",
+  "n_questions": 3,
+  "results": [
+    {
+      "question_id": 1,
+      "question_text": "What is the difference between egotism and arrogance?",
+      "condition_a": {
+        "condition": "A_SP",
+        "question": "What is the difference between egotism and arrogance?",
+        "answer": "Based on the prompt, the key insight concerns between, egotism, arrogance?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #1]",
+        "total_tokens": 45,
+        "latency_ms": 0.008106231689453125,
+        "llm_calls": 1,
+        "trace": [
+          {
+            "step": "direct",
+            "response": "Based on the prompt, the key insight concerns between, egotism, arrogance?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction e"
+          }
+        ]
+      },
+      "condition_b": {
+        "condition": "B_IAD_P",
+        "question": "What is the difference between egotism and arrogance?",
+        "answer": "Based on the prompt, the key insight concerns collapse, single, narrative.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #2]",
+        "total_tokens": 182,
+        "latency_ms": 0.07605552673339844,
+        "llm_calls": 1,
+        "trace": [
+          {
+            "step": "iad_structured",
+            "response": "Based on the prompt, the key insight concerns collapse, single, narrative.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction e"
+          }
+        ]
+      },
+      "condition_c": {
+        "condition": "C_THEOS",
+        "question": "What is the difference between egotism and arrogance?",
+        "answer": "Based on the prompt, the key insight concerns between, egotism, arrogance?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #8]",
+        "total_tokens": 702,
+        "latency_ms": 1516.850233078003,
+        "llm_calls": 6,
+        "trace": [
+          {
+            "step": "p1_inductive",
+            "response": "Based on the prompt, the key insight concerns between, egotism, arrogance?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction e"
+          },
+          {
+            "step": "p1_abductive_L",
+            "response": "Based on the prompt, the key insight concerns between, egotism, arrogance?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction e"
+          },
+          {
+            "step": "p1_abductive_R",
+            "response": "Based on the prompt, the key insight concerns between, egotism, arrogance?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction e"
+          },
+          {
+            "step": "p1_deductive",
+            "response": "Based on the prompt, the key insight concerns between, egotism, arrogance?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction e"
+          },
+          {
+            "step": "p2_inductive",
+            "response": "Based on the prompt, the key insight concerns between, egotism, arrogance?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction e"
+          },
+          {
+            "step": "p2_final",
+            "response": "Based on the prompt, the key insight concerns between, egotism, arrogance?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction e"
+          }
+        ]
+      }
+    },
+    {
+      "question_id": 2,
+      "question_text": "What is the difference between knowledge and wisdom?",
+      "condition_a": {
+        "condition": "A_SP",
+        "question": "What is the difference between knowledge and wisdom?",
+        "answer": "Based on the prompt, the key insight concerns between, knowledge, wisdom?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #9]",
+        "total_tokens": 45,
+        "latency_ms": 0.02288818359375,
+        "llm_calls": 1,
+        "trace": [
+          {
+            "step": "direct",
+            "response": "Based on the prompt, the key insight concerns between, knowledge, wisdom?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction ef"
+          }
+        ]
+      },
+      "condition_b": {
+        "condition": "B_IAD_P",
+        "question": "What is the difference between knowledge and wisdom?",
+        "answer": "Based on the prompt, the key insight concerns collapse, single, narrative.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #10]",
+        "total_tokens": 182,
+        "latency_ms": 0.20623207092285156,
+        "llm_calls": 1,
+        "trace": [
+          {
+            "step": "iad_structured",
+            "response": "Based on the prompt, the key insight concerns collapse, single, narrative.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction e"
+          }
+        ]
+      },
+      "condition_c": {
+        "condition": "C_THEOS",
+        "question": "What is the difference between knowledge and wisdom?",
+        "answer": "Based on the prompt, the key insight concerns between, knowledge, wisdom?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #16]",
+        "total_tokens": 702,
+        "latency_ms": 1520.3850269317627,
+        "llm_calls": 6,
+        "trace": [
+          {
+            "step": "p1_inductive",
+            "response": "Based on the prompt, the key insight concerns between, knowledge, wisdom?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction ef"
+          },
+          {
+            "step": "p1_abductive_L",
+            "response": "Based on the prompt, the key insight concerns between, knowledge, wisdom?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction ef"
+          },
+          {
+            "step": "p1_abductive_R",
+            "response": "Based on the prompt, the key insight concerns between, knowledge, wisdom?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction ef"
+          },
+          {
+            "step": "p1_deductive",
+            "response": "Based on the prompt, the key insight concerns between, knowledge, wisdom?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction ef"
+          },
+          {
+            "step": "p2_inductive",
+            "response": "Based on the prompt, the key insight concerns between, knowledge, wisdom?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction ef"
+          },
+          {
+            "step": "p2_final",
+            "response": "Based on the prompt, the key insight concerns between, knowledge, wisdom?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction ef"
+          }
+        ]
+      }
+    },
+    {
+      "question_id": 3,
+      "question_text": "What is the difference between courage and recklessness?",
+      "condition_a": {
+        "condition": "A_SP",
+        "question": "What is the difference between courage and recklessness?",
+        "answer": "Based on the prompt, the key insight concerns between, courage, recklessness?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #17]",
+        "total_tokens": 45,
+        "latency_ms": 0.049114227294921875,
+        "llm_calls": 1,
+        "trace": [
+          {
+            "step": "direct",
+            "response": "Based on the prompt, the key insight concerns between, courage, recklessness?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interactio"
+          }
+        ]
+      },
+      "condition_b": {
+        "condition": "B_IAD_P",
+        "question": "What is the difference between courage and recklessness?",
+        "answer": "Based on the prompt, the key insight concerns collapse, single, narrative.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #18]",
+        "total_tokens": 182,
+        "latency_ms": 0.10704994201660156,
+        "llm_calls": 1,
+        "trace": [
+          {
+            "step": "iad_structured",
+            "response": "Based on the prompt, the key insight concerns collapse, single, narrative.. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction e"
+          }
+        ]
+      },
+      "condition_c": {
+        "condition": "C_THEOS",
+        "question": "What is the difference between courage and recklessness?",
+        "answer": "Based on the prompt, the key insight concerns between, courage, recklessness?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interaction effect that single-pass analysis would miss. [Mock response #24]",
+        "total_tokens": 702,
+        "latency_ms": 1525.3198146820068,
+        "llm_calls": 6,
+        "trace": [
+          {
+            "step": "p1_inductive",
+            "response": "Based on the prompt, the key insight concerns between, courage, recklessness?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interactio"
+          },
+          {
+            "step": "p1_abductive_L",
+            "response": "Based on the prompt, the key insight concerns between, courage, recklessness?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interactio"
+          },
+          {
+            "step": "p1_abductive_R",
+            "response": "Based on the prompt, the key insight concerns between, courage, recklessness?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interactio"
+          },
+          {
+            "step": "p1_deductive",
+            "response": "Based on the prompt, the key insight concerns between, courage, recklessness?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interactio"
+          },
+          {
+            "step": "p2_inductive",
+            "response": "Based on the prompt, the key insight concerns between, courage, recklessness?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interactio"
+          },
+          {
+            "step": "p2_final",
+            "response": "Based on the prompt, the key insight concerns between, courage, recklessness?. This appears to involve a relationship between distinct but related concepts. The deeper structure suggests an interactio"
+          }
+        ]
+      }
+    }
+  ]
+}

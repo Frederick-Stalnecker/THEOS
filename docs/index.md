@@ -99,6 +99,11 @@ Or **[open in GitHub Codespaces](https://codespaces.new/Frederick-Stalnecker/THE
 | [Research](research/) | Why standard metrics fail · Comparative studies · Experiment design |
 | [The Experiment](experiment) | Insight Detection Rubric · How to contribute results |
 | [Architecture](architecture) | The wringer · The governor · The formal math |
+| [API Reference](api) | TheosCore · TheosConfig · TheosOutput · LLM adapters |
+| [Developer Guide](guide) | Build a THEOS domain · Operator contract · Self-reflection |
+| [Integration Guide](integration) | Claude · GPT-4 · MCP server · Token costs |
+| [Troubleshooting](troubleshooting) | Common issues · CI · Evaluation pitfalls |
+| [Current Status](status) | What is proven · What is not yet tested · What was corrected |
 | [GitHub](https://github.com/Frederick-Stalnecker/THEOS) | Code · Tests · Contributing |
 
 ---

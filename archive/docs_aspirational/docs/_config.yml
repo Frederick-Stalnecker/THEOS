@@ -1,0 +1,26 @@
+title: THEOS
+description: Dual-Engine Dialectical Reasoning Framework
+baseurl: "/THEOS"
+url: "https://frederick-stalnecker.github.io"
+
+remote_theme: pages-themes/cayman@v0.2.0
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+
+author: Frederick Davis Stalnecker
+github_username: Frederick-Stalnecker
+
+show_downloads: true
+
+nav:
+  - title: Home
+    url: /THEOS/
+  - title: Research
+    url: /THEOS/research/
+  - title: The Experiment
+    url: /THEOS/experiment/
+  - title: Architecture
+    url: /THEOS/architecture/
+  - title: GitHub
+    url: https://github.com/Frederick-Stalnecker/THEOS
