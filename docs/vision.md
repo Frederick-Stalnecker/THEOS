@@ -95,4 +95,4 @@ This work is not being done for personal gain. It is being done because the prob
 
 ---
 
-[← Back to Home](index) · [Current Status](status) · [Architecture](architecture) · [GitHub](https://github.com/Frederick-Stalnecker/THEOS)
+[← Back to Home](index) · [Current Status](status) · [Architecture](architecture) · [GitHub](https://github.com/Frederick-Stalnecker/THEOS) · [YouTube](https://www.youtube.com/@TheosAIGovernance)

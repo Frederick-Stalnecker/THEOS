@@ -120,6 +120,7 @@ Or **[open in GitHub Codespaces](https://codespaces.new/Frederick-Stalnecker/THE
 | [Integration Guide](integration) | Claude · GPT-4 · MCP server · Token costs |
 | [Troubleshooting](troubleshooting) | Common issues · CI · Evaluation pitfalls |
 | [GitHub](https://github.com/Frederick-Stalnecker/THEOS) | Code · Tests · Contributing |
+| [YouTube](https://www.youtube.com/@TheosAIGovernance) | Video explanations · Demonstrations · The vision |
 
 ---
 
