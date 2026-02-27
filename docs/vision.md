@@ -7,6 +7,12 @@ title: The Vision — THEOS
 
 # The Vision
 
+<div style="text-align:center; margin:20px 0;">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/i5Mmq305ryg" frameborder="0" allowfullscreen></iframe>
+</div>
+
+---
+
 THEOS began as a question: what if AI reasoning were structured the way human cognition actually works — two engines in creative tension, overseen by a governor, accumulating wisdom from every question it answers?
 
 That question produced a working framework. The working framework points toward something larger.

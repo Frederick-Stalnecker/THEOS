@@ -17,6 +17,12 @@
 
 ---
 
+## Watch: What is THEOS and Why Does It Exist
+
+[![Watch: What is THEOS and Why Does It Exist](https://img.youtube.com/vi/i5Mmq305ryg/maxresdefault.jpg)](https://youtu.be/i5Mmq305ryg)
+
+---
+
 ## The Result That Started This
 
 Ask an AI: *"What is the difference between egotism and arrogance?"*

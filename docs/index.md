@@ -96,6 +96,14 @@ Or **[open in GitHub Codespaces](https://codespaces.new/Frederick-Stalnecker/THE
 
 ---
 
+## Watch: What is THEOS and Why Does It Exist
+
+<div style="text-align:center; margin:20px 0;">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/i5Mmq305ryg" frameborder="0" allowfullscreen></iframe>
+</div>
+
+---
+
 ## → [The Vision](vision)
 
 *Where THEOS is going: THEOS Certification, medicine, constitutional AI, and the global wisdom network. This is the most important page on this site.*
