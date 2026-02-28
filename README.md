@@ -21,7 +21,9 @@
 
 ## Watch: What is THEOS and Why Does It Exist
 
-[![Watch: What is THEOS and Why Does It Exist](https://img.youtube.com/vi/i5Mmq305ryg/maxresdefault.jpg)](https://youtu.be/i5Mmq305ryg)
+[![Watch: What is THEOS and Why Does It Exist](https://img.youtube.com/vi/i5Mmq305ryg/hqdefault.jpg)](https://youtu.be/i5Mmq305ryg)
+
+▶ [Watch the 3-minute introduction on YouTube](https://youtu.be/i5Mmq305ryg)
 
 ---
 
