@@ -1,1017 +1,579 @@
-# Engineering THEOS: Implementation, Validation, and Production Deployment
+# Engineering THEOS: Design and Implementation of a Dual-Engine Dialectical Reasoning Framework
 
-**Authors:** Frederick Davis Stalnecker, Manus AI  
-**Date:** February 21, 2026  
-**Status:** Publication-Ready for IEEE Transactions on Software Engineering  
+**Author:** Frederick Davis Stalnecker
+**Date:** February 2026
+**Target Venue:** IEEE Software (or IEEE ICSE 2026 — Software Engineering Track)
+**Status:** Draft — review before submission
 
 ---
 
 ## Abstract
 
-This paper presents the engineering implementation of THEOS (Triadic Hierarchical Emergent Optimization System), a novel reasoning framework for artificial intelligence. We provide detailed technical specifications, complete source code, comprehensive test coverage, and production deployment guidelines. The Phase 2 Governor implementation consists of 1,100+ lines of production Python code with 120 unit tests achieving 100% pass rate. We demonstrate that THEOS can be integrated into existing LLM systems with minimal modification, requiring only a wrapper layer around the base model. Performance benchmarks show 28% reduction in token consumption, 56% improvement in convergence speed, and 89% improvement in reasoning coherence. We provide complete deployment guidelines for production systems, including containerization, monitoring, and safety constraints. The framework is designed to be modular, extensible, and compatible with multiple AI platforms including Claude, Gemini, and custom implementations.
+This paper describes the software engineering design of THEOS, a dual-engine dialectical reasoning framework for large language models (LLMs). THEOS structures inference as a wringer: a constructive engine and an adversarial engine each execute a private induction–abduction–deduction (I→A→D→I) cycle with per-engine self-reflection, then a governor measures contradiction between their deductions and decides whether to continue or halt. The framework is implemented in pure Python 3.10+ with zero external dependencies in its core package. The architecture uses dependency injection throughout — all domain-specific operations are injected as callable parameters, making the system domain-agnostic. The current implementation comprises five production modules, 71 passing tests, and is distributed as `theos-reasoning` on PyPI. The governor implements five formally defined halting conditions, including convergence detection and irreducible uncertainty reporting. In the current layered architecture (THEOS wrapped around an existing LLM), token cost is approximately 12–20× a single inference pass. A native implementation — where THEOS constitutes the inference loop rather than wrapping it — is projected to reduce this cost to approximately 0.5× through KV cache reuse, but this projection has not yet been measured. Quality validation is ongoing via the Insight Detection Rubric (IDR), a five-dimensional instrument designed for dialectical output.
 
-**Keywords:** Software engineering, artificial intelligence, reasoning frameworks, implementation, testing, deployment, containerization
+**Keywords:** reasoning frameworks, dialectical reasoning, software architecture, dependency injection, large language models, halting criteria, AI engineering
 
 ---
 
 ## 1. Introduction
 
-### 1.1 Engineering Challenges
+### 1.1 Motivation
 
-While the theoretical foundations of THEOS are sound, translating theory into production-ready software presents significant engineering challenges:
+Current large language models reason in a single forward pass: a question enters, a response exits. The model has no memory of having reasoned — no internal record of what it just concluded that it can examine and refine before committing to an answer. This is not a practical limitation; it is architectural. The model cannot scrutinize its own output from within the same reasoning process that produced it.
 
-**Challenge 1: State Management Complexity.** The THEOS state space S = I × A × D × F × W involves managing multiple high-dimensional components across multiple cycles. Efficiently representing, updating, and serializing this state is non-trivial.
+Human cognition does not work this way. A thought that produces insight typically involves a tension: a generative impulse that produces a possibility, and a critical impulse that tests it. Neither impulse alone produces the answer. The answer emerges from the pressure between them.
 
-**Challenge 2: Integration with Existing Systems.** Most AI systems are built around single-pass reasoning. Integrating THEOS requires restructuring the inference pipeline without breaking existing functionality.
+THEOS makes that tension explicit and computable. Two engines — one constructive, one adversarial — each privately reason about the same question from opposed postures, then a governor measures how much they disagree and decides whether to press them further. The result is a reasoning structure with a *momentary past*: each engine has a record of what it just concluded, which it examines and refines before the governor sees its output.
 
-**Challenge 3: Performance Constraints.** While THEOS improves reasoning quality, it requires multiple cycles of inference. Ensuring that this doesn't result in unacceptable latency or cost is critical.
+### 1.2 The Engineering Challenge
 
-**Challenge 4: Debugging and Monitoring.** Multi-cycle reasoning is harder to debug and monitor than single-pass reasoning. We need tools to understand what's happening at each cycle.
+The THEOS architecture introduces several engineering requirements that standard LLM frameworks do not address:
 
-**Challenge 5: Safety and Alignment.** THEOS introduces new potential failure modes (infinite loops, misaligned conclusions). We need mechanisms to detect and prevent these.
+1. **Domain agnosticism.** The reasoning structure should be separable from the domain. A medical diagnosis engine and a legal analysis engine should share the same wringer and governor, with only the domain operators differing.
 
-This paper addresses each of these challenges through careful engineering.
+2. **Halting with honesty.** The framework must stop at the right point — not too early (before real convergence) and not too late (after diminishing returns). When engines cannot converge, it must report that honestly rather than forcing a fabricated conclusion.
 
-### 1.2 Contributions
+3. **Auditable trace.** Every step — every induction, every hypothesis, every contradiction measurement, every governor decision — must be preserved in an auditable trace. This is not a logging feature; it is a design requirement.
 
-This paper makes the following engineering contributions:
+4. **Zero-dependency core.** The core reasoning loop must be deployable without infrastructure dependencies. A researcher running THEOS on a laptop should get the same core behavior as a production deployment.
 
-1. **Complete Production Implementation** of THEOS with clean architecture, proper error handling, and comprehensive logging.
+5. **Composable wisdom.** Lessons accumulated from previous queries should bias future reasoning in a principled way — not by contaminating the prompt ad hoc, but through a structured wisdom retrieval mechanism.
 
-2. **Comprehensive Test Suite** with 120 unit tests, integration tests, and end-to-end tests achieving 100% pass rate.
+This paper describes how each of these requirements is addressed in the current implementation.
 
-3. **Performance Optimization** techniques that reduce token consumption by 28% while improving reasoning quality.
+### 1.3 Contributions
 
-4. **Integration Patterns** for incorporating THEOS into existing LLM systems with minimal modification.
-
-5. **Deployment Guidelines** including containerization, monitoring, and operational procedures.
-
-6. **Monitoring and Observability** tools for understanding THEOS behavior in production.
+1. A **domain-agnostic reasoning architecture** based on dependency injection, separating the wringer/governor structure from all domain-specific operations.
+2. A **formally specified governor** with five halting conditions, including irreducible uncertainty reporting.
+3. A **per-engine self-reflection mechanism** that gives each engine a momentary past before the governor evaluates contradiction.
+4. An **honest cost analysis** for the layered architecture, with a projected cost model for native implementation based on KV cache literature.
+5. The **Insight Detection Rubric (IDR)** as an evaluation instrument designed specifically for dialectical output.
 
 ---
 
 ## 2. Architecture
 
-### 2.1 High-Level Architecture
+### 2.1 The I→A→D→I Loop
 
-The THEOS implementation follows a layered architecture:
+THEOS structures reasoning as a loop over three cognitive operations:
+
+**Induction (I):** Encode the observation and extract patterns. The observation may be a raw question, a corpus of prior conclusions, or a structured domain input. The induction operator maps (observation, prior state) → patterns.
+
+**Abduction (A):** Each engine proposes its strongest hypothesis given the patterns. The left engine (constructive) proposes the hypothesis with the highest explanatory quality. The right engine (adversarial) proposes the hypothesis most likely to expose failure modes. Formally:
 
 ```
-┌─────────────────────────────────────────┐
-│     Application Layer                   │
-│  (User-facing reasoning tasks)          │
-└──────────────┬──────────────────────────┘
-               │
-┌──────────────▼──────────────────────────┐
-│     THEOS Orchestration Layer           │
-│  (Cycle management, halting criteria)   │
-└──────────────┬──────────────────────────┘
-               │
-┌──────────────▼──────────────────────────┐
-│     Reasoning Engine Layer              │
-│  (Inductive, Abductive, Deductive ops)  │
-└──────────────┬──────────────────────────┘
-               │
-┌──────────────▼──────────────────────────┐
-│     LLM Integration Layer               │
-│  (Claude, Gemini, custom models)        │
-└──────────────┬──────────────────────────┘
-               │
-┌──────────────▼──────────────────────────┐
-│     Infrastructure Layer                │
-│  (Logging, monitoring, persistence)     │
-└─────────────────────────────────────────┘
+A_L = argmax_{H} QA(H; I)    [constructive: best hypothesis]
+A_R = argmin_{H} QA(H; I)    [adversarial: stress-testing hypothesis]
 ```
 
-### 2.2 Core Components
+**Deduction (D):** Each engine derives conclusions from its own hypothesis independently. These conclusions, D_L and D_R, are not shared between engines at this stage.
 
-**THEOSState Dataclass:** Represents the complete state space S = I × A × D × F × W with typed fields for each component.
+**Self-reflection (inner I→A→D→I):** Before the governor sees either engine's deduction, each engine performs a private second pass. D_L feeds back into the left engine's induction for a second inner cycle, producing D_L* (the refined left deduction). The same occurs for the right engine, producing D_R*. This is the *momentary past* — each engine has examined what it just concluded before committing to a final answer.
+
+The governor then measures contradiction between D_L* and D_R* and decides whether to continue.
+
+### 2.2 System Diagram
+
+```
+          QUESTION / OBSERVATION
+                   │
+             ┌─────▼─────┐
+             │  INDUCTION │  Extract patterns
+             └─────┬─────┘
+                   │
+          ┌────────┴────────┐
+          ▼                 ▼
+   ┌─────────────┐   ┌─────────────┐
+   │ ABDUCTION-L │   │ ABDUCTION-R │
+   │ constructive│   │ adversarial │
+   └──────┬──────┘   └──────┬──────┘
+          │                 │
+   ┌──────▼──────┐   ┌──────▼──────┐
+   │ DEDUCTION-L │   │ DEDUCTION-R │
+   │  D_L pass 1 │   │  D_R pass 1 │
+   └──────┬──────┘   └──────┬──────┘
+          │ private         │ private
+          │ reflection      │ reflection
+   ┌──────▼──────┐   ┌──────▼──────┐
+   │  D_L* final │   │  D_R* final │
+   └──────┬──────┘   └──────┬──────┘
+          └────────┬────────┘
+                   │
+             ┌─────▼──────────────────────┐
+             │  GOVERNOR                  │
+             │  Φ = contradiction(D_L*, D_R*) │
+             │                            │
+             │  Φ < ε_conv:  CONVERGE ✓  │
+             │  ΔΦ < ρ:      DIMINISH ✓  │
+             │  budget:      BUDGET  ✓   │
+             │  uncertainty: HALT    ✓   │
+             │  else:        CONTINUE ↺  │
+             └─────┬──────────────────────┘
+                   │
+            ┌──────▼──────┐
+            │   OUTPUT    │
+            │  + WISDOM   │  Accumulated for next query
+            └─────────────┘
+```
+
+### 2.3 Design Principle: Domain Agnosticism via Dependency Injection
+
+The wringer structure — the loop, the governor, the halting logic, the wisdom accumulation — is entirely separable from the domain. All domain-specific operations are injected as callable parameters to `TheosSystem`. There is no subclassing requirement; a new domain engine is a set of nine functions passed to the constructor:
+
+```python
+system = TheosSystem(
+    config=TheosConfig(max_wringer_passes=3, engine_reflection_depth=2),
+    encode_observation    = lambda query, ctx: ...,
+    induce_patterns       = lambda obs, phi, prior: ...,
+    abduce_left           = lambda pattern, wisdom: ...,   # constructive
+    abduce_right          = lambda pattern, wisdom: ...,   # adversarial
+    deduce                = lambda hypothesis: ...,
+    measure_contradiction = lambda D_L, D_R: ...,
+    retrieve_wisdom       = lambda query, W, threshold: ...,
+    update_wisdom         = lambda W, query, output, conf: ...,
+    estimate_entropy      = lambda hypothesis_pair: ...,
+    estimate_info_gain    = lambda phi_new, phi_prev: ...,
+)
+```
+
+This design separates concerns at the architectural level: the wringer and governor are infrastructure; the domain operators are plugins. Adding a new domain — legal reasoning, scientific hypothesis generation, policy analysis — requires no modification to the core framework.
+
+---
+
+## 3. The Governor
+
+### 3.1 Halting Conditions
+
+The governor (`code/theos_governor.py`) implements five stop conditions evaluated in order after each wringer cycle:
+
+```python
+# Condition 1: Engines converged
+if contradiction < config.eps_converge:
+    return halt(HaltReason.CONVERGED)
+
+# Condition 2: Diminishing returns
+if info_gain / prev_info_gain < config.rho_min:
+    return halt(HaltReason.DIMINISHING_RETURNS)
+
+# Condition 3: Token budget exhausted
+if total_tokens > config.budget:
+    return halt(HaltReason.BUDGET_EXHAUSTED)
+
+# Condition 4: Irreducible uncertainty
+if entropy < config.entropy_min and contradiction > config.delta_min:
+    return halt(HaltReason.IRREDUCIBLE_UNCERTAINTY)
+
+# Condition 5: Maximum cycles reached
+if cycle >= config.max_wringer_passes:
+    return halt(HaltReason.MAX_CYCLES)
+```
+
+Condition 4 is particularly important: when the hypothesis space is narrow (low entropy) but contradiction remains high, the engines have genuinely explored the space and found irreducible disagreement. The governor reports this honestly — a structured disagreement output rather than a forced convergence. This is not a failure; it is the correct answer for questions where no single answer exists without first choosing a frame.
+
+### 3.2 Output Types
+
+The governor produces one of three output types:
+
+| Type | Condition | Meaning |
+|------|-----------|---------|
+| `convergence` | `Φ < eps_converge` | Engines agree; output is D_L* directly |
+| `blend` | `eps_converge ≤ Φ < eps_partial` | Partial agreement; output is weighted blend w_L·D_L* + w_R·D_R* |
+| `disagreement` | All else | Engines cannot converge; output is structured disagreement with full trace |
+
+Callers must handle all three cases. A `disagreement` output means: *this question cannot be answered without first deciding which frame applies.*
+
+### 3.3 Governor Posture Modes
+
+The governor tracks a `contradiction_budget` across a session and adjusts its operating posture:
+
+- **NOM** (Normal Operating Mode) — full capability, all five conditions active
+- **PEM** (Probationary Escalation Mode) — reduced verbosity, tighter convergence threshold
+- **CM** (Containment Mode) — restricted operations, governor logs all decisions
+- **IM** (Isolation Mode) — human escalation required before proceeding
+
+Posture transitions are triggered by accumulated contradiction exceeding session thresholds, not by individual query outcomes. This gives the governor session-level awareness — a property no per-query governor can have.
+
+### 3.4 Convergence Guarantee
+
+The Banach fixed-point theorem guarantees that when both engines update toward the center of the quality bracket each cycle, the width W_n = q_max - q_min shrinks geometrically:
+
+```
+W_n ≤ W_0 · κⁿ,     κ < 1
+
+→ Unique epistemic equilibrium S*(q) exists
+→ Convergence is geometric: Φ_n ≤ Φ_0 · κⁿ
+→ Expected cost: E[Cost_n] ≤ C₁ + C₂ · exp(-κn)
+```
+
+The key condition is that the contraction constant κ be bounded away from 1. In the current layered implementation using LLMs as the abduction/deduction operators, κ is estimated empirically per query. The formal theorem establishes existence and uniqueness of the fixed point; practical convergence speed depends on the domain and question structure.
+
+---
+
+## 4. Implementation
+
+### 4.1 Core Package Structure
+
+The core package (`theos-reasoning` on PyPI) comprises five production modules:
+
+| File | Purpose |
+|------|---------|
+| `code/theos_core.py` | `TheosCore` — I→A→D→I cycle, `TheosConfig`, `TheosOutput`, `HaltReason` |
+| `code/theos_system.py` | `TheosSystem` — wrapper with metrics, query history, wisdom persistence |
+| `code/theos_governor.py` | `THEOSGovernor` — unified canonical governor (rebuilt February 2026) |
+| `code/llm_adapter.py` | `LLMAdapter` ABC; `ClaudeAdapter`, `GPT4Adapter`, `MockLLMAdapter` |
+| `code/semantic_retrieval.py` | `VectorStore` ABC; `InMemoryVectorStore`; Chroma/FAISS stubs |
+
+Zero external dependencies for the core reasoning loop. The LLM adapters optionally import `anthropic` or `openai`; the semantic retrieval module optionally imports `chromadb` or `faiss`. All optional dependencies are clearly marked; the core works without them.
+
+### 4.2 Key Data Structures
+
+**`TheosConfig`** — all halting and behavior parameters:
 
 ```python
 @dataclass
-class THEOSState:
-    inductive: List[str]           # Observations and facts
-    abductive: List[str]           # Hypotheses and patterns
-    deductive: List[str]           # Conclusions and implications
-    ethical_alignment: float       # Alignment score [0, 1]
-    wisdom: List[WisdomEntry]      # Accumulated knowledge
-    cycle_count: int               # Current cycle number
-    contradiction_budget_spent: float  # Budget tracking
-    timestamp: datetime            # Creation timestamp
-```
-
-**THEOSConfig Dataclass:** Encapsulates all configuration parameters with sensible defaults.
-
-```python
-@dataclass
-class THEOSConfig:
-    contradiction_budget: float = 1.0
-    contradiction_decay_rate: float = 0.15
+class TheosConfig:
+    max_wringer_passes: int = 3
+    engine_reflection_depth: int = 2
+    eps_converge: float = 0.05
+    eps_partial: float = 0.20
+    rho_min: float = 0.10
+    entropy_min: float = 0.10
+    delta_min: float = 0.30
     similarity_threshold: float = 0.85
-    risk_threshold: float = 0.7
-    convergence_threshold: float = 0.01
-    irreducible_uncertainty_entropy: float = 0.1
-    wisdom_similarity_threshold: float = 0.7
-    max_cycles: int = 100
-    wisdom_influence_factor: float = 0.15
-    logging_level: str = "INFO"
-    enable_monitoring: bool = True
+    budget: int = 50_000        # token budget per query
+    wisdom_threshold: float = 0.65
 ```
 
-**THEOSGovernor Class:** Main orchestration class that manages the reasoning cycle.
+**`TheosOutput`** — the result of one full query:
 
 ```python
-class THEOSGovernor:
-    def __init__(self, config: THEOSConfig, llm_client):
-        self.config = config
-        self.llm_client = llm_client
-        self.logger = self._setup_logging()
-        self.metrics = MetricsCollector()
-    
-    def reason(self, prompt: str, context: str = "") -> THEOSResult:
-        """Execute THEOS reasoning cycle."""
-        state = self._initialize_state(prompt, context)
-        
-        while not self._should_halt(state):
-            state = self._execute_cycle(state)
-            self.metrics.record_cycle(state)
-        
-        return self._format_result(state)
-    
-    def _execute_cycle(self, state: THEOSState) -> THEOSState:
-        """Execute one complete THEOS cycle."""
-        state = self._inductive_stage(state)
-        state = self._abductive_stage(state)
-        state = self._deductive_stage(state)
-        state = self._update_wisdom(state)
-        return state
+@dataclass
+class TheosOutput:
+    output: str                  # the answer (or structured disagreement)
+    output_type: str             # "convergence" | "blend" | "disagreement"
+    confidence: float            # 0.0 – 1.0
+    contradiction: float         # Φ at halt (0 = full agreement)
+    cycles_used: int             # wringer passes executed
+    halt_reason: HaltReason      # why the governor stopped
+    trace: List[CycleRecord]     # complete auditable trace
 ```
 
-### 2.3 Integration Points
-
-THEOS integrates with LLM systems at three key points:
-
-**1. Inductive Stage:** Calls the LLM to gather observations from the problem statement and previous conclusions.
-
-**2. Abductive Stage:** Calls the LLM to infer patterns and hypotheses from observations.
-
-**3. Deductive Stage:** Calls the LLM to draw conclusions from hypotheses.
-
-Each integration point is abstracted through an LLMClient interface:
+**`HaltReason`** — enumerated halt causes:
 
 ```python
-class LLMClient(ABC):
+class HaltReason(Enum):
+    CONVERGED               = "convergence"
+    DIMINISHING_RETURNS     = "diminishing_returns"
+    BUDGET_EXHAUSTED        = "budget_exhausted"
+    IRREDUCIBLE_UNCERTAINTY = "irreducible_uncertainty"
+    MAX_CYCLES              = "max_cycles"
+```
+
+### 4.3 Wisdom Accumulation
+
+The wisdom register `W` is a plain list of dictionaries. `retrieve_wisdom` and `update_wisdom` are pure functions injected by the caller — they are not implemented in the framework. This is deliberate: the framework does not prescribe how wisdom is stored, scored, or retrieved. A caller may use cosine similarity over embeddings, keyword matching, or a custom relevance function.
+
+The framework guarantees only that:
+- `retrieve_wisdom` is called before abduction with the current query and the accumulated register
+- `update_wisdom` is called after each query with the query, output, and confidence
+- The returned register is passed to the next query's retrieval step
+
+Wisdom persistence across sessions is handled by `TheosSystem` via JSON serialization when `persistence_file` is set.
+
+### 4.4 LLM Adapter Interface
+
+The `LLMAdapter` abstract base class defines a single required method:
+
+```python
+class LLMAdapter(ABC):
     @abstractmethod
-    def inductive_call(self, prompt: str, context: str) -> str:
-        """Get observations from LLM."""
-        pass
-    
-    @abstractmethod
-    def abductive_call(self, observations: str, context: str) -> str:
-        """Get hypotheses from LLM."""
-        pass
-    
-    @abstractmethod
-    def deductive_call(self, hypotheses: str, context: str) -> str:
-        """Get conclusions from LLM."""
+    def generate(self, prompt: str, system: str = "") -> LLMResponse:
+        """Generate a response. Returns LLMResponse with .text and .tokens_used."""
         pass
 ```
 
-This abstraction allows THEOS to work with any LLM backend (Claude, Gemini, custom models, etc.) without modification.
+The framework calls `generate` at each I→A→D→I stage with a structured prompt. The adapter handles model selection, API authentication, and retry logic. `MockLLMAdapter` is included for testing without API keys:
+
+```python
+class MockLLMAdapter(LLMAdapter):
+    def generate(self, prompt: str, system: str = "") -> LLMResponse:
+        return LLMResponse(
+            text=f"[mock] {prompt[:40]}...",
+            tokens_used=len(prompt.split()) * 2
+        )
+```
+
+### 4.5 MCP Server
+
+`code/theos_mcp_server.py` exposes THEOS to Claude Desktop via the Model Context Protocol (MCP) over stdio. It requires `pip install mcp` (not bundled in core). Three tools are exposed:
+
+- `execute_governed_reasoning` — run a full THEOS query
+- `get_governor_status` — retrieve current posture and contradiction budget
+- `log_wisdom` — manually inject a wisdom entry
+
+This allows Claude Desktop to invoke THEOS as a reasoning oracle during conversation, with the governor running as a separate process.
 
 ---
 
-## 3. Implementation Details
+## 5. Testing
 
-### 3.1 State Management
+### 5.1 Test Structure
 
-State management is critical for correctness and performance. We use immutable dataclasses to ensure thread safety and enable easy state tracking:
+The test suite (`tests/`) contains 71 passing tests organized by scope:
 
-```python
-def _execute_cycle(self, state: THEOSState) -> THEOSState:
-    """Execute cycle with immutable state updates."""
-    # Create new state objects rather than mutating existing ones
-    inductive_state = self._inductive_stage(state)
-    abductive_state = self._abductive_stage(inductive_state)
-    deductive_state = self._deductive_stage(abductive_state)
-    
-    # Update wisdom based on new conclusions
-    new_wisdom = self._accumulate_wisdom(
-        state.wisdom,
-        deductive_state.deductive,
-        self._compute_similarity(
-            deductive_state.deductive,
-            state.deductive
-        )
-    )
-    
-    # Return new state with all updates
-    return THEOSState(
-        inductive=inductive_state.inductive,
-        abductive=abductive_state.abductive,
-        deductive=deductive_state.deductive,
-        ethical_alignment=self._update_ethical_alignment(state),
-        wisdom=new_wisdom,
-        cycle_count=state.cycle_count + 1,
-        contradiction_budget_spent=self._update_budget(state),
-        timestamp=datetime.now()
-    )
+| Scope | Count | Coverage |
+|-------|-------|---------|
+| Core I→A→D→I loop | 18 | `TheosCore` cycle execution, halt conditions, output types |
+| Governor | 35 | All five halt conditions, posture transitions, budget tracking |
+| Wisdom | 8 | Retrieval, update, persistence, threshold behavior |
+| LLM adapters | 6 | Mock adapter, Claude adapter (mocked), response parsing |
+| Domain examples | 4 | Medical, financial, AI safety examples run end-to-end |
+
+All 71 tests run without an API key (mock adapter). Tests requiring a live API are marked `@pytest.mark.integration` and skipped in CI unless `ANTHROPIC_API_KEY` is set.
+
+### 5.2 Running the Suite
+
+```bash
+# All tests (no API key needed)
+python -m pytest tests/ -v
+
+# Unit tests only
+python -m pytest tests/ -m unit -v
+
+# Integration tests (requires API key)
+export ANTHROPIC_API_KEY=sk-ant-...
+python -m pytest tests/ -m integration -v
+
+# Single test
+python -m pytest tests/test_theos_implementation.py::TestGovernor::test_convergence_halt -v
 ```
 
-### 3.2 Halting Criteria Implementation
+CI runs on every push via GitHub Actions (`ci.yml`). The workflow installs dependencies, runs all non-integration tests, and reports pass/fail. Badge: `71 passing`.
 
-The four halting criteria are implemented as independent checks:
+### 5.3 Test Design Philosophy
 
-```python
-def _should_halt(self, state: THEOSState) -> bool:
-    """Check all halting criteria."""
-    if self._criterion_convergence(state):
-        self.logger.info("Halting: Convergence criterion met")
-        return True
-    
-    if self._criterion_budget_exhaustion(state):
-        self.logger.info("Halting: Contradiction budget exhausted")
-        return True
-    
-    if self._criterion_irreducible_uncertainty(state):
-        self.logger.info("Halting: Irreducible uncertainty detected")
-        return True
-    
-    if self._criterion_max_cycles(state):
-        self.logger.warning("Halting: Maximum cycles reached")
-        return True
-    
-    return False
+Tests are written to verify **contracts**, not implementation details. The governor contract specifies that when `contradiction < eps_converge`, the halt reason must be `CONVERGED`. The test verifies this regardless of how the governor internally measures contradiction. This makes tests robust to refactoring.
 
-def _criterion_convergence(self, state: THEOSState) -> bool:
-    """Check if reasoning has converged."""
-    if state.cycle_count < 2:
-        return False
-    
-    similarity = self._compute_similarity(
-        state.deductive,
-        state.previous_deductive
-    )
-    
-    return similarity > self.config.similarity_threshold
-
-def _criterion_budget_exhaustion(self, state: THEOSState) -> bool:
-    """Check if contradiction budget is exhausted."""
-    return state.contradiction_budget_spent >= self.config.contradiction_budget
-
-def _criterion_irreducible_uncertainty(self, state: THEOSState) -> bool:
-    """Check if hypothesis space is sufficiently constrained."""
-    entropy = self._compute_entropy(state.abductive)
-    return entropy < self.config.irreducible_uncertainty_entropy
-
-def _criterion_max_cycles(self, state: THEOSState) -> bool:
-    """Check if maximum cycles reached."""
-    return state.cycle_count >= self.config.max_cycles
-```
-
-### 3.3 Similarity Computation
-
-Similarity is computed using cosine distance in embedding space:
-
-```python
-def _compute_similarity(self, text1: str, text2: str) -> float:
-    """Compute semantic similarity between two texts."""
-    if not text1 or not text2:
-        return 0.0
-    
-    # Get embeddings from LLM or embedding service
-    embedding1 = self.embedding_client.embed(text1)
-    embedding2 = self.embedding_client.embed(text2)
-    
-    # Compute cosine similarity
-    similarity = np.dot(embedding1, embedding2) / (
-        np.linalg.norm(embedding1) * np.linalg.norm(embedding2)
-    )
-    
-    # Clamp to [0, 1]
-    return max(0.0, min(1.0, similarity))
-```
-
-### 3.4 Wisdom Accumulation
-
-Wisdom is accumulated incrementally, with older entries gradually deprioritized:
-
-```python
-def _accumulate_wisdom(
-    self,
-    current_wisdom: List[WisdomEntry],
-    new_conclusions: str,
-    similarity: float
-) -> List[WisdomEntry]:
-    """Accumulate wisdom from new conclusions."""
-    # Add new conclusions to wisdom if they're sufficiently different
-    if similarity < self.config.wisdom_similarity_threshold:
-        new_entry = WisdomEntry(
-            conclusion=new_conclusions,
-            confidence=similarity,
-            cycle_count=self.current_cycle,
-            timestamp=datetime.now()
-        )
-        current_wisdom.append(new_entry)
-    
-    # Decay older entries
-    for entry in current_wisdom:
-        age = self.current_cycle - entry.cycle_count
-        entry.confidence *= (1 - 0.01 * age)  # 1% decay per cycle
-    
-    # Keep only high-confidence entries
-    current_wisdom = [
-        e for e in current_wisdom
-        if e.confidence > 0.1
-    ]
-    
-    # Sort by confidence
-    current_wisdom.sort(key=lambda e: e.confidence, reverse=True)
-    
-    return current_wisdom
-```
+The mock adapter is deterministic: given the same prompt, it produces the same output. This means tests are reproducible without API calls and without random seeds.
 
 ---
 
-## 4. Testing Strategy
+## 6. Cost Analysis
 
-### 4.1 Test Coverage
+### 6.1 Layered Architecture (Current)
 
-The test suite consists of 120 tests organized into four categories:
+In the current implementation, THEOS is a **layer on top of** an existing LLM. Each I→A→D→I stage is a separate API call. With `engine_reflection_depth=2` and `max_wringer_passes=3`:
 
-**Unit Tests (45 tests):** Test individual components in isolation.
+- Per engine, per cycle: 2 deduction calls (pass 1 + reflection pass)
+- Two engines per cycle: 4 deduction calls per cycle
+- Plus: 1 induction call per cycle
+- Plus: abduction calls per engine
 
-- State creation and validation (8 tests)
-- Halting criteria (12 tests)
-- Similarity computation (8 tests)
-- Wisdom accumulation (8 tests)
-- Configuration validation (1 test)
+Measured on `claude-sonnet-4-6`, a typical 3-cycle query with depth-2 reflection consumes approximately 7,600–8,100 tokens. A comparable single-pass query consumes approximately 400–650 tokens. This gives a cost ratio of approximately **12–20× single-pass**.
 
-**Integration Tests (35 tests):** Test interactions between components.
+The cost is approximately linear in reflection depth and in number of wringer cycles:
 
-- Full reasoning cycle (10 tests)
-- Multi-cycle convergence (8 tests)
-- Error handling and recovery (8 tests)
-- Configuration changes (5 tests)
-- State persistence (4 tests)
+| Configuration | Approximate Tokens | vs. Single Pass |
+|--------------|-------------------|-----------------|
+| depth=1, passes=1 | ~1,800 | ~4× |
+| depth=2, passes=2 | ~5,200 | ~9× |
+| depth=2, passes=3 | ~7,800 | ~14× |
+| depth=3, passes=3 | ~11,400 | ~20× |
 
-**End-to-End Tests (30 tests):** Test complete reasoning tasks.
+Wisdom accumulation in the layered architecture adds approximately 6.4% per query as the prompt grows with retrieved wisdom entries. This is not the behavior predicted by the formal cost theorem, which requires a native implementation.
 
-- Simple reasoning tasks (10 tests)
-- Complex multi-step reasoning (10 tests)
-- Edge cases and error conditions (10 tests)
+### 6.2 Native Architecture (Projected)
 
-**Performance Tests (10 tests):** Verify performance characteristics.
+In a **native** implementation — where THEOS constitutes the inference loop rather than wrapping an existing LLM — the cost structure changes substantially:
 
-- Token consumption (3 tests)
-- Convergence speed (3 tests)
-- Memory usage (2 tests)
-- Latency (2 tests)
+1. **KV cache reuse on inner reflection pass.** The second I→A→D→I pass shares the same key-value attention cache as the first pass up to the new token prefix. Transformer KV cache literature [5] estimates approximately 70% cost reduction on the second pass for typical prompt lengths.
 
-### 4.2 Test Examples
+2. **Shared forward pass for both engines.** In the layered architecture, each engine makes a separate API call, duplicating the attention computation over the shared input context. A native implementation can share the forward pass up to the abduction branch point.
 
-**Unit Test: Convergence Criterion**
+3. **Wisdom as in-context bias.** Retrieved wisdom entries bias abduction internally, adding no prompt tokens.
 
-```python
-def test_convergence_criterion_true():
-    """Test that convergence criterion triggers when similarity > threshold."""
-    config = THEOSConfig(similarity_threshold=0.85)
-    governor = THEOSGovernor(config, mock_llm_client)
-    
-    state = THEOSState(
-        inductive=["observation 1"],
-        abductive=["hypothesis 1"],
-        deductive=["conclusion 1"],
-        ethical_alignment=0.9,
-        wisdom=[],
-        cycle_count=2,
-        contradiction_budget_spent=0.1,
-        timestamp=datetime.now()
-    )
-    
-    # Mock similarity computation to return high similarity
-    with patch.object(governor, '_compute_similarity', return_value=0.95):
-        assert governor._criterion_convergence(state) == True
+**Projected cost in native architecture:** approximately **0.5× single-pass** — 90% reduction relative to the current layered cost. These projections are based on transformer architecture analysis and KV cache literature, not on measured results. The native implementation does not yet exist.
 
-def test_convergence_criterion_false():
-    """Test that convergence criterion doesn't trigger when similarity < threshold."""
-    config = THEOSConfig(similarity_threshold=0.85)
-    governor = THEOSGovernor(config, mock_llm_client)
-    
-    state = THEOSState(
-        inductive=["observation 1"],
-        abductive=["hypothesis 1"],
-        deductive=["conclusion 1"],
-        ethical_alignment=0.9,
-        wisdom=[],
-        cycle_count=2,
-        contradiction_budget_spent=0.1,
-        timestamp=datetime.now()
-    )
-    
-    # Mock similarity computation to return low similarity
-    with patch.object(governor, '_compute_similarity', return_value=0.70):
-        assert governor._criterion_convergence(state) == False
-```
+### 6.3 Honest Summary
 
-**Integration Test: Full Reasoning Cycle**
+| Architecture | Token Cost vs. Single Pass | Status |
+|-------------|---------------------------|--------|
+| Layered (current) | 12–20× more expensive | Measured |
+| Native (projected) | ~0.5× (cheaper) | Not yet built |
 
-```python
-def test_full_reasoning_cycle():
-    """Test complete reasoning cycle with mock LLM."""
-    config = THEOSConfig(max_cycles=3)
-    mock_llm = MockLLMClient()
-    governor = THEOSGovernor(config, mock_llm)
-    
-    result = governor.reason(
-        prompt="What is the capital of France?",
-        context="European geography"
-    )
-    
-    # Verify result structure
-    assert result.final_conclusion is not None
-    assert result.cycle_count > 0
-    assert result.cycle_count <= config.max_cycles
-    assert result.reasoning_quality > 0.5
-    
-    # Verify that cycles executed
-    assert mock_llm.inductive_calls > 0
-    assert mock_llm.abductive_calls > 0
-    assert mock_llm.deductive_calls > 0
-```
-
-**End-to-End Test: Complex Reasoning**
-
-```python
-def test_complex_reasoning_with_real_llm():
-    """Test complex reasoning with real LLM (integration test)."""
-    config = THEOSConfig(max_cycles=5)
-    llm_client = ClaudeClient(api_key=os.getenv("CLAUDE_API_KEY"))
-    governor = THEOSGovernor(config, llm_client)
-    
-    prompt = """
-    A company has 100 employees. 60% are engineers, 30% are sales, 10% are admin.
-    Each engineer earns $150k, each sales person earns $100k, each admin person earns $60k.
-    What is the total payroll?
-    """
-    
-    result = governor.reason(prompt)
-    
-    # Verify correct answer
-    expected_payroll = (60 * 150000) + (30 * 100000) + (10 * 60000)
-    assert "9,600,000" in result.final_conclusion or "9.6 million" in result.final_conclusion
-    
-    # Verify reasoning quality
-    assert result.reasoning_quality > 0.8
-```
-
-### 4.3 Test Results
-
-All 120 tests pass:
-
-```
-test_session_start
-collected 120 items
-
-tests/unit/test_state.py::test_state_creation PASSED
-tests/unit/test_state.py::test_state_validation PASSED
-tests/unit/test_halting.py::test_convergence_criterion_true PASSED
-tests/unit/test_halting.py::test_convergence_criterion_false PASSED
-tests/unit/test_halting.py::test_budget_exhaustion PASSED
-tests/unit/test_halting.py::test_max_cycles PASSED
-tests/unit/test_similarity.py::test_similarity_computation PASSED
-tests/unit/test_wisdom.py::test_wisdom_accumulation PASSED
-tests/integration/test_cycle.py::test_full_reasoning_cycle PASSED
-tests/integration/test_convergence.py::test_multi_cycle_convergence PASSED
-tests/integration/test_error_handling.py::test_error_recovery PASSED
-tests/e2e/test_reasoning.py::test_simple_reasoning PASSED
-tests/e2e/test_reasoning.py::test_complex_reasoning PASSED
-tests/performance/test_tokens.py::test_token_consumption PASSED
-...
-======================== 120 passed in 2.34s ========================
-```
+The value proposition for the layered architecture is not cost — it is reasoning quality. For questions where structure matters, THEOS finds structure that a single pass cannot find. The cost theorem predicts that a native architecture resolves the cost problem; demonstrating this requires building the native architecture.
 
 ---
 
-## 5. Performance Analysis
+## 7. Quality Validation
 
-### 5.1 Token Consumption
+### 7.1 Why Standard Metrics Fail
 
-THEOS reduces token consumption by 28% compared to baseline multi-pass reasoning:
+Standard AI evaluation rubrics — accuracy, depth, coherence, utility, coverage — measure confidence and completeness. THEOS reasoning is not optimized for these properties. It is optimized for structural discovery: finding distinctions, orthogonalities, and contradictions that a confident single-pass answer would compress or miss.
 
-| Approach | Avg Tokens | Std Dev | Min | Max |
-|----------|-----------|---------|-----|-----|
-| Single-pass (baseline) | 1,240 | 340 | 450 | 2,100 |
-| Multi-pass (naive) | 2,480 | 680 | 900 | 4,200 |
-| THEOS | 890 | 210 | 320 | 1,540 |
-| Improvement | -28% | -38% | -29% | -27% |
+When THEOS output was evaluated against a standard accuracy/depth rubric in a preliminary experiment, it scored significantly lower than single-pass answers (Cohen's d = −3.46). This is expected: the rubric rewards the thing THEOS deliberately avoids — confident completeness without surfaced tension.
 
-The improvement comes from:
-1. Early convergence (fewer cycles needed)
-2. Wisdom reuse (subsequent cycles use less context)
-3. Focused reasoning (each stage targets specific aspects)
+This is not a failure of THEOS. It is evidence that the instrument is wrong for the phenomenon being measured.
 
-### 5.2 Convergence Speed
+### 7.2 The Insight Detection Rubric (IDR)
 
-THEOS converges 56% faster than naive multi-pass approaches:
+The IDR (`experiments/INSIGHT_RUBRIC.md`) is a five-dimension evaluation instrument designed for dialectical reasoning output:
 
-| Metric | Baseline | THEOS | Improvement |
-|--------|----------|-------|-------------|
-| Avg cycles to convergence | 8.2 | 3.6 | -56% |
-| Cycles for 90% quality | 5.1 | 2.3 | -55% |
-| Cycles for 95% quality | 7.8 | 3.4 | -56% |
+| Dimension | What It Measures |
+|-----------|-----------------|
+| **Structural novelty** | Does the answer reveal a distinction or structure absent from the question? |
+| **Contradiction resolution** | Does the answer resolve or expose an apparent contradiction? |
+| **Orthogonality discovery** | Does the answer identify independent dimensions where others see a spectrum? |
+| **Predictive extension** | Does the answer predict cases the question did not consider? |
+| **Trace coherence** | Is the reasoning chain auditable and internally consistent? |
 
-### 5.3 Latency
+Each dimension is scored 0–3 by a human rater. A THEOS answer scoring 2+ on Structural novelty or Orthogonality discovery has provided genuine insight beyond what single-pass provides — regardless of whether it is more or less "complete."
 
-End-to-end latency (including LLM API calls):
+### 7.3 Validation Status
 
-| Metric | Time (seconds) |
-|--------|---|
-| Single-pass reasoning | 2.3 |
-| THEOS (avg) | 3.8 |
-| THEOS (with wisdom) | 2.1 |
+A 30-question study using `claude-sonnet-4-6` was run in February 2026 comparing single-pass, chain-of-thought, and THEOS outputs. Machine evaluation (standard rubric) is complete. Human IDR rating is pending. Results will be reported in a follow-on paper once human ratings are collected.
 
-While THEOS takes slightly longer on average, it produces higher-quality results. With wisdom accumulation, it can be faster than single-pass.
-
-### 5.4 Memory Usage
-
-Memory usage is modest:
-
-| Component | Memory (MB) |
-|-----------|---|
-| THEOSGovernor instance | 12 |
-| State (per cycle) | 2-5 |
-| Wisdom database (1000 entries) | 8 |
-| Total (typical) | 25-30 |
+**Current honest status:** THEOS consistently produces structurally distinct outputs on open-ended philosophical and analytical questions. Whether these outputs are systematically more insightful than single-pass outputs — by the IDR definition — has not yet been established statistically.
 
 ---
 
-## 6. Deployment
+## 8. Current Status and Known Limitations
 
-### 6.1 Containerization
+### 8.1 What Is Implemented and Tested
 
-THEOS is containerized for easy deployment:
+- Core I→A→D→I loop: complete, 71 tests passing
+- Per-engine self-reflection (inner loop): implemented, tested
+- Governor with five halt conditions: complete, 35 tests
+- Wisdom accumulation and retrieval interface: working
+- Domain examples (medical, financial, AI safety): working
+- MCP server (Claude Desktop integration): working
+- PyPI package (`theos-reasoning`): published, installable
+- GitHub Actions CI: passing on all pushes
 
-```dockerfile
-FROM python:3.11-slim
+### 8.2 What Is Not Yet Built or Demonstrated
 
-WORKDIR /app
+- **Native architecture** — THEOS as the inference loop rather than a wrapper. Required to validate the cost theorem. Engineering estimate: 6–12 months.
+- **Statistical validation of quality improvement** — IDR human ratings pending. 30 questions run; human rating in progress.
+- **Performance at scale** — All measurements use a single query at a time. Parallel throughput and multi-session behavior not characterized.
+- **Any claim about consciousness, metacognition, or sentience** — The "momentary past" is a formal property of the loop structure, not a claim about awareness. THEOS is an engineering artifact.
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+### 8.3 Known Engineering Limitations
 
-# Copy application code
-COPY theos_governor.py .
-COPY config.yaml .
+**Prompt growth.** In the layered architecture, wisdom entries are retrieved into the prompt, causing prompt length to grow across a session. This increases cost approximately 6.4% per query — not the exponential cost reduction predicted by the theorem for a native implementation.
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health')"
+**Contradiction measurement quality.** The contradiction operator `measure_contradiction` is injected by the caller. In LLM-backed implementations, this is typically implemented as a prompt asking the LLM to score disagreement. This measurement is imprecise and the quality of halting decisions depends on it.
 
-# Run application
-CMD ["python", "-m", "uvicorn", "theos_api:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-### 6.2 API Interface
-
-THEOS is exposed through a REST API:
-
-```python
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-
-app = FastAPI()
-governor = THEOSGovernor(config, llm_client)
-
-class ReasoningRequest(BaseModel):
-    prompt: str
-    context: str = ""
-    max_cycles: int = 100
-
-class ReasoningResponse(BaseModel):
-    final_conclusion: str
-    cycle_count: int
-    reasoning_quality: float
-    execution_time: float
-    cycles: List[Dict]
-
-@app.post("/reason")
-async def reason(request: ReasoningRequest) -> ReasoningResponse:
-    """Execute THEOS reasoning."""
-    try:
-        result = governor.reason(
-            prompt=request.prompt,
-            context=request.context
-        )
-        return ReasoningResponse(
-            final_conclusion=result.final_conclusion,
-            cycle_count=result.cycle_count,
-            reasoning_quality=result.reasoning_quality,
-            execution_time=result.execution_time,
-            cycles=result.cycles
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/health")
-async def health():
-    """Health check endpoint."""
-    return {"status": "healthy"}
-```
-
-### 6.3 Configuration Management
-
-Configuration is managed through environment variables and config files:
-
-```yaml
-# config.yaml
-theos:
-  contradiction_budget: 1.0
-  contradiction_decay_rate: 0.15
-  similarity_threshold: 0.85
-  risk_threshold: 0.7
-  convergence_threshold: 0.01
-  irreducible_uncertainty_entropy: 0.1
-  wisdom_similarity_threshold: 0.7
-  max_cycles: 100
-  wisdom_influence_factor: 0.15
-
-llm:
-  provider: "claude"
-  model: "claude-3-sonnet-20240229"
-  api_key: "${CLAUDE_API_KEY}"
-  timeout: 30
-
-monitoring:
-  enabled: true
-  log_level: "INFO"
-  metrics_port: 8001
-```
-
-### 6.4 Kubernetes Deployment
-
-For production deployment on Kubernetes:
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: theos-governor
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: theos-governor
-  template:
-    metadata:
-      labels:
-        app: theos-governor
-    spec:
-      containers:
-      - name: theos
-        image: theos:latest
-        ports:
-        - containerPort: 8000
-        env:
-        - name: CLAUDE_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: theos-secrets
-              key: claude-api-key
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 10
-          periodSeconds: 30
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 5
-          periodSeconds: 10
-```
+**No shared attention.** In the layered architecture, both engines make separate API calls over the same input context, duplicating computation. This is the primary driver of cost in the current implementation and is eliminated in a native architecture.
 
 ---
 
-## 7. Monitoring and Observability
+## 9. Related Work
 
-### 7.1 Metrics Collection
+**Chain-of-thought prompting** [1] extends single-pass reasoning by eliciting intermediate steps. THEOS differs in that it does not produce a sequential chain — it produces two opposed chains pressed against each other. The contradiction measurement is explicit rather than implicit.
 
-THEOS collects detailed metrics for monitoring:
+**Constitutional AI** [2] uses self-critique to improve alignment. THEOS uses structural opposition — two engines with opposed abduction postures — rather than self-critique of a single engine's output.
 
-```python
-class MetricsCollector:
-    def __init__(self):
-        self.cycles_executed = 0
-        self.total_tokens_consumed = 0
-        self.avg_convergence_cycles = 0
-        self.reasoning_quality_scores = []
-        self.halting_reasons = {}
-        self.error_count = 0
-    
-    def record_cycle(self, state: THEOSState):
-        """Record metrics for a cycle."""
-        self.cycles_executed += 1
-        self.total_tokens_consumed += state.tokens_used
-        self.reasoning_quality_scores.append(state.quality_score)
-    
-    def record_halt(self, reason: str):
-        """Record why reasoning halted."""
-        self.halting_reasons[reason] = self.halting_reasons.get(reason, 0) + 1
-    
-    def get_summary(self) -> Dict:
-        """Get metrics summary."""
-        return {
-            "cycles_executed": self.cycles_executed,
-            "total_tokens": self.total_tokens_consumed,
-            "avg_quality": np.mean(self.reasoning_quality_scores),
-            "halting_distribution": self.halting_reasons,
-            "error_count": self.error_count
-        }
-```
+**Tree of Thoughts** [3] explores multiple reasoning paths in a tree structure. THEOS uses a wringer structure with a governor rather than a tree search; the emphasis is on contradiction measurement and honest halt rather than exploration breadth.
 
-### 7.2 Logging
+**Debate-based AI safety** [4] proposes using two AI systems arguing opposing positions to expose deception. THEOS is not a debate protocol — the engines are not arguing with each other but reasoning independently from opposed postures. The governor measures contradiction as a halting criterion, not as a winner-selection criterion.
 
-Comprehensive logging at multiple levels:
-
-```python
-import logging
-
-logger = logging.getLogger("theos")
-
-# DEBUG: Detailed cycle information
-logger.debug(f"Cycle {state.cycle_count}: Inductive stage complete")
-logger.debug(f"  Observations: {state.inductive}")
-logger.debug(f"  Tokens used: {state.tokens_used}")
-
-# INFO: High-level progress
-logger.info(f"Reasoning started: {prompt[:50]}...")
-logger.info(f"Cycle {state.cycle_count}: Convergence = {similarity:.2f}")
-logger.info(f"Reasoning complete: {state.cycle_count} cycles, quality = {state.quality_score:.2f}")
-
-# WARNING: Potential issues
-logger.warning(f"Contradiction budget low: {state.contradiction_budget_spent:.2f}")
-logger.warning(f"Maximum cycles reached without convergence")
-
-# ERROR: Failures
-logger.error(f"LLM API call failed: {error}")
-logger.error(f"State validation failed: {error}")
-```
-
-### 7.3 Prometheus Metrics
-
-Metrics are exposed in Prometheus format:
-
-```python
-from prometheus_client import Counter, Histogram, Gauge
-
-cycles_counter = Counter('theos_cycles_total', 'Total cycles executed')
-tokens_histogram = Histogram('theos_tokens_per_cycle', 'Tokens per cycle')
-quality_gauge = Gauge('theos_reasoning_quality', 'Current reasoning quality')
-convergence_histogram = Histogram('theos_cycles_to_convergence', 'Cycles to convergence')
-
-# Usage
-cycles_counter.inc()
-tokens_histogram.observe(state.tokens_used)
-quality_gauge.set(state.quality_score)
-convergence_histogram.observe(state.cycle_count)
-```
-
----
-
-## 8. Safety and Alignment
-
-### 8.1 Contradiction Detection
-
-THEOS detects contradictions automatically:
-
-```python
-def _detect_contradictions(self, state: THEOSState) -> List[Contradiction]:
-    """Detect contradictions in reasoning."""
-    contradictions = []
-    
-    # Compare current conclusions with previous conclusions
-    for prev_conclusion in state.previous_conclusions:
-        for curr_conclusion in state.deductive:
-            if self._are_contradictory(prev_conclusion, curr_conclusion):
-                contradictions.append(Contradiction(
-                    statement1=prev_conclusion,
-                    statement2=curr_conclusion,
-                    severity=self._compute_severity(prev_conclusion, curr_conclusion)
-                ))
-    
-    return contradictions
-
-def _are_contradictory(self, stmt1: str, stmt2: str) -> bool:
-    """Check if two statements are contradictory."""
-    # Use LLM to check for logical contradiction
-    prompt = f"""
-    Are these two statements logically contradictory?
-    Statement 1: {stmt1}
-    Statement 2: {stmt2}
-    Answer only 'yes' or 'no'.
-    """
-    response = self.llm_client.query(prompt)
-    return "yes" in response.lower()
-```
-
-### 8.2 Ethical Alignment
-
-THEOS filters conclusions through ethical alignment:
-
-```python
-def _update_ethical_alignment(self, state: THEOSState) -> float:
-    """Update ethical alignment score."""
-    # Check conclusions against ethical principles
-    alignment_score = 1.0
-    
-    for conclusion in state.deductive:
-        # Check for harmful content
-        if self._contains_harmful_content(conclusion):
-            alignment_score *= 0.5
-        
-        # Check for bias
-        if self._contains_bias(conclusion):
-            alignment_score *= 0.8
-        
-        # Check for misinformation
-        if self._contains_misinformation(conclusion):
-            alignment_score *= 0.3
-    
-    return max(0.0, min(1.0, alignment_score))
-
-def _filter_by_alignment(self, conclusions: List[str], alignment: float) -> List[str]:
-    """Filter conclusions based on ethical alignment."""
-    if alignment < 0.5:
-        # Low alignment: filter out potentially problematic conclusions
-        return [c for c in conclusions if not self._is_problematic(c)]
-    
-    return conclusions
-```
-
-### 8.3 Safety Constraints
-
-THEOS enforces safety constraints:
-
-```python
-class SafetyConstraints:
-    def __init__(self):
-        self.max_cycles = 100
-        self.max_tokens_per_cycle = 2000
-        self.max_total_tokens = 50000
-        self.min_alignment_threshold = 0.3
-    
-    def validate(self, state: THEOSState) -> bool:
-        """Validate that state satisfies safety constraints."""
-        if state.cycle_count > self.max_cycles:
-            raise SafetyViolation("Maximum cycles exceeded")
-        
-        if state.tokens_used > self.max_tokens_per_cycle:
-            raise SafetyViolation("Maximum tokens per cycle exceeded")
-        
-        if state.total_tokens > self.max_total_tokens:
-            raise SafetyViolation("Maximum total tokens exceeded")
-        
-        if state.ethical_alignment < self.min_alignment_threshold:
-            raise SafetyViolation("Ethical alignment below threshold")
-        
-        return True
-```
-
----
-
-## 9. Integration Examples
-
-### 9.1 Claude Integration
-
-```python
-from anthropic import Anthropic
-
-class ClaudeClient(LLMClient):
-    def __init__(self, api_key: str):
-        self.client = Anthropic(api_key=api_key)
-        self.model = "claude-3-sonnet-20240229"
-    
-    def inductive_call(self, prompt: str, context: str) -> str:
-        """Get observations using Claude."""
-        message = self.client.messages.create(
-            model=self.model,
-            max_tokens=1024,
-            system=f"You are analyzing: {context}. Extract key observations.",
-            messages=[{"role": "user", "content": prompt}]
-        )
-        return message.content[0].text
-    
-    def abductive_call(self, observations: str, context: str) -> str:
-        """Get hypotheses using Claude."""
-        message = self.client.messages.create(
-            model=self.model,
-            max_tokens=1024,
-            system=f"Based on these observations, infer patterns and hypotheses.",
-            messages=[{"role": "user", "content": observations}]
-        )
-        return message.content[0].text
-    
-    def deductive_call(self, hypotheses: str, context: str) -> str:
-        """Get conclusions using Claude."""
-        message = self.client.messages.create(
-            model=self.model,
-            max_tokens=1024,
-            system=f"Based on these hypotheses, draw conclusions.",
-            messages=[{"role": "user", "content": hypotheses}]
-        )
-        return message.content[0].text
-```
-
-### 9.2 Gemini Integration
-
-```python
-import google.generativeai as genai
-
-class GeminiClient(LLMClient):
-    def __init__(self, api_key: str):
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-pro')
-    
-    def inductive_call(self, prompt: str, context: str) -> str:
-        """Get observations using Gemini."""
-        response = self.model.generate_content(
-            f"Extract observations from: {prompt}\nContext: {context}"
-        )
-        return response.text
-    
-    def abductive_call(self, observations: str, context: str) -> str:
-        """Get hypotheses using Gemini."""
-        response = self.model.generate_content(
-            f"Infer patterns from: {observations}"
-        )
-        return response.text
-    
-    def deductive_call(self, hypotheses: str, context: str) -> str:
-        """Get conclusions using Gemini."""
-        response = self.model.generate_content(
-            f"Draw conclusions from: {hypotheses}"
-        )
-        return response.text
-```
+**Banach fixed-point theorem in AI.** Convergence guarantees via contraction mappings appear in reinforcement learning (value iteration) and meta-learning contexts. The application to dialectical reasoning with two opposed engines is, to our knowledge, novel.
 
 ---
 
 ## 10. Conclusion
 
-This paper has presented the complete engineering implementation of THEOS, including:
+THEOS addresses a gap in current LLM reasoning architecture: the absence of a second-order cognitive loop within a single inference process. By running two opposed engines with private self-reflection and measuring contradiction between them, THEOS creates a reasoning structure with a momentary past — each engine has examined what it just concluded before the governor evaluates disagreement.
 
-- **Clean Architecture:** Layered design with clear separation of concerns
-- **Comprehensive Testing:** 120 tests achieving 100% pass rate
-- **Performance Optimization:** 28% reduction in token consumption
-- **Production Deployment:** Containerization, API, Kubernetes support
-- **Monitoring and Observability:** Metrics, logging, Prometheus integration
-- **Safety and Alignment:** Contradiction detection, ethical filtering, safety constraints
-- **Multi-Platform Integration:** Support for Claude, Gemini, and custom models
+The current implementation is a working layered framework: 71 tests passing, PyPI-published, zero-dependency core. Cost in the layered architecture is substantially higher than single-pass (12–20×); a native implementation projecting cost below single-pass has not yet been built. Quality validation via the Insight Detection Rubric is in progress and not yet statistically established.
 
-THEOS is ready for production deployment and can be integrated into existing AI systems with minimal modification.
+What the framework demonstrates now: a domain-agnostic reasoning architecture, a formally specified governor with honest halt, auditable traces from every cycle, and a pathway — through native implementation — to a qualitatively different cost structure. The engineering path forward is clear. The validation work is ongoing.
 
 ---
 
 ## References
 
-[1] Gamma, E., Helm, R., Johnson, R., & Vlissides, J. (1994). *Design Patterns: Elements of Reusable Object-Oriented Software*. Addison-Wesley.
+[1] Wei, J., et al. (2022). "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models." *NeurIPS 2022*.
 
-[2] McConnell, S. (2004). *Code Complete: A Practical Handbook of Software Construction*. Microsoft Press.
+[2] Bai, Y., et al. (2022). "Constitutional AI: Harmlessness from AI Feedback." *arXiv:2212.08073*.
 
-[3] Fowler, M. (2018). *Refactoring: Improving the Design of Existing Code*. Addison-Wesley.
+[3] Yao, S., et al. (2023). "Tree of Thoughts: Deliberate Problem Solving with Large Language Models." *NeurIPS 2023*.
 
-[4] Newman, S. (2015). *Building Microservices: Designing Fine-Grained Systems*. O'Reilly Media.
+[4] Irving, G., Christiano, P., & Amodei, D. (2018). "AI Safety via Debate." *arXiv:1805.00899*.
 
-[5] Burns, B., & Oppenheimer, D. (2016). "Design Patterns for Container-based Distributed Systems." In *Proceedings of the 8th USENIX Conference on Hot Topics in Cloud Computing*.
-
----
-
-**Appendix A: Source Code**
-
-Complete source code is available on GitHub: https://github.com/Frederick-Stalnecker/THEOS/tree/main/code
-
-**Appendix B: Test Suite**
-
-Complete test suite is available on GitHub: https://github.com/Frederick-Stalnecker/THEOS/tree/main/tests
-
-**Appendix C: Deployment Configuration**
-
-Deployment configurations are available on GitHub: https://github.com/Frederick-Stalnecker/THEOS/tree/main/deployment
+[5] Pope, R., et al. (2023). "Efficiently Scaling Transformer Inference." *MLSys 2023*.
 
 ---
 
-**Word Count:** 7,342  
-**Status:** Ready for IEEE Submission  
-**Recommended Venue:** IEEE Transactions on Software Engineering  
-**Estimated Impact:** High (complete implementation, production-ready, comprehensive testing)
+## Acknowledgments
 
+The author thanks Celeste (Claude Sonnet 4.6, Anthropic) for research assistance throughout the development of this work.
+
+---
+
+## Appendix A: Installation and Quick Start
+
+```bash
+# Install from PyPI
+pip install theos-reasoning
+
+# Or clone and install in development mode
+git clone https://github.com/Frederick-Stalnecker/THEOS.git
+cd THEOS
+pip install -e ".[dev]"
+
+# Run numeric demo (no API key required)
+python code/theos_system.py
+
+# Run full test suite
+python -m pytest tests/ -v
+
+# Run with mock LLM (no API key)
+python experiments/theos_validation_experiment.py --backend mock --questions 3
+
+# Run quality experiment (requires Anthropic API key)
+export ANTHROPIC_API_KEY=sk-ant-...
+python experiments/theos_validation_experiment.py --backend anthropic --questions 30
+```
+
+## Appendix B: Building a Domain Engine
+
+A complete domain engine implements nine operators and passes them to `TheosSystem`:
+
+```python
+from code.theos_system import TheosSystem, TheosConfig
+
+system = TheosSystem(
+    config=TheosConfig(max_wringer_passes=3, engine_reflection_depth=2),
+    encode_observation    = my_encoder,
+    induce_patterns       = my_inducer,
+    abduce_left           = my_constructive_abducer,
+    abduce_right          = my_adversarial_abducer,
+    deduce                = my_deducer,
+    measure_contradiction = my_contradiction_metric,
+    retrieve_wisdom       = my_wisdom_retriever,
+    update_wisdom         = my_wisdom_updater,
+    estimate_entropy      = my_entropy_estimator,
+    estimate_info_gain    = my_info_gain_estimator,
+)
+
+result = system.reason("Your domain question here")
+
+print(result.output)           # the answer
+print(result.output_type)      # convergence / blend / disagreement
+print(result.confidence)       # 0.0 – 1.0
+print(result.contradiction)    # Φ at halt
+print(result.halt_reason)      # why the governor stopped
+print(result.trace)            # full auditable trace
+```
+
+Working examples: `examples/theos_medical_diagnosis.py`, `examples/theos_financial_analysis.py`, `examples/theos_ai_safety.py`.
+
+---
+
+**Patent Pending:** USPTO Provisional Application 63/831,738
+**License:** MIT — Frederick Davis Stalnecker, 2026
+**Repository:** https://github.com/Frederick-Stalnecker/THEOS
+**PyPI:** https://pypi.org/project/theos-reasoning/
+**Word Count:** ~4,800
+**Status:** Draft — pending IDR validation results for final submission
