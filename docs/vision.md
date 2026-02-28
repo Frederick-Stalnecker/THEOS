@@ -45,7 +45,7 @@ THEOS compresses that bottleneck.
 
 > *THEOS could compress years of scientific reasoning — hypothesis generation, safety analysis, literature synthesis, contraindication mapping — into days. The auditable trail it produces meets the documentation standard regulators require. The empirical phases still require time. The reasoning phases no longer need to.*
 
-A complete reasoning trace — every step, every contradiction examined, every conclusion with its supporting chain — is not a byproduct of THEOS. It is the output. That trace *is* the regulatory documentation. Life-saving medicines that currently wait years for approval of their reasoning foundation could reach patients in weeks.
+A complete reasoning trace — every step, every contradiction examined, every conclusion with its supporting chain — is not a byproduct of THEOS. It is the output. That trace *is* the regulatory documentation. Life-saving medicines that currently wait years for approval of their reasoning foundation could potentially reach patients far sooner — once the reasoning phases are no longer the bottleneck.
 
 ---
 
