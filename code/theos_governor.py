@@ -12,6 +12,35 @@ Single canonical governor that supersedes the three earlier drafts:
 * ``theos_dual_clock_governor.py``   (MCP-facing, rich per-score API)
 * ``theos_governor_phase2.py``       (experimental, archived)
 
+Architectural Note — Two Governor Layers
+-----------------------------------------
+THEOS has two governor mechanisms that serve different purposes at
+different levels of the architecture:
+
+1. **TheosCore._check_halt_criteria** (in ``theos_core.py``)
+   The *inner governor*. Operates per-query inside the wringer loop.
+   Checks four halting criteria (convergence, diminishing returns,
+   budget, irreducible uncertainty) on numerical contradiction Φ
+   after each wringer pass. This is the formal-specification governor
+   described in the patent and the Banach convergence proof.
+
+2. **THEOSGovernor** (this module)
+   The *session governor*. Operates across queries in the MCP server.
+   Tracks a contradiction budget across an entire session, manages
+   posture states (NOM/PEM/CM/IM), scores engine outputs using a
+   multi-factor composite (coherence, calibration, evidence,
+   actionability, risk), and uses TF-IDF cosine similarity for
+   convergence detection on text outputs.
+
+These two governors are complementary, not competing:
+
+- TheosCore's inner governor decides *when to stop reasoning on one query*.
+- THEOSGovernor decides *how to govern a session of multiple queries*.
+
+In the MCP server integration, THEOSGovernor wraps the per-cycle
+reasoning loop, while TheosCore's inner governor manages each
+individual query's wringer passes internally.
+
 Design principles
 -----------------
 1. **Governed reasoning**: the governor has absolute authority over stop

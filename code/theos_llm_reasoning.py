@@ -285,26 +285,15 @@ Critical analysis:"""
         """
         Measure contradiction between constructive and critical outputs.
 
-        Simple heuristic: Check for opposing keywords and sentiment.
-        In production, use semantic similarity or LLM-based measurement.
+        Uses TF-IDF cosine similarity (same metric as the unified governor)
+        to produce a semantic distance score. Returns 1 - similarity, so
+        high contradiction = low similarity between engine outputs.
         """
-        # Simple heuristic: if critical mentions "but", "however", "risk", "problem", etc.
-        critical_keywords = [
-            "but",
-            "however",
-            "risk",
-            "problem",
-            "weakness",
-            "concern",
-            "issue",
-            "limitation",
-        ]
-        contradiction_score = sum(1 for kw in critical_keywords if kw in critical.lower())
+        from theos_governor import _tfidf_cosine_similarity
 
-        # Normalize to [0, 1]
-        contradiction = min(1.0, contradiction_score / 5.0)
-
-        return contradiction
+        similarity = _tfidf_cosine_similarity(constructive, critical)
+        # Invert: high similarity = low contradiction, low similarity = high contradiction
+        return 1.0 - similarity
 
     def _blend_outputs(self, constructive: str, critical: str, contradiction: float) -> str:
         """
