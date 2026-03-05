@@ -147,6 +147,10 @@ class TestScoring:
         expected = 1.2 * 0.8 + 1.0 * 0.75 + 1.1 * 0.6 + 1.0 * 0.7 - 1.6 * 0.1
         assert abs(gov._score(out) - expected) < 1e-9
 
+    def test_public_score_matches_private(self, gov):
+        out = _out(coherence=0.8, calibration=0.75, evidence=0.6, actionability=0.7, risk=0.1)
+        assert gov.score(out) == gov._score(out)
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 4. Stop conditions

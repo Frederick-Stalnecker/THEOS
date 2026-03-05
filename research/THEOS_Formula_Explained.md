@@ -17,7 +17,7 @@ What THEOS does—and what is genuinely novel—is this: it takes the full archi
 ## The Formula
 
 ```
-H* = lim_{n→∞} G(C₁ⁿ ⊕ C₂ⁿ, Δⁿ, Wⁿ)
+H* = lim_{n→∞} G(C₁ⁿ ⊕ C₂ⁿ, Φⁿ, Wⁿ)
 ```
 
 This is not merely symbolic. It is a complete description of how reasoning converges to truth.
@@ -50,9 +50,9 @@ C₂ is the second reasoning engine, running the same I→A→D cycle but from t
 
 This symbol is critical. It does not mean "add together" or "average." It means the two outputs are forced into confrontation. C₁ says one thing. C₂ says another. The ⊕ is the moment they meet in the middle—the contradiction zone from your diagram. It is the intellectual collision where assumptions are exposed, weaknesses are revealed, and neither side gets a free pass.
 
-### Δⁿ — The Contradiction Metric
+### Φⁿ — The Contradiction Metric
 
-Delta (Δ) is the measured distance between the two engines' conclusions. It is a number between 0 and 1. When Δ is high, the engines strongly disagree—there is much unresolved tension. When Δ is low, they are converging—the contradiction is being resolved. Δ is not a problem to be eliminated. It is the fuel that drives the system forward. Without contradiction, there is no refinement. The Governor watches Δ and uses it to decide whether another cycle is needed.
+Phi (Φ) is the measured distance between the two engines' conclusions. It is a number between 0 and 1. When Φ is high, the engines strongly disagree—there is much unresolved tension. When Φ is low, they are converging—the contradiction is being resolved. Φ is not a problem to be eliminated. It is the fuel that drives the system forward. Without contradiction, there is no refinement. The Governor watches Φ and uses it to decide whether another cycle is needed.
 
 ### Wⁿ — Accumulated Wisdom
 
@@ -62,7 +62,7 @@ W is everything the system has learned from every previous cycle—not the raw d
 
 ## Putting It All Together
 
-THEOS says that truth (H*) is what you get when a Governor (G) repeatedly sends two opposing engines of reasoning (C₁ and C₂) into collision (⊕), measures how much they still disagree (Δ), draws on everything learned from every previous collision (W), and keeps cycling until the disagreement fades to silence—and what remains is the answer that no opposition could break.
+THEOS says that truth (H*) is what you get when a Governor (G) repeatedly sends two opposing engines of reasoning (C₁ and C₂) into collision (⊕), measures how much they still disagree (Φ), draws on everything learned from every previous collision (W), and keeps cycling until the disagreement fades to silence—and what remains is the answer that no opposition could break.
 
 ---
 
@@ -92,12 +92,12 @@ THEOS captures the reasoning architecture—the structural engine of how human b
 
 If you want to understand how THEOS works in detail, see:
 
-- **THEOS_COMPLETE_MASTER_DOCUMENT.pdf** — Complete mathematical framework with all formulas
-- **THEOS_Core_Formula_Final.txt** — Formal specification of the cycle map and operators
-- **THEOS_Mathematical_Completeness_Addendum.md** — Formal proofs of all key claims
-- **code/theos_governor_phase2.py** — Production-ready implementation (120 tests, all passing)
+- **THEOS_ARCHITECTURE.md** — Complete architectural reference with formal specification
+- **research/MATHEMATICAL_AUDIT.md** — Claim-by-claim mathematical audit
+- **research/THEOS_Mathematical_Completeness_Addendum.md** — Formal proofs of all key claims
+- **code/theos_governor.py** — Unified governor implementation (72 tests, all passing)
 
-For a quick start, see **THEOS_Plugin_Documentation.md** for API reference and examples.
+For a quick start, see **docs/api.md** for API reference and **docs/guide.md** for the developer guide.
 
 ---
 

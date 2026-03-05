@@ -131,18 +131,20 @@ The governor tracks a `contradiction_budget` across a session and adjusts its po
 
 ## The Formal Math
 
-The abduction step uses quality-bracket shrinkage:
+Convergence is proven via the **Banach fixed-point theorem**:
 
 ```
-A_L = argmax QA(H; I)    [left: highest explanatory quality]
-A_R = argmin QA(H; I)    [right: lowest explanatory quality — adversarial]
+T_q: S → S   (the wringer operator on state space S = I × A × D × Φ × W)
 
-Width_n = q_max - q_min  → 0 exponentially (Theorem 3.5)
+‖T_q(s₁) - T_q(s₂)‖ ≤ ρ · ‖s₁ - s₂‖,   ρ < 1
+
+→ Unique epistemic equilibrium S*(q) exists for each query q.
+→ Convergence is geometric: Φ_n ≤ Φ_0 · ρⁿ
 ```
 
-Convergence is guaranteed when both engines update toward the center of the quality bracket each cycle. The width decreases exponentially with each pass.
+When both engines are contractive (each wringer pass reduces contradiction), the system converges to a unique fixed point. The dual-engine convergence rate ρ_eff is bounded by the geometric mean of the individual engine contraction factors — meaning two opposing engines converge faster than one engine alone.
 
-The full formal proofs are in: `THEOS_Architecture/governor/` and the iCloud document *Theos Math version 2.pdf*.
+The full formal specification is in: `THEOS_ARCHITECTURE.md` (Formal Specification section) and `code/theos_core.py` (docstring).
 
 ---
 
@@ -162,10 +164,9 @@ The full formal proofs are in: `THEOS_Architecture/governor/` and the iCloud doc
 ## Patent Status
 
 Provisional patent application filed: USPTO 63/831,738
+Full application filed: U.S. Application No. 18/919,771
 
-The I→A→D→I loop is claimed in the provisional. The specific abduction sub-structure (A_L = argmax QA(H; I), A_R = argmin QA(H; I), bracket shrinkage to zero) may be separately patentable — the patent attorney is being briefed.
-
-Window: 12-month provisional closes approximately June 2026.
+The I→A→D→I loop with per-engine self-reflection is the core claimed invention.
 
 ---
 

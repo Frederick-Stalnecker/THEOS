@@ -7,7 +7,7 @@
 <a href="https://www.producthunt.com/products/theos?utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-theos" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1087234&theme=light" alt="THEOS on Product Hunt" width="250" height="54"></a>
 
 [![CI](https://github.com/Frederick-Stalnecker/THEOS/actions/workflows/ci.yml/badge.svg)](https://github.com/Frederick-Stalnecker/THEOS/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-71%20passing-brightgreen)](#)
+[![Tests](https://img.shields.io/badge/tests-72%20passing-brightgreen)](#)
 [![PyPI](https://img.shields.io/pypi/v/theos-reasoning?color=blue)](https://pypi.org/project/theos-reasoning/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -92,11 +92,11 @@ THEOS convergence is proven via the **Banach fixed-point theorem**:
 
 ```
 T_q: S → S   (the wringer operator)
-‖T_q(s₁) - T_q(s₂)‖ ≤ κ · ‖s₁ - s₂‖,   κ < 1
+‖T_q(s₁) - T_q(s₂)‖ ≤ ρ · ‖s₁ - s₂‖,   ρ < 1
 
 → Unique epistemic equilibrium S*(q) exists.
-→ Convergence is geometric: Φ_n ≤ Φ_0 · κⁿ
-→ Expected cost: E[Cost_n] ≤ C₁ + C₂ · exp(-κn)
+→ Convergence is geometric: Φ_n ≤ Φ_0 · ρⁿ
+→ Expected cost: E[Cost_n] ≤ C₁ + C₂ · exp(-ρn)
 ```
 
 The contradiction between engines shrinks geometrically with each wringer pass toward a unique fixed point. When engines cannot converge, the governor reports irreducible disagreement — an honest answer in domains where certainty is impossible.
@@ -203,7 +203,7 @@ THEOS/
 │   ├── theos_medical_diagnosis.py
 │   ├── theos_financial_analysis.py
 │   └── theos_ai_safety.py
-├── tests/                         # 71 passing tests
+├── tests/                         # 72 passing tests
 ├── experiments/                   # Validation framework
 │   ├── insight_experiment.py            # IDR experiment (correct instrument)
 │   ├── theos_validation_experiment.py   # Quality experiment (SP/CoT/THEOS)

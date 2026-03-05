@@ -52,7 +52,7 @@ class LLMAdapter(ABC):
         Initialize LLM adapter.
 
         Args:
-            model_name: Name of the model (e.g., "claude-3-opus", "gpt-4")
+            model_name: Name of the model (e.g., "claude-sonnet-4-5-20250929", "gpt-4o")
             api_key: API key for the LLM service
         """
         self.model_name = model_name
@@ -128,7 +128,7 @@ class ClaudeAdapter(LLMAdapter):
     Uses the Claude API to provide reasoning engines for THEOS.
     """
 
-    def __init__(self, api_key: str | None = None, model: str = "claude-3-5-sonnet-20241022"):
+    def __init__(self, api_key: str | None = None, model: str = "claude-sonnet-4-5-20250929"):
         """
         Initialize Claude adapter.
 
@@ -192,7 +192,7 @@ class GPT4Adapter(LLMAdapter):
     Uses the OpenAI API to provide reasoning engines for THEOS.
     """
 
-    def __init__(self, api_key: str | None = None, model: str = "gpt-4-turbo"):
+    def __init__(self, api_key: str | None = None, model: str = "gpt-4o"):
         """
         Initialize GPT-4 adapter.
 
@@ -311,9 +311,9 @@ def get_llm_adapter(
         LLMAdapter instance
     """
     if provider.lower() == "claude":
-        return ClaudeAdapter(api_key=api_key, model=model or "claude-3-5-sonnet-20241022")
+        return ClaudeAdapter(api_key=api_key, model=model or "claude-sonnet-4-5-20250929")
     elif provider.lower() == "gpt4":
-        return GPT4Adapter(api_key=api_key, model=model or "gpt-4-turbo")
+        return GPT4Adapter(api_key=api_key, model=model or "gpt-4o")
     elif provider.lower() == "mock":
         return MockLLMAdapter(model_name=model or "mock-llm")
     else:

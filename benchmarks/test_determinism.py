@@ -10,8 +10,9 @@ This is the foundation benchmark. If THEOS isn't deterministic, nothing else mat
 Lab Assistant Mode: Only report what we actually observe.
 """
 
+import os
 import sys
-sys.path.insert(0, '/home/ubuntu/THEOS_repo/code')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'code'))
 
 from theos_governor import THEOSGovernor, EngineOutput, GovernorConfig
 import json
@@ -278,7 +279,8 @@ def main():
     print(f"{'='*70}\n")
     
     # Save detailed results
-    with open('/home/ubuntu/THEOS_repo/benchmarks/determinism_results.json', 'w') as f:
+    _results_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'determinism_results.json')
+    with open(_results_path, 'w') as f:
         json.dump({
             "test_name": "Determinism Verification",
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),

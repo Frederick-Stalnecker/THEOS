@@ -560,6 +560,16 @@ class THEOSGovernor:
             return "CM"
         return "IM"
 
+    # ── Public scoring API ─────────────────────────────────────────────────────
+
+    def score(self, out: EngineOutput) -> float:
+        """Public API: compute composite quality score for one engine output.
+
+        Delegates to :meth:`_score`.  Use this from MCP servers, demos, and
+        external code that needs to inspect per-engine quality.
+        """
+        return self._score(out)
+
     # ── Private helpers ───────────────────────────────────────────────────────
 
     def _score(self, out: EngineOutput) -> float:

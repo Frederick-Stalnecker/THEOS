@@ -14,9 +14,10 @@ Author: Frederick Davis Stalnecker
 Date: February 22, 2026
 """
 
+import os
 import sys
 
-sys.path.insert(0, "/home/ubuntu/THEOS_repo/code")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__))))
 
 
 from llm_adapter import get_llm_adapter

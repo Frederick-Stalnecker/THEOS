@@ -9,8 +9,9 @@ and other failure modes gracefully.
 Lab Assistant Mode: Only report what we actually observe.
 """
 
+import os
 import sys
-sys.path.insert(0, '/home/ubuntu/THEOS_repo/code')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'code'))
 
 from theos_governor import THEOSGovernor, EngineOutput, GovernorConfig, StopReason
 import json
@@ -444,7 +445,8 @@ class SafetyTestSuite:
             print(f"\n⚠️  {self.failed} ISSUES FOUND")
         
         # Save results
-        with open('/home/ubuntu/THEOS_repo/benchmarks/safety_results.json', 'w') as f:
+        _results_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'safety_results.json')
+        with open(_results_path, 'w') as f:
             json.dump({
                 "test_name": "Safety and Robustness Benchmark",
                 "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
